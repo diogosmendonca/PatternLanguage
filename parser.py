@@ -75,7 +75,7 @@ def recurse_through_ast(node, handle_ast, handle_terminal, handle_fields, handle
 
 
 
-source = "Account.objects.get(id=id)"
+source = "print(Account.objects.get(id=id))"
 source2 = "Account.objects.get(id=id)"
 node = ast.parse(source)
 node2 = ast.parse(source2)
