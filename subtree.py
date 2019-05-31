@@ -1,21 +1,24 @@
 import ast
 import equals
-tree_source = "Account.objects.get(id=id)"
-sub_tree = ast.parse(tree_source)
-a_source = "print(Account.objects.get(id=id))"
-a = ast.parse(a_source)
-print('--->',vars(vars(sub_tree).get('body')[0]).get('value'))
-sub_tree = vars(vars(sub_tree).get('body')[0]).get('value')
-#a = vars(vars(vars(a).get('body')[0]).get('value')).get('args')[0]
-
-class visitor(ast.NodeVisitor):
+class Analyzer(ast.NodeVisitor):
+    status = False
+    cont = 0
+    def __init__(self, tree, sub_tree):  
+        print(sub_tree)      
+        print(vars(sub_tree))
+        #VERIFICAR O TAMANHO DO BODY, PORQUE PODE HAVER MAIS DE UMA INSTANCIA
+        #PELO TAMANHO DO BODY
+        # sub_tree = vars(vars(sub_tree).get('body')[0]).get('value')
+        self.tree = tree
+        self.sub_tree = sub_tree  
+         
+        ast.NodeVisitor.generic_visit(self, tree)        
+    
     def generic_visit(self, node):
-        value = equals.isEquals(node,sub_tree)
-        print('visiting sub_--->', node)
-        print('subtree--->',sub_tree)
+        value = equals.isEquals(node, self.sub_tree)
+        if(value == True):
+            self.cont+= 1
+            self.status = True        
         print('-------------------------------------------------->',value)
         print(type(node).__name__)
         ast.NodeVisitor.generic_visit(self, node)
-
-x = visitor()
-x.visit(a)

@@ -2,6 +2,7 @@ import ast
 from functools import partial
 from nltk.tree import Tree
 import equals
+import subtree
 
 try:
     _basestring = basestring
@@ -75,8 +76,22 @@ def recurse_through_ast(node, handle_ast, handle_terminal, handle_fields, handle
 
 
 
-source = "print(Account.objects.get(id=id))"
-source2 = "Account.objects.get(id=id)"
+source = """aaaaaaaaaaaaaaaaa
+Account.objects.get(id=id)
+aaaaaaaaaaaaaaaaa
+print(1+2)
+def vaalor():  
+    sub = valor  
+    valor = 10
+    
+
+
+"""
+source2 = """
+sub = valor  
+valor = 10
+    
+"""
 node = ast.parse(source)
 node2 = ast.parse(source2)
 str_tree = handle_ast(node, True)
@@ -88,4 +103,5 @@ t2.draw()
 print(t.flatten())
 print(t2.flatten())
 print(equals.isEquals(node, node2))
-
+test = subtree.Analyzer(node, node2)
+print(test.status, test.cont)
