@@ -76,34 +76,37 @@ def recurse_through_ast(node, handle_ast, handle_terminal, handle_fields, handle
 
 
 
-# source = """aaaaaaaaaaaaaaaaa
-# Account.objects.get(id=id)
-# aaaaaaaaaaaaaaaaa
-# print(1+2)
-# def vaalor():  
-#     sub = valor  
-#     print(5+8)
-#     valor = 10
+source = """aaaaaaaaaaaaaaaaa
+Account.objects.get(id=id)
+aaaaaaaaaaaaaaaaa
+print(1+2)
+def vaalor(): 
+    sub = valor  
+    print(5+8)
+    valor = 10
+    print('aa')
     
     
 
 
-# """
-# source2 = """
-# sub = valor  
-# valor = 10
-    
-# """
-# node = ast.parse(source)
-# node2 = ast.parse(source2)
-# str_tree = handle_ast(node, True)
-# str_tree2 = handle_ast(node2, True)
-# t = Tree.fromstring(str_tree)
-# t2 = Tree.fromstring(str_tree2)
-# t.draw()
-# t2.draw()
+"""
+source2 = """ 
+Account.objects.get(id=id)
+"""
+
+node = ast.parse(source)
+node2 = ast.parse(source2)
+
+str_tree = handle_ast(node, True)
+str_tree2 = handle_ast(node2, True)
+
+t = Tree.fromstring(str_tree)
+t2 = Tree.fromstring(str_tree2)
+
+t.draw()
+t2.draw()
 # print(t.flatten())
 # print(t2.flatten())
 # print(equals.isEquals(node, node2))
-# test = subtree.Analyzer(node, node2)
-# print(test.status, test.cont)
+test = subtree.Analyzer(node, node2).status
+print(test)

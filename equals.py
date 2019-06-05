@@ -9,8 +9,6 @@ def isEquals(node1, node2):
         for tipe, var in vars(node1).items():
             #print('->>>>>', 'tipe: ', tipe, '->>>>> var: ' ,var)
             if tipe not in ('lineno', 'col_offset', 'ctx'):
-                # ignorando linhas e outros contextos
-                # print(var)
                 var2 = vars(node2).get(tipe)
                 if not isEquals(var, var2):
                     return False        
