@@ -1,12 +1,11 @@
 import ast
 import equals
 class Analyzer(ast.NodeVisitor):
-    cont = 0
-    cont2 =0
-    error = []
+    __error = []
+    errors = []
     def status(self):
         list_subtree = list(ast.iter_child_nodes(self.sub_tree))
-        status_value = self.__verify_error(self.error, list_subtree)
+        status_value = self.__verify_error(self.__error, list_subtree)
         print(status_value)
         if(status_value > 0):
             return True
@@ -18,14 +17,25 @@ class Analyzer(ast.NodeVisitor):
         for indexJ in range(len(error)):
             error_node.append(error[indexJ][0])
             error_node_subtree.append(error[indexJ][1])
+        self.errors = error_node
         if len(subtree) == 1:
             return len(error)
         else:
             cont = sum(1 for indexI in range(len(error_node_subtree)) if error_node_subtree[indexI:indexI+len(subtree)] == subtree)
             #print(cont)
             return cont
-    def detals_pattern(self, error):
-        pass
+    def detals_erro(self, errors=None, error=None):
+        if errors == None and error == None:
+            return None
+        elif errors == None:
+            print(error)
+            error_dict = vars(error)
+            return error_dict
+        else:
+            return [vars(indexI) for indexI in errors]
+        
+
+        
     def length_subtree(self, subtree):        
         return len(vars(subtree).get('body'))
         
@@ -43,8 +53,6 @@ class Analyzer(ast.NodeVisitor):
                 lis_aux = []
                 lis_aux.append(node)
                 lis_aux.append(node_subtree)
-                self.error.append(lis_aux)
+                self.__error.append(lis_aux)
                 break
         ast.NodeVisitor.generic_visit(self, node)
-
-

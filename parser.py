@@ -75,41 +75,28 @@ def recurse_through_ast(node, handle_ast, handle_terminal, handle_fields, handle
     return handle_fields(node, field_results)
 
 
-source = """aaaaaaaaaaaaaaaaa
-Account.objects.get(id=id)
-aaaaaaaaaaaaaaaaa
-print(1+2)
-Account.objects.get(id=id)
-def vaalor(): 
-    sub = valor  
-    print(5+8)
-    valor = 10
-    valor = 10
-    print(b)
-    valor = 20
-    valor = 10
-    valor = 10
-    valor = 20
-    valor = 10
-    valor = 20
-    valor = 20
-    valor = 10
-    valor = 10
-    valor = 20
-    valor = 10
-    Account.objects.get(id=id)
-    Account.objects.get(id=id)
-    valor = 20
-    valor = 20
-    valor = 10
-    valor = 10
-    valor = 20
-    valor = 10
-    valor = 20
-    print('aa')
+source = """
+def fibonacci(n):
+     if n <= 1:
+         return n
+     else:
+         return fibonacci(n-1) + fibonacci(n-2)
+def ola_mundo():
+    a=10
+    b=20
+    print(a+b)
+    print(c)
+    c = 40
+    print(c)
+    c = 40
+    print(c)
+    c = 40
+    print(c)
+    c = 40
 """
 source2 = """
-Account.objects.get(id=id)
+print(c)
+c = 40
 """
 
 node = ast.parse(source)
@@ -127,14 +114,6 @@ t2 = Tree.fromstring(str_tree2)
 # print(t2.flatten())
 # print(equals.isEquals(node, node2))
 test = subtree.Analyzer(node, node2)
-#print(test.status)
-#print('----------')
-#print(test.error)
-subtreee = list(ast.iter_child_nodes(node2))
-#print(subtreee)
 print(test.status())
-print(test.error)
-# for indexI in range(len(test.error)):
-#     print('----------', indexI, '-------------', end='\n\n')
-#     for indexJ in vars(test.error[indexI]).items():
-#         print(indexJ)
+for indexI in test.errors:
+    print(test.detals_erro(error=indexI))
