@@ -41,7 +41,8 @@ def handle_no_fields(node):
 
 
 def recurse_through_ast(node, handle_ast, handle_terminal, handle_fields, handle_no_fields, omit_docstrings):
-    possible_docstring = isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.Module))
+    possible_docstring = isinstance(
+        node, (ast.FunctionDef, ast.ClassDef, ast.Module))
 
     node_fields = zip(
         node._fields,
@@ -71,26 +72,43 @@ def recurse_through_ast(node, handle_ast, handle_terminal, handle_fields, handle
     if not field_results:
         return handle_no_fields(node)
 
-
     return handle_fields(node, field_results)
-
 
 
 source = """aaaaaaaaaaaaaaaaa
 Account.objects.get(id=id)
 aaaaaaaaaaaaaaaaa
 print(1+2)
+Account.objects.get(id=id)
 def vaalor(): 
     sub = valor  
     print(5+8)
     valor = 10
+    valor = 10
+    print(b)
+    valor = 20
+    valor = 10
+    valor = 10
+    valor = 20
+    valor = 10
+    valor = 20
+    valor = 20
+    valor = 10
+    valor = 10
+    valor = 20
+    valor = 10
+    Account.objects.get(id=id)
+    Account.objects.get(id=id)
+    valor = 20
+    valor = 20
+    valor = 10
+    valor = 10
+    valor = 20
+    valor = 10
+    valor = 20
     print('aa')
-    
-    
-
-
 """
-source2 = """ 
+source2 = """
 Account.objects.get(id=id)
 """
 
@@ -103,10 +121,20 @@ str_tree2 = handle_ast(node2, True)
 t = Tree.fromstring(str_tree)
 t2 = Tree.fromstring(str_tree2)
 
-t.draw()
-t2.draw()
+# t.draw()
+# t2.draw()
 # print(t.flatten())
 # print(t2.flatten())
 # print(equals.isEquals(node, node2))
-test = subtree.Analyzer(node, node2).status
-print(test)
+test = subtree.Analyzer(node, node2)
+#print(test.status)
+#print('----------')
+#print(test.error)
+subtreee = list(ast.iter_child_nodes(node2))
+#print(subtreee)
+print(test.status())
+print(test.error)
+# for indexI in range(len(test.error)):
+#     print('----------', indexI, '-------------', end='\n\n')
+#     for indexJ in vars(test.error[indexI]).items():
+#         print(indexJ)
