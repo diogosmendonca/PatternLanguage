@@ -2,6 +2,7 @@ import ast
 from functools import partial
 from nltk.tree import Tree
 import equals
+import subtree
 
 try:
     _basestring = basestring
@@ -40,7 +41,8 @@ def handle_no_fields(node):
 
 
 def recurse_through_ast(node, handle_ast, handle_terminal, handle_fields, handle_no_fields, omit_docstrings):
-    possible_docstring = isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.Module))
+    possible_docstring = isinstance(
+        node, (ast.FunctionDef, ast.ClassDef, ast.Module))
 
     node_fields = zip(
         node._fields,
@@ -70,22 +72,48 @@ def recurse_through_ast(node, handle_ast, handle_terminal, handle_fields, handle
     if not field_results:
         return handle_no_fields(node)
 
-
     return handle_fields(node, field_results)
 
 
+source = """
+def fibonacci(n):
+     if n <= 1:
+         return n
+     else:
+         return fibonacci(n-1) + fibonacci(n-2)
+def ola_mundo():
+    a=10
+    b=20
+    print(a+b)
+    print(c)
+    c = 40
+    print(c)
+    c = 40
+    print(c)
+    c = 40
+    print(c)
+    c = 40
+"""
+source2 = """
+print(c)
+c = 40
+"""
 
-source = "Account.objects.get(id=id)"
-source2 = "Account.objects.get(id=id)"
 node = ast.parse(source)
 node2 = ast.parse(source2)
+
 str_tree = handle_ast(node, True)
 str_tree2 = handle_ast(node2, True)
+
 t = Tree.fromstring(str_tree)
 t2 = Tree.fromstring(str_tree2)
-t.draw()
-t2.draw()
-print(t.flatten())
-print(t2.flatten())
-print(equals.isEquals(node, node2))
 
+# t.draw()
+# t2.draw()
+# print(t.flatten())
+# print(t2.flatten())
+# print(equals.isEquals(node, node2))
+test = subtree.Analyzer(node, node2)
+print(test.status())
+for indexI in test.errors:
+    print(test.detals_erro(error=indexI))
