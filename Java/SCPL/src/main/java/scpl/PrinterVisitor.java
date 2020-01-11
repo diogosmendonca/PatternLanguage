@@ -1,17 +1,13 @@
 package scpl;
 
-import com.sun.source.util.TreePath;
-import com.sun.source.util.TreePathScanner;
-import com.sun.source.util.TreeScanner;
-
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.util.TreePath;
+import com.sun.source.util.TreePathScanner;
 
 public class PrinterVisitor extends TreePathScanner<Void, List<String>> {
 	
@@ -46,4 +42,8 @@ public class PrinterVisitor extends TreePathScanner<Void, List<String>> {
 	      indentLevel--;
 		 return null;
 	  }
+	  
+	  
+	  
+	  
 }
