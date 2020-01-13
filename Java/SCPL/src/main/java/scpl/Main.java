@@ -3,7 +3,10 @@ package scpl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 import javax.tools.JavaCompiler;
@@ -23,8 +26,11 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		
+		//Main print 
+		
 		List<File> files = new ArrayList<>();
-				
+		
+		files.add(new File("./arquivos/Teste.java"));
 		files.add(new File("./arquivos/CodigoFonte.java"));
 		files.add(new File("./arquivos/PadraoErro.java"));
 		
@@ -39,11 +45,16 @@ public class Main {
 		List<CompilationUnitTree> lista = new ArrayList<CompilationUnitTree>();
 		
 		
+		Map<Tree, Collection<Tree>> nodes = new LinkedHashMap<>();
 		
 		for (CompilationUnitTree compilationUnitTree : compilationUnitTrees) {
-			//System.out.println(PrinterVisitor.print(compilationUnitTree, null));
+			System.out.println(PrinterVisitor.print(compilationUnitTree, nodes));
 			lista.add(compilationUnitTree);
+			break;
 		}
+		
+		System.out.println(nodes);
+		/*
 		
 		ComparationVisitor cv = new ComparationVisitor(); 
 		
@@ -62,7 +73,7 @@ public class Main {
 		}*/
 		
 	}
-	
+	/*
 	public static boolean isEquals(Tree CT1,Tree CT2) {
 		
 	  	PrinterVisitor pv1 = new PrinterVisitor();
@@ -93,9 +104,7 @@ public class Main {
 			return false;
 		}
 		
-	}
-	
-	
+	}*/
 	
 	
 
