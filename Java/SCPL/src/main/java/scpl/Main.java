@@ -48,35 +48,16 @@ public class Main {
 		
 		
 		Map<Tree, List<Node>> nodes1 = new LinkedHashMap<>();
-		System.out.println(AstVisitor.build(iter.next(),nodes1));
+		System.out.println(NodeVisitor.build(iter.next(),nodes1));
 		addChildren(nodes1);
 		
 		Map<Tree, List<Node>> nodes2 = new LinkedHashMap<>();
-		System.out.println(AstVisitor.build(iter.next(),nodes2));
+		System.out.println(NodeVisitor.build(iter.next(),nodes2));
 		addChildren(nodes2);
 		
-		
-		System.out.println(Utils.isSubtree(nodes1.get(null).iterator().next(), nodes2.get(null).iterator().next()));
-		
+		System.out.println(Utils.isEquals(nodes1.get(null).iterator().next(), nodes2.get(null).iterator().next()));
 		
 		System.out.println("A");
-		/*
-		
-		ComparationVisitor cv = new ComparationVisitor(); 
-		
-		Integer c = 0;
-		Integer c2 =0;
-		
-		Tree l = (cv.scan(lista.get(0), c));
-		System.out.println(cv.atr.getKind());
-		System.out.println("Kind do resultado " + l.getKind());
-		
-		System.out.println(cv.scan(lista.get(0),c2));
-		
-		/*
-		if(isEquals(lista.get(0),lista.get(1))) {
-			System.out.println("São iguais");
-		}*/
 		
 	}
 	
@@ -91,40 +72,5 @@ public class Main {
 				}
 			}
 	 }
-	
-	/*
-	public static boolean isEquals(Tree CT1,Tree CT2) {
-		
-	  	PrinterVisitor pv1 = new PrinterVisitor();
-		PrinterVisitor pv2 = new PrinterVisitor();
-
-		if (CT1 == null) {
-			
-			System.out.println("Nulo1");
-            return false;
-
-		} 
-	    if (CT2 == null) {
-	    	
-	    	System.out.println("Nulo2");
-        	return false;
-
-	    }
-	    
-		//TreePath tp1 = new TreePath(CT1);
-		//TreePath tp2 = new TreePath(CT2);
-		System.out.println();
-		System.out.println(CT1.getClass().getInterfaces()[0].getSimpleName());
-		if(CT1.getKind() == CT2.getKind())
-		{		
-			return true;
-			
-		}else {
-			return false;
-		}
-		
-	}*/
-	
-	
 
 }

@@ -13,7 +13,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 
-public class AstVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
+public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 	
 	
 	  private static final int INDENT_SPACES = 2;
@@ -22,14 +22,14 @@ public class AstVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 	  private int indentLevel;
 	  private final Node root;
 
-	  public AstVisitor(Tree tree) {
+	  public NodeVisitor(Tree tree) {
 		sb = new StringBuilder();
 	    indentLevel = 0;
 	    root = new Node(tree);
 	  }
 
 	  public static String build(Tree tree, Map<Tree, List<Node>> nodes) {
-	    AstVisitor pv = new AstVisitor(tree);
+	    NodeVisitor pv = new NodeVisitor(tree);
 	    pv.scan(tree, nodes);
 	    //pv.addChildren(nodes);
 	    return pv.sb.toString();
