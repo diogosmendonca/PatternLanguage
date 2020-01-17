@@ -7,6 +7,8 @@ import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 
+import com.sun.source.tree.ModifiersTree;
+
 public class Utils {
 	
 	public static boolean isEquals(Node a, Node b) {
@@ -19,11 +21,11 @@ public class Utils {
 			return false;
 		}
 		
-		System.out.println("A" +a.getNode());
-		System.out.println("B" +b.getNode());
+		//System.out.println("A -> " +a.getNode());
+		//System.out.println("B -> " +b.getNode());
 		
 		//Compara se os tipos sao iguais
-		if(a.getNode().getKind()!=a.getNode().getKind()) {
+		if(a.getNode().getKind()!=b.getNode().getKind()) {
 			return false;
 		}
 		
@@ -31,7 +33,6 @@ public class Utils {
 		if(!compareName(a, b)) {
 			return false;
 		}
-		
 		if(a.getChildren().size()!=b.getChildren().size()) {
 			return false;
 		}
@@ -47,19 +48,72 @@ public class Utils {
 		
 	}
 	
+	public static boolean isEquals2(Node a, Node b) {
+		
+		if(a==null) {
+			return false;
+		}
+		
+		if(b==null) {
+			return false;
+		}
+		
+		//System.out.println("A -> " +a.getNode());
+		//System.out.println("B -> " +b.getNode());
+		
+		//Compara se os tipos sao iguais
+		if(a.getNode().getKind()!=b.getNode().getKind()) {
+			return false;
+		}
+		
+		//Caso seja classe, metodo ou variavel,compara os nomes
+		if(!compareName(a, b)) {
+			return false;
+		}
+		
+		if(a.getChildren().size()<b.getChildren().size()) {
+			return false;
+		}
+		
+		int cont = 0;
+		for(int i=0; i<b.getChildren().size(); i++) {
+			for(int j=0; j<a.getChildren().size(); j++) {
+
+				if(!isEquals2(a.getChildren().get(j), b.getChildren().get(i))) {
+					continue;
+				}else {
+					cont++;
+					break;
+				}
+			}
+			
+		}
+		
+		if(cont == b.getChildren().size()) {
+			return true;
+		}else {
+
+			return false;
+		}
+		
+		
+	}
+	
+
+	
+	
 	public static boolean isSubtree(Node a, Node b) {
 		
-		if(isEquals(a, b)) {
+		if(isEquals2(a, b)) {
 			return true;
 		}
-		
-		for(Node node : a.getChildren()) {
-			return isSubtree(node, b);
-		}
+		/*for(Node node : a.getChildren()) {
+			return isSubtree(node, b.getChildren().get(0));
+		}*/
 		
 		return false;
 	}
-	
+	//Problema Aqui
 	private static boolean compareName(Node node1, Node node2) {
 		
 		switch(node1.getNode().getKind()) {

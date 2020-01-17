@@ -54,6 +54,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 	        if (nodes.get(parent) == null) {
 				List<Node> l = new ArrayList<>();
 				
+				//Criando nó raiz com sua Tree equivalente e add no mapeamento.
 				l.add(new Node(parent,tree));
 				nodes.put(parent, l);
 			}else {
