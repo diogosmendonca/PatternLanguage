@@ -99,22 +99,58 @@ public class Utils {
 		
 	}
 	
-
-	
 	
 	public static boolean isSubtree(Node a, Node b) {
-		
-		if(isEquals2(a, b)) {
-			return true;
+				
+		if(a==null) {
+			return false;
 		}
-		/*for(Node node : a.getChildren()) {
-			return isSubtree(node, b.getChildren().get(0));
-		}*/
 		
-		return false;
+		if(b==null) {
+			return false;
+		}
+		
+		System.out.println("A -> " +a.getNode());
+		System.out.println("B -> " +b.getNode());
+		
+		//Compara se os tipos sao iguais
+		if(a.getNode().getKind()!=b.getNode().getKind()) {
+			return false;
+		}
+		
+		//Caso seja classe, metodo ou variavel,compara os nomes
+		if(!compareName(a, b)) {
+			return false;
+		}
+		
+		if(a.getChildren().size()<b.getChildren().size()) {
+			return false;
+		}
+		
+		boolean searching = false;
+		int counter = 0;
+		
+		for(int i =0;i<b.getChildren().size();i++) { 
+			
+			if(b.getChildren().size()-i > a.getChildren().size()-counter || searching) {
+				return false;
+			}
+			
+			searching=true;
+			
+			while(searching && counter<a.getChildren().size() ) {
+				if(isSubtree(a.getChildren().get(counter), b.getChildren().get(i))) {
+					searching=false;
+				}
+				counter++;
+			}
+		}
+		
+		return true;
 	}
+	
 	//Problema Aqui
-	private static boolean compareName(Node node1, Node node2) {
+	static boolean compareName(Node node1, Node node2) {
 		
 		switch(node1.getNode().getKind()) {
 		

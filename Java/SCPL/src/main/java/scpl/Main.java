@@ -48,23 +48,22 @@ public class Main {
 		
 		
 		Map<Tree, List<Node>> nodes1 = new LinkedHashMap<>();
-		NodeVisitor.build(iter.next(),nodes1);
-		//System.out.println(NodeVisitor.build(iter.next(),nodes1));
+		//NodeVisitor.build(iter.next(),nodes1);
+		System.out.println(NodeVisitor.build(iter.next(),nodes1));
 		addChildren(nodes1);
 		
 		Map<Tree, List<Node>> nodes2 = new LinkedHashMap<>();
-		NodeVisitor.build(iter.next(),nodes2);
-		//System.out.println(NodeVisitor.build(iter.next(),nodes2));
+		//NodeVisitor.build(iter.next(),nodes2);
+		System.out.println(NodeVisitor.build(iter.next(),nodes2));
 		addChildren(nodes2);
 		
-	//	System.out.println(Utils.isEquals(nodes1.get(null).iterator().next(), nodes2.get(null).iterator().next()));
+		//System.out.println(Utils.isEquals(nodes1.get(null).iterator().next(), nodes2.get(null).iterator().next()));
 		
 		System.out.println(Utils.isSubtree(nodes1.get(null).iterator().next(), nodes2.get(null).iterator().next()));
 		
 	}
 	
 	private static void addChildren(Map<Tree, List<Node>> nodes) {
-		  //System.out.println("Tentou");
 		  for(Tree key : nodes.keySet()) {
 				for(Node node :  nodes.get(key)) {
 					Collection<Node> children = nodes.get(node.getNode());
