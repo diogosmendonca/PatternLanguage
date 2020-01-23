@@ -1,5 +1,6 @@
 package scpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -56,30 +57,33 @@ public class Utils {
 		
 	}
 	
-	public static boolean subtree(Node a, Node b) {
+	public static List<Node> subtree(Node a, Node b) {
+		
+		List<Node> ocorrences = new ArrayList<>();
 		
 		if(isEquals(a, b)) {
-			return true;
+			ocorrences.add(a);
+			return ocorrences;
 		}
 		
-		if(searchChildren(a, b)) {
-			return true;
+		if(searchChildren(a, b, ocorrences)) {
+			return ocorrences;
 		}
 		
 		for(Node child : a.getChildren()) {
-			if(subtree(child, b)) {
-				return true;
-			}
+			ocorrences.addAll(subtree(child, b));
 		}
 		
-		return false;
+		return ocorrences;
 	}
 	
-	private static boolean searchChildren(Node a, Node b) {
+	private static boolean searchChildren(Node a, Node b, List<Node> ocorrences) {
 		
 		if(a.getChildren().size()<b.getChildren().size()) {
 			return false;
 		}
+		
+		List<Node> ocorrencesAux = new ArrayList<>();
 		
 		boolean searching = false;
 		int counter = 0;
@@ -95,16 +99,22 @@ public class Utils {
 			
 			while(searching && counter<a.getChildren().size() ) {
 				if(isEquals(a.getChildren().get(counter), b.getChildren().get(i))) {
+					ocorrencesAux.add(a.getChildren().get(counter));
 					searching=false;
 				}
 				counter++;
 			}
+			
+			/*if(!searching && i+1 == b.getChildren().size()) {
+				i=0;
+			}*/
 		}
 		
 		if(b.getChildren().size()-i > a.getChildren().size()-counter || searching) {
 			return false;
 		}
 		
+		ocorrences.addAll(ocorrencesAux);
 		return true;
 	}
 	
