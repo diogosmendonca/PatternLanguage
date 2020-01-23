@@ -57,9 +57,9 @@ public class Main {
 		System.out.println(NodeVisitor.build(iter.next(),nodes2));
 		addChildren(nodes2);
 		
-		//System.out.println(Utils.isEquals(nodes1.get(null).iterator().next(), nodes2.get(null).iterator().next()));
+		//System.out.println(Utils.isEquals(Utils.getCompilationUnitTree(nodes1), Utils.removeStub(nodes2)));
 		
-		System.out.println(Utils.isSubtree(nodes1.get(null).iterator().next(), nodes2.get(null).iterator().next()));
+		System.out.println(Utils.subtree(Utils.getCompilationUnitTree(nodes1), Utils.removeStub(nodes2)));
 		
 	}
 	
