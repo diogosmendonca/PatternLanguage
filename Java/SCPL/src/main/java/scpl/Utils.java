@@ -16,30 +16,8 @@ public class Utils {
 	
 	public static boolean isEquals(Node a, Node b) {
 		
-		if(a==null) {
+		if(!basicComparation(a, b)) {
 			return false;
-		}
-		
-		if(b==null) {
-			return false;
-		}
-		
-		//System.out.println("A -> " +a.getNode());
-		//System.out.println("B -> " +b.getNode());
-		
-		//Verifica se é nó de esboço
-		if(b.getParent() != null && b.getNode() != null) {
-		
-			//Compara se os tipos sao iguais
-			if(a.getNode().getKind()!=b.getNode().getKind()) {
-				return false;
-			}
-			
-			//Caso seja classe, metodo ou variavel,compara os nomes
-			if(!compareName(a, b)) {
-				return false;
-			}
-		
 		}
 		
 		if(a.getChildren().size()!=b.getChildren().size()) {
@@ -57,30 +35,85 @@ public class Utils {
 		
 	}
 	
+	private static boolean basicComparation(Node a, Node b) {
+		if(a==null) {
+			return false;
+		}
+		
+		if(b==null) {
+			return false;
+		}
+		
+		//System.out.println("A -> " +a.getNode());
+		//System.out.println("B -> " +b.getNode());
+		
+		//Verifica se é nó de esboço
+		if(!isFakeNode(b)) {
+		
+			//Compara se os tipos sao iguais
+			if(a.getNode().getKind()!=b.getNode().getKind()) {
+				return false;
+			}
+			
+			//Caso seja classe, metodo ou variavel,compara os nomes
+			if(!compareName(a, b)) {
+				return false;
+			}
+		
+		}
+		
+		return true;
+	}
+	
+	private static boolean isFakeNode(Node node) {
+		//Verifica se é nó de esboço
+		if(node.getParent() != null && node.getNode() != null) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public static List<Node> subtree(Node a, Node b) {
 		
 		List<Node> ocorrences = new ArrayList<>();
 		
 		if(isEquals(a, b)) {
-			ocorrences.add(a);
+			if(isFakeNode(b)) {
+				ocorrences.addAll(a.getChildren());
+			}else {
+				ocorrences.add(a);
+			}
+			
 			return ocorrences;
 		}
 		
-		if(searchChildren(a, b, ocorrences)) {
-			return ocorrences;
-		}
+		List<Node> childrenNodesAux = searchChildren(a, b);
+		ocorrences.addAll(childrenNodesAux);
 		
-		for(Node child : a.getChildren()) {
+		List<Node> aux = new ArrayList<>();
+		aux.addAll(a.getChildren());		
+		aux.removeAll(childrenNodesAux);
+		
+		for(Node child : aux) {
 			ocorrences.addAll(subtree(child, b));
 		}
 		
 		return ocorrences;
 	}
 	
-	private static boolean searchChildren(Node a, Node b, List<Node> ocorrences) {
+	
+	
+	private static List<Node> searchChildren(Node a, Node b) {
+		
+		List<Node> ocorrences = new ArrayList<>();
+		
+		if(!basicComparation(a, b)) {
+			return ocorrences;
+		}
 		
 		if(a.getChildren().size()<b.getChildren().size()) {
-			return false;
+			return ocorrences;
 		}
 		
 		List<Node> ocorrencesAux = new ArrayList<>();
@@ -92,7 +125,7 @@ public class Utils {
 		for(i =0;i<b.getChildren().size();i++) { 
 			
 			if(b.getChildren().size()-i > a.getChildren().size()-counter || searching) {
-				return false;
+				return ocorrences;
 			}
 			
 			searching=true;
@@ -105,17 +138,14 @@ public class Utils {
 				counter++;
 			}
 			
-			/*if(!searching && i+1 == b.getChildren().size()) {
-				i=0;
-			}*/
+			if(!searching && i == b.getChildren().size() - 1) {
+				ocorrences.addAll(ocorrencesAux);
+				ocorrencesAux.clear();
+				i=-1;
+			}
 		}
-		
-		if(b.getChildren().size()-i > a.getChildren().size()-counter || searching) {
-			return false;
-		}
-		
-		ocorrences.addAll(ocorrencesAux);
-		return true;
+					
+		return ocorrences;
 	}
 	
 	
@@ -217,7 +247,7 @@ public class Utils {
 			}
 		}
 		
-		retorno = nodes.get(retorno.getNode()).get(1);
+		retorno = nodes.get(retorno.getNode()).get(nodes.get(retorno.getNode()).size()-1);
 		
 		if(retorno.getNode().getKind() == Tree.Kind.METHOD) {
 			if(!((MethodTree) retorno.getNode()).getName().toString()
@@ -227,7 +257,7 @@ public class Utils {
 			}
 		}
 		
-		retorno = nodes.get(retorno.getNode()).get(2);
+		retorno = nodes.get(retorno.getNode()).get(nodes.get(retorno.getNode()).size()-1);
 		
 		if(retorno.getNode().getKind() == Tree.Kind.BLOCK) {
 			
