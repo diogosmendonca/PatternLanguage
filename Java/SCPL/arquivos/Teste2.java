@@ -1,8 +1,11 @@
-public class Teste {
+class StubClass {
 	
-	public int soma(){
-		int q = add(2,3);
-		return q;
+	void stubMethod(){
+
+		int a = 10;
+		if(true){
+			a++;
+		}
 	}
 	
 }
