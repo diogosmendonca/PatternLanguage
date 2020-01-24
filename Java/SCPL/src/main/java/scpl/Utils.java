@@ -239,22 +239,14 @@ public class Utils {
 		
 		Node retorno = nodes.get(getCompilationUnitTree(nodes).getNode()).get(0);
 		
-		if(retorno.getNode().getKind() == Tree.Kind.CLASS) {
-			if(!((ClassTree) retorno.getNode()).getSimpleName().toString()
-					.equals("StubClass")){
-				
-				return retorno;
-			}
+		if(retorno.getNode().getKind() != Tree.Kind.CLASS) {
+			return retorno;
 		}
 		
 		retorno = nodes.get(retorno.getNode()).get(nodes.get(retorno.getNode()).size()-1);
 		
-		if(retorno.getNode().getKind() == Tree.Kind.METHOD) {
-			if(!((MethodTree) retorno.getNode()).getName().toString()
-					.equals("stubMethod")){
-				
-				return retorno;
-			}
+		if(retorno.getNode().getKind() != Tree.Kind.METHOD) {
+			return retorno;
 		}
 		
 		retorno = nodes.get(retorno.getNode()).get(nodes.get(retorno.getNode()).size()-1);
