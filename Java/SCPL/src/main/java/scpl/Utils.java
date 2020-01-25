@@ -154,6 +154,7 @@ public class Utils {
 			if(!searching && i == b.getChildren().size() - 1) {
 				ocorrences.addAll(ocorrencesAux);
 				ocorrencesAux.clear();
+				wildcardsMap.clear();
 				counter = 0;
 				i =-1;
 			}

@@ -1,25 +1,25 @@
 public class Teste {
 	public void add(int a1, int b1){
 		int a = 10;
-		int b = 20;
-		if(true){
-			a++;
-		}
-		while(true){
-			int a = 10;
-			int b = 20;
-			if(true){
-				a++;
-			}
-		}	
-	}
-
-	public void add(int a1, int b1){
 		int a = 10;
 		if(true){
 			a++;
 		}
+		
+		
+		if(true){
+			a++;
+		}
+		
+	}
+
+	public void add(int a1, int b1){
+		int b = 10;
+		if(true){
+			b++;
+		}
 		int b = 20;
+		int c = 20;
 	}
 	
 }

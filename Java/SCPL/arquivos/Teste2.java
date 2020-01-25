@@ -1,10 +1,9 @@
-class StubClass {
+public class blabla {
 	
-	void stubMethod(){
-
-		int a = 10;
+	public void stubMedsathod(){
+		int someVariable = 10;
 		if(true){
-			a++;
+			someVariable++;
 		}
 	}
 	
