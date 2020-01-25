@@ -1,8 +1,10 @@
 package scpl;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.BlockTree;
@@ -14,9 +16,15 @@ import com.sun.source.tree.ModifiersTree;
 
 public class Utils {
 	
-	public static boolean isEquals(Node a, Node b) {
+	private static final ResourceBundle wildcards = ResourceBundle.getBundle("wildcards");
+	private final static String anyVariable = wildcards.getString("anyVariable");
+	private final static String someVariable = wildcards.getString("someVariable");
+	private final static String anyMethod = wildcards.getString("anyMethod");
+	private final static String someMethod = wildcards.getString("someMethod");
+	
+	public static boolean isEquals(Node a, Node b, Map<String, String> wildcardsMap) {
 		
-		if(!basicComparation(a, b)) {
+		if(!basicComparation(a, b, wildcardsMap)) {
 			return false;
 		}
 		
@@ -26,7 +34,7 @@ public class Utils {
 		
 		
 		for(int i=0; i<a.getChildren().size(); i++) {
-			if(!isEquals(a.getChildren().get(i), b.getChildren().get(i))) {
+			if(!isEquals(a.getChildren().get(i), b.getChildren().get(i), wildcardsMap)) {
 				return false;
 			}
 		}
@@ -35,7 +43,7 @@ public class Utils {
 		
 	}
 	
-	private static boolean basicComparation(Node a, Node b) {
+	private static boolean basicComparation(Node a, Node b, Map<String, String> wildcardsMap) {
 		if(a==null) {
 			return false;
 		}
@@ -56,7 +64,7 @@ public class Utils {
 			}
 			
 			//Caso seja classe, metodo ou variavel,compara os nomes
-			if(!compareName(a, b)) {
+			if(!compareName(a, b, wildcardsMap)) {
 				return false;
 			}
 		
@@ -78,7 +86,7 @@ public class Utils {
 		
 		List<Node> ocorrences = new ArrayList<>();
 		
-		if(isEquals(a, b)) {
+		if(isEquals(a, b, new LinkedHashMap<>())) {
 			if(isFakeNode(b)) {
 				ocorrences.addAll(a.getChildren());
 			}else {
@@ -88,7 +96,7 @@ public class Utils {
 			return ocorrences;
 		}
 		
-		List<Node> childrenNodesAux = searchChildren(a, b);
+		List<Node> childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>());
 		ocorrences.addAll(childrenNodesAux);
 		
 		List<Node> aux = new ArrayList<>();
@@ -104,11 +112,11 @@ public class Utils {
 	
 	
 	
-	private static List<Node> searchChildren(Node a, Node b) {
+	private static List<Node> searchChildren(Node a, Node b, Map<String, String> wildcardsMap) {
 		
 		List<Node> ocorrences = new ArrayList<>();
 		
-		if(!basicComparation(a, b)) {
+		if(!basicComparation(a, b, wildcardsMap)) {
 			return ocorrences;
 		}
 		
@@ -117,6 +125,7 @@ public class Utils {
 		}
 		
 		List<Node> ocorrencesAux = new ArrayList<>();
+		List<Integer> ocorrencesIndex = new ArrayList<>();
 		
 		boolean searching = false;
 		int counter = 0;
@@ -131,9 +140,13 @@ public class Utils {
 			searching=true;
 			
 			while(searching && counter<a.getChildren().size() ) {
-				if(isEquals(a.getChildren().get(counter), b.getChildren().get(i))) {
-					ocorrencesAux.add(a.getChildren().get(counter));
-					searching=false;
+				System.out.println(ocorrencesIndex);
+				if(!ocorrencesIndex.contains(counter)) {
+					if(isEquals(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap)) {
+						ocorrencesAux.add(a.getChildren().get(counter));
+						ocorrencesIndex.add(counter);
+						searching=false;
+					}
 				}
 				counter++;
 			}
@@ -141,7 +154,8 @@ public class Utils {
 			if(!searching && i == b.getChildren().size() - 1) {
 				ocorrences.addAll(ocorrencesAux);
 				ocorrencesAux.clear();
-				i=-1;
+				counter = 0;
+				i =-1;
 			}
 		}
 					
@@ -172,7 +186,7 @@ public class Utils {
 			}
 			
 			//Caso seja classe, metodo ou variavel,compara os nomes
-			if(!compareName(a, b)) {
+			if(!compareName(a, b, null)) {
 				return false;
 			}
 		}
@@ -208,21 +222,61 @@ public class Utils {
 		return true;
 	}
 	
-	static boolean compareName(Node node1, Node node2) {
+	static boolean compareName(Node node1, Node node2, Map<String, String> wildcardsMap) {
+		
+		String name1;
+		String name2;
 		
 		switch(node1.getNode().getKind()) {
 		
 			case CLASS:
-				return ((ClassTree) node1.getNode()).getSimpleName().toString()
-							.equals(((ClassTree) node2.getNode()).getSimpleName().toString());
+				
+				name1 = ((ClassTree) node1.getNode()).getSimpleName().toString();
+				name2 = ((ClassTree) node2.getNode()).getSimpleName().toString();
+				
+				return name1.equals(name2);
 				
 			case METHOD:
-				return ((MethodTree) node1.getNode()).getName().toString()
-							.equals(((MethodTree) node2.getNode()).getName().toString()); 
+				
+				name1 = ((MethodTree) node1.getNode()).getName().toString();
+				name2 = ((MethodTree) node2.getNode()).getName().toString();
+				
+				if(name2.equalsIgnoreCase(anyMethod)) {
+					return true;
+				}
+				
+				if(name2.startsWith(someMethod)) {
+					if(wildcardsMap.get(name2)==null) {
+						wildcardsMap.put(name2, name1);
+						return true;
+						
+					}else {
+						return wildcardsMap.get(name2).equals(name1);
+					}
+				}
+				
+				return name1.equals(name2);
 				
 			case VARIABLE:
-				return ((VariableTree) node1.getNode()).getName().toString()
-							.equals(((VariableTree) node2.getNode()).getName().toString());
+				
+				name1 = ((VariableTree) node1.getNode()).getName().toString();
+				name2 = ((VariableTree) node2.getNode()).getName().toString();
+				
+				if(name2.equalsIgnoreCase(anyVariable)) {
+					return true;
+				}
+				
+				if(name2.startsWith(someVariable)) {
+					if(wildcardsMap.get(name2)==null) {
+						wildcardsMap.put(name2, name1);
+						return true;
+						
+					}else {
+						return wildcardsMap.get(name2).equals(name1);
+					}
+				}
+				
+				return name1.equals(name2);
 				
 			default:
 				return true;
