@@ -14,13 +14,34 @@ import com.sun.source.tree.VariableTree;
 
 import com.sun.source.tree.ModifiersTree;
 
+/***
+ * Classe com métodos utilitários
+ * 
+ * @author Denis
+ *
+ */
+
 public class Utils {
 	
+	/**
+	 * 
+	 */
 	private static final ResourceBundle wildcards = ResourceBundle.getBundle("wildcards");
 	private final static String anyVariable = wildcards.getString("anyVariable");
 	private final static String someVariable = wildcards.getString("someVariable");
 	private final static String anyMethod = wildcards.getString("anyMethod");
 	private final static String someMethod = wildcards.getString("someMethod");
+	
+	
+	/***
+	 * Recebe duas árvores e um mapa com os wildcard já utilizados.
+	 * Retorna um booleano que indica se as duas árvores são iguais.
+	 * 
+	 * @param a Árvore do código-fonte alvo
+	 * @param b Árvore do padrão buscado
+	 * @param wildcardsMap Mapa de wildcards
+	 * @return Se duas árvores são iguais 
+	 */
 	
 	public static boolean isEquals(Node a, Node b, Map<String, String> wildcardsMap) {
 		
@@ -28,11 +49,12 @@ public class Utils {
 			return false;
 		}
 		
+		//Verifica se as árvores tem o mesmo número de filhos
 		if(a.getChildren().size()!=b.getChildren().size()) {
 			return false;
 		}
 		
-		
+		//Para cada filho chama recursivamente o método isEquals
 		for(int i=0; i<a.getChildren().size(); i++) {
 			if(!isEquals(a.getChildren().get(i), b.getChildren().get(i), wildcardsMap)) {
 				return false;
@@ -42,6 +64,18 @@ public class Utils {
 		return true;
 		
 	}
+	
+	
+	/***
+	 * Recebe duas árvores e um mapa com os wildcard já utilizados.
+	 * Faz as comparações básicas, verifica se são nulos e se o tipo e nome são iguais.
+	 * Retorna booleano que indica se passou em todas as comparações básicas.
+	 * 
+	 * @param a Árvore do código-fonte alvo
+	 * @param b Árvore do padrão buscado
+	 * @param wildcardsMap Mapa de wildcards
+	 * @return booleano que indica se passou em todas as comparações básicas
+	 */
 	
 	private static boolean basicComparation(Node a, Node b, Map<String, String> wildcardsMap) {
 		if(a==null) {
@@ -55,15 +89,13 @@ public class Utils {
 		//System.out.println("A -> " +a.getNode());
 		//System.out.println("B -> " +b.getNode());
 		
-		//Verifica se � n� de esbo�o
 		if(!isFakeNode(b)) {
 		
-			//Compara se os tipos sao iguais
+			//Compara se os tipos sao iguais.
 			if(a.getNode().getKind()!=b.getNode().getKind()) {
 				return false;
 			}
 			
-			//Caso seja classe, metodo ou variavel,compara os nomes
 			if(!compareName(a, b, wildcardsMap)) {
 				return false;
 			}
@@ -73,8 +105,15 @@ public class Utils {
 		return true;
 	}
 	
+	/***
+	 * Verifica se o nó pai da árvore recebida é um nó fake(esboço).
+	 * 
+	 * @param node Árvore do padrão buscado
+	 * @return Se o nó pai da árvore é um nó fake
+	 */
+	
 	private static boolean isFakeNode(Node node) {
-		//Verifica se � n� de esbo�o
+		//Se a árvore não tem pai e o nó raiz é null é um nó fake.
 		if(node.getParent() != null && node.getNode() != null) {
 			return false;
 		}
@@ -178,7 +217,7 @@ public class Utils {
 		System.out.println("B -> " +b.getNode());
 		
 
-		//Verifica se � n� de esbo�o
+		//Verifica se é nó de esboço
 		if(b.getParent() != null && b.getNode() != null) {
 			
 			//Compara se os tipos sao iguais
@@ -238,6 +277,27 @@ public class Utils {
 				return name1.equals(name2);
 				
 			case METHOD:
+				
+				name1 = ((MethodTree) node1.getNode()).getName().toString();
+				name2 = ((MethodTree) node2.getNode()).getName().toString();
+				
+				if(name2.equalsIgnoreCase(anyMethod)) {
+					return true;
+				}
+				
+				if(name2.startsWith(someMethod)) {
+					if(wildcardsMap.get(name2)==null) {
+						wildcardsMap.put(name2, name1);
+						return true;
+						
+					}else {
+						return wildcardsMap.get(name2).equals(name1);
+					}
+				}
+				
+				return name1.equals(name2);
+				
+			case METHOD_INVOCATION:	
 				
 				name1 = ((MethodTree) node1.getNode()).getName().toString();
 				name2 = ((MethodTree) node2.getNode()).getName().toString();
