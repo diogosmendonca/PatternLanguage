@@ -11,6 +11,7 @@ import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
+import com.sun.source.tree.IdentifierTree;
 
 import com.sun.source.tree.ModifiersTree;
 
@@ -190,12 +191,22 @@ public class Utils {
 				counter++;
 			}
 			
-			if(!searching && i == b.getChildren().size() - 1) {
-				ocorrences.addAll(ocorrencesAux);
-				ocorrencesAux.clear();
-				wildcardsMap.clear();
-				counter = 0;
-				i =-1;
+			if(i == b.getChildren().size() - 1) {
+				if(searching) {
+					if(!wildcardsMap.isEmpty()) {
+						ocorrencesAux.clear();
+						wildcardsMap.clear();
+						counter = 0;
+						i =-1;
+						searching=false;
+					}
+				}else {
+					ocorrences.addAll(ocorrencesAux);
+					ocorrencesAux.clear();
+					wildcardsMap.clear();
+					counter = 0;
+					i =-1;
+				}
 			}
 		}
 					
@@ -322,6 +333,27 @@ public class Utils {
 				
 				name1 = ((VariableTree) node1.getNode()).getName().toString();
 				name2 = ((VariableTree) node2.getNode()).getName().toString();
+				
+				if(name2.equalsIgnoreCase(anyVariable)) {
+					return true;
+				}
+				
+				if(name2.startsWith(someVariable)) {
+					if(wildcardsMap.get(name2)==null) {
+						wildcardsMap.put(name2, name1);
+						return true;
+						
+					}else {
+						return wildcardsMap.get(name2).equals(name1);
+					}
+				}
+				
+				return name1.equals(name2);
+				
+			case IDENTIFIER:
+				
+				name1 = ((IdentifierTree) node1.getNode()).getName().toString();
+				name2 = ((IdentifierTree) node2.getNode()).getName().toString();
 				
 				if(name2.equalsIgnoreCase(anyVariable)) {
 					return true;
