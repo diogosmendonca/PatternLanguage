@@ -1,4 +1,4 @@
-import subtree
+from oldcode import subtree
 import ast
 
 source = """

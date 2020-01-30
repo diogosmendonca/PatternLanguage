@@ -1,5 +1,6 @@
 import ast
-import equals
+from oldcode import equals
+
 
 class Analyzer(ast.NodeVisitor):
     __error = []
