@@ -117,19 +117,18 @@ class SourceTree():
 
         occurrences = []
 
-        if len(root_pattern) == 1:
-            return len(occurrences_no_handle)
-        else:
-            for indexI in range(len(error_node_subtree)):
-                if error_node_subtree[indexI:indexI + len(root_pattern)] == root_pattern:
-                    node_found = error_node_subtree[indexI:indexI + len(root_pattern)]
-                    occurrences.append(node_found)
+        for indexI in range(len(error_node_subtree)):
+            if error_node_subtree[indexI:indexI + len(root_pattern)] == root_pattern:
+                node_found = error_node[indexI:indexI + len(root_pattern)]
+                occurrences.append(node_found)
 
-            return occurrences
+        return occurrences
 
     def prettier_occurrences(self, root_pattern):
         occurrences = self.get_all_occurrences(root_pattern)
-        print(occurrences)
-
+        for occurr in occurrences:
+            for node_occur in occurr:
+                print(vars(node_occur))
+            print("-------------------")
 
 
