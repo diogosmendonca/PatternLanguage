@@ -31,10 +31,10 @@ public class Main {
 		
 		List<File> files = new ArrayList<>();
 		
-		files.add(new File("./arquivos/Teste.java"));
-		files.add(new File("./arquivos/Teste2.java"));
-		files.add(new File("./arquivos/CodigoFonte.java"));
-		files.add(new File("./arquivos/PadraoErro.java"));
+		files.add(new File("./src/main/resources/Teste.java"));
+		files.add(new File("./src/main/resources/Teste2.java"));
+		files.add(new File("./src/main/resources/CodigoFonte.java"));
+		files.add(new File("./src/main/resources/PadraoErro.java"));
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
