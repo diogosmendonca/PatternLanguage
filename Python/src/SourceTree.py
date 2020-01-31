@@ -1,4 +1,7 @@
+import ast
 from src.gui.gui import *
+from src.utils.tree_utils import *
+
 
 class SourceTree():
     root = None
@@ -30,11 +33,15 @@ class SourceTree():
         if type(node1) != type(node2):
             return False
         if (isinstance(node1, ast.AST)):
+
+            # Ignorando nomes de variaveis, considerando valores.
+            if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
+                num_node1 = vars(node1).get("value")
+                num_node2 = vars(node2).get("value")
+                return self.__equals_tree(num_node1, num_node2)
+
             for tipe, var in vars(node1).items():
-                if tipe not in ('lineno', 'col_offset', 'ctx', 'parent'):
-                    ctx_var = vars(node1).get('ctx')
-                    if isinstance(ctx_var, ast.Store):
-                        return True
+                if tipe not in ('lineno', 'col_offset', 'ctx', 'parent',):
                     if isinstance(node1, ast.Call) and tipe == 'args':
                         list_node1 = vars(node1).get(tipe)
                         list_node2 = vars(node2).get(tipe)
@@ -61,7 +68,6 @@ class SourceTree():
             return True
         else:
             return False
-
 
     def __find_subtree(self, mytree, root_pattern):
         for node_my_tree in ast.walk(mytree):
@@ -124,11 +130,18 @@ class SourceTree():
 
         return occurrences
 
+    def get_all_name_variable(self):
+        mytree = self.root
+        all_ast_name = []
+        for node_my_tree in ast.walk(mytree):
+            if isinstance(node_my_tree, ast.Name):
+                if parent_is(node_my_tree, ast.Assign):
+                    all_ast_name.append(node_my_tree)
+        return all_ast_name
+
     def prettier_occurrences(self, root_pattern):
         occurrences = self.get_all_occurrences(root_pattern)
         for occurr in occurrences:
             for node_occur in occurr:
                 print(vars(node_occur))
             print("-------------------")
-
-
