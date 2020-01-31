@@ -27,51 +27,15 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		
-		//Main print 
+		 
+		String pathCode = "./src/main/resources/codesExamples";
 		
-		List<File> files = new ArrayList<>();
+		String pathPattern = "./src/main/resources/codesPatterns";
 		
-		files.add(new File("./src/main/resources/Teste.java"));
-		files.add(new File("./src/main/resources/Teste2.java"));
-		files.add(new File("./src/main/resources/CodigoFonte.java"));
-		files.add(new File("./src/main/resources/PadraoErro.java"));
-		
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
-
-		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(files.toArray(new File[0]));
-		JavacTask javacTask = (JavacTask) compiler.getTask(null, fileManager, null, null, null, compilationUnits);
-		
-		Iterable<? extends CompilationUnitTree> compilationUnitTrees = javacTask.parse();
-		
-		Iterator<? extends CompilationUnitTree> iter = compilationUnitTrees.iterator();
-		
-		
-		Map<Tree, List<Node>> nodes1 = new LinkedHashMap<>();
-		//NodeVisitor.build(iter.next(),nodes1);
-		System.out.println(NodeVisitor.build(iter.next(),nodes1));
-		addChildren(nodes1);
-		
-		Map<Tree, List<Node>> nodes2 = new LinkedHashMap<>();
-		//NodeVisitor.build(iter.next(),nodes2);
-		System.out.println(NodeVisitor.build(iter.next(),nodes2));
-		addChildren(nodes2);
-		
-		//System.out.println(Utils.isEquals(Utils.getCompilationUnitTree(nodes1), Utils.removeStub(nodes2)));
-		
-		System.out.println(Utils.subtree(Utils.getCompilationUnitTree(nodes1), Utils.removeStub(nodes2)));
+		System.out.println(Utils.searchOcorrences(pathCode, pathPattern));
 		
 	}
 	
-	private static void addChildren(Map<Tree, List<Node>> nodes) {
-		  for(Tree key : nodes.keySet()) {
-				for(Node node :  nodes.get(key)) {
-					Collection<Node> children = nodes.get(node.getNode());
-					if(children != null) {
-						node.getChildren().addAll(children);
-					}
-				}
-			}
-	 }
+	
 
 }

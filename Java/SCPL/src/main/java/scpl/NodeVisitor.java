@@ -31,7 +31,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 	  public static String build(Tree tree, Map<Tree, List<Node>> nodes) {
 	    NodeVisitor pv = new NodeVisitor(tree);
 	    pv.scan(tree, nodes);
-	    //pv.addChildren(nodes);
+	    addChildren(nodes);
 	    return pv.sb.toString();
 	  }
 
@@ -67,6 +67,17 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 	      indentLevel--;
 		 return null;
 	  }
+	  
+	  private static void addChildren(Map<Tree, List<Node>> nodes) {
+		  for(Tree key : nodes.keySet()) {
+				for(Node node :  nodes.get(key)) {
+					Collection<Node> children = nodes.get(node.getNode());
+					if(children != null) {
+						node.getChildren().addAll(children);
+					}
+				}
+			}
+	 }
 	  
 }
 

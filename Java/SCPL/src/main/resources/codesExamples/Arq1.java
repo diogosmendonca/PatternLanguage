@@ -3,13 +3,12 @@ public class Teste {
 		int q = 10;
 		int a = 10;
 		if(true){
-			b++;
+			q++;
 		}
 
 		int a = 10;
 		if(true){
 			a++;
-			q++;
 		}
 		
 		

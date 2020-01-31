@@ -1,15 +1,18 @@
 public class Teste {
 	public void add(int a1, int b1){
+		int q = 10;
 		int a = 10;
+		if(true){
+			q++;
+		}
+
 		int a = 10;
 		if(true){
 			a++;
 		}
 		
 		
-		if(true){
-			a++;
-		}
+		
 		
 	}
 

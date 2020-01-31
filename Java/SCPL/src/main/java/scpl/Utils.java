@@ -1,16 +1,26 @@
 package scpl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
+import com.sun.source.util.JavacTask;
 import com.sun.source.tree.IdentifierTree;
 
 import com.sun.source.tree.ModifiersTree;
@@ -416,5 +426,73 @@ public class Utils {
 		
 		return getCompilationUnitTree(nodes);
 	}
+	
+	///////////////////////////////////////////////////
+	
+	public static Iterator<? extends CompilationUnitTree> parserFileToCompilationUnitTree(File... files) {
+		
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+
+		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(files);
+		JavacTask javacTask = (JavacTask) compiler.getTask(null, fileManager, null, null, null, compilationUnits);
+		
+		Iterable<? extends CompilationUnitTree> compilationUnitTrees;
+		Iterator<? extends CompilationUnitTree> iter = null;
+		
+		try {
+			compilationUnitTrees = javacTask.parse();
+			iter = compilationUnitTrees.iterator();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return iter;
+
+	}
+	
+	public static Map<Tree, List<Node>> buildTree(Tree tree){
+		Map<Tree, List<Node>> nodes = new LinkedHashMap<>();
+		NodeVisitor.build(tree,nodes);
+		//System.out.println(NodeVisitor.build(tree,nodes));
+		
+		return nodes;
+	}
+	
+	public static  List<Node> searchOcorrences(String pathCode, String pathPattern){
+		
+		List<Node> retorno = new ArrayList<>();
+		
+		File[] filesCode = FileHandler.getFiles(pathCode);
+		
+		Iterator<? extends CompilationUnitTree> compilationUnitsCode = Utils.parserFileToCompilationUnitTree(filesCode);
+		
+		File[] filesPatterns = FileHandler.getFiles(pathPattern);
+		
+		Iterator<? extends CompilationUnitTree> compilationUnitsPattern = Utils.parserFileToCompilationUnitTree(filesPatterns);
+		
+        List<Tree> listPattern = new ArrayList<>(); 
+  
+        // Add each element of iterator to the List 
+        compilationUnitsPattern.forEachRemaining(listPattern::add); 
+		
+		while(compilationUnitsCode.hasNext()) {
+			
+			Tree treeCode = compilationUnitsCode.next();
+			
+			for(Tree treePattern: listPattern) {
+				
+				retorno.addAll(Utils.subtree(Utils.getCompilationUnitTree(Utils.buildTree(treeCode)), Utils.removeStub(Utils.buildTree(treePattern))));
+				
+			}
+			
+		}
+		
+		System.out.println(retorno.size());
+		
+		return retorno;
+	}
+	
 	
 }
