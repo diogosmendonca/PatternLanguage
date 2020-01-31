@@ -1,6 +1,12 @@
 import ast
+from src.gui.gui import *
+from src.utils.tree_utils import *
+
+
 class SourceTree():
     root = None
+    __occurrences = []
+
     def __init__(self, root_tree):
         self.root = root_tree
         self.__handle_tree(self.root)
@@ -15,6 +21,9 @@ class SourceTree():
                 child.parent = node
         return tree
 
+    def draw(self, subtree):
+        draw_gui(self.root, subtree)
+
     def is_equals(self, other_tree):
         my_root = self.root
         result = self.__equals_tree(my_root, other_tree)
@@ -23,12 +32,16 @@ class SourceTree():
     def __equals_tree(self, node1, node2):
         if type(node1) != type(node2):
             return False
-        if(isinstance(node1, ast.AST)):
+        if (isinstance(node1, ast.AST)):
+
+            # Ignorando nomes de variaveis, considerando valores.
+            if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
+                num_node1 = vars(node1).get("value")
+                num_node2 = vars(node2).get("value")
+                return self.__equals_tree(num_node1, num_node2)
+
             for tipe, var in vars(node1).items():
-                if tipe not in ('lineno', 'col_offset', 'ctx', 'parent'):
-                    ctx_var = vars(node1).get('ctx')
-                    if isinstance(ctx_var, ast.Store):
-                        return True
+                if tipe not in ('lineno', 'col_offset', 'ctx', 'parent',):
                     if isinstance(node1, ast.Call) and tipe == 'args':
                         list_node1 = vars(node1).get(tipe)
                         list_node2 = vars(node2).get(tipe)
@@ -50,13 +63,85 @@ class SourceTree():
 
     def is_subtree(self, root_pattern):
         mytree = self.root
-        return self.__is_subtree(mytree ,root_pattern)
+        founded_tree = self.__find_subtree(mytree, root_pattern)
+        if founded_tree and self.amount_of_patterns_found(root_pattern) > 0:
+            return True
+        else:
+            return False
 
-    def __is_subtree(self, mytree, root_pattern):
+    def __find_subtree(self, mytree, root_pattern):
         for node_my_tree in ast.walk(mytree):
             for node_pattern in ast.walk(root_pattern):
                 result = self.__equals_tree(node_my_tree, node_pattern)
-                if(result):
+                if (result):
                     return True
-
         return False
+
+    def __walking_all_occurrences(self, root_mytree, root_pattern):
+        occurrences = []
+        for node_my_tree in ast.walk(root_mytree):
+            for node_pattern in ast.iter_child_nodes(root_pattern):
+                result = self.__equals_tree(node_my_tree, node_pattern)
+                if (result):
+                    lis_aux = []
+                    lis_aux.append(node_my_tree)
+                    lis_aux.append(node_pattern)
+                    occurrences.append(lis_aux)
+                    break
+        return occurrences
+
+    def __len_occurrences(self, error, root_pattern):
+        root_pattern = list(ast.iter_child_nodes(root_pattern))
+        error_node = []
+        error_node_subtree = []
+        for indexJ in range(len(error)):
+            error_node.append(error[indexJ][0])
+            error_node_subtree.append(error[indexJ][1])
+
+        if len(root_pattern) == 1:
+            return len(error)
+        else:
+            cont = sum(1 for indexI in range(len(error_node_subtree))
+                       if error_node_subtree[indexI:indexI + len(root_pattern)] == root_pattern)
+            return cont
+
+    def amount_of_patterns_found(self, root_pattern):
+        mytree = self.root
+        occurrences_no_handle = self.__walking_all_occurrences(mytree, root_pattern)
+        status_value = self.__len_occurrences(occurrences_no_handle, root_pattern)
+        return status_value
+
+    def get_all_occurrences(self, root_pattern):
+        mytree = self.root
+        occurrences_no_handle = self.__walking_all_occurrences(mytree, root_pattern)
+        root_pattern = list(ast.iter_child_nodes(root_pattern))
+        error_node = []
+        error_node_subtree = []
+        for indexJ in range(len(occurrences_no_handle)):
+            error_node.append(occurrences_no_handle[indexJ][0])
+            error_node_subtree.append(occurrences_no_handle[indexJ][1])
+
+        occurrences = []
+
+        for indexI in range(len(error_node_subtree)):
+            if error_node_subtree[indexI:indexI + len(root_pattern)] == root_pattern:
+                node_found = error_node[indexI:indexI + len(root_pattern)]
+                occurrences.append(node_found)
+
+        return occurrences
+
+    def get_all_name_variable(self):
+        mytree = self.root
+        all_ast_name = []
+        for node_my_tree in ast.walk(mytree):
+            if isinstance(node_my_tree, ast.Name):
+                if parent_is(node_my_tree, ast.Assign):
+                    all_ast_name.append(node_my_tree)
+        return all_ast_name
+
+    def prettier_occurrences(self, root_pattern):
+        occurrences = self.get_all_occurrences(root_pattern)
+        for occurr in occurrences:
+            for node_occur in occurr:
+                print(vars(node_occur))
+            print("-------------------")

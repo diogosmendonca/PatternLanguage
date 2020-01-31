@@ -1,30 +1,28 @@
 import ast
-import SourceTree
+from src.SourceTree import SourceTree
 
-source = """
-print(anyVariaveis)
-anyVariavel = 10
+str_source_pattern = """
+outravariaveil = 20
+qualquerOutroNome = 10
 """
-source2 = """ 
+str_source_code = """ 
 def olaMundo():
-    if(a == 10):
-        try:
-            while(True):
-                print(anyVariaveis)
-                anyVariavel = 10
-        except:
-            print("Ola")
+    outravariavel = 20
+    outrocode = 10
 """
 
-node = ast.parse(source)
-node2 = ast.parse(source2)
+source_code = ast.parse(str_source_code)
+source_pattern = ast.parse(str_source_pattern)
 
-tree1 = SourceTree.SourceTree(node)
+tree1 = SourceTree(source_code)
 
-print (tree1.is_equals(node2))
-print (tree1.is_subtree(node2))
+print(tree1.is_equals(source_pattern))
+print(tree1.is_subtree(source_pattern))
+# tree1.draw(source_pattern)
+# print(tree1.get_all_occurrences(source_pattern))
+# tree1.prettier_occurrences(source_pattern)
+# print(tree1.amount_of_patterns_found(source_pattern))
 
 
-
-
+# tree1.get_all_name_variable()
 
