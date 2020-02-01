@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.LineMap;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
@@ -20,19 +21,19 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 		
 	  private final StringBuilder sb;
 	  private int indentLevel;
-	  private final Node root;
+	  private final CompilationUnitTree compilatioUnitTree;
 
 	  public NodeVisitor(Tree tree) {
 		sb = new StringBuilder();
 	    indentLevel = 0;
-	    root = new Node(tree);
+	    compilatioUnitTree = (CompilationUnitTree) tree;
 	  }
 
 	  public static String build(Tree tree, Map<Tree, List<Node>> nodes) {
-	    NodeVisitor pv = new NodeVisitor(tree);
-	    pv.scan(tree, nodes);
+	    NodeVisitor nv = new NodeVisitor(tree);
+	    nv.scan(tree, nodes);
 	    addChildren(nodes);
-	    return pv.sb.toString();
+	    return nv.sb.toString();
 	  }
 
 	  private StringBuilder indent() {
@@ -55,10 +56,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 				List<Node> l = new ArrayList<>();
 				
 				//Criando nó raiz com sua Tree equivalente e add no mapeamento.
-				l.add(new Node(parent,tree));
+				l.add(new Node(parent,tree,compilatioUnitTree));
 				nodes.put(parent, l);
 			}else {
-				nodes.get(parent).add(new Node(parent,tree));
+				nodes.get(parent).add(new Node(parent,tree,compilatioUnitTree));
 			}
 	        
      	  }

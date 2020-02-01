@@ -3,6 +3,7 @@ package scpl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,6 +15,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ClassTree;
@@ -21,6 +24,8 @@ import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.JavacTask;
+import com.sun.source.util.Trees;
+import com.sun.source.util.SourcePositions;
 import com.sun.source.tree.IdentifierTree;
 
 import com.sun.source.tree.ModifiersTree;
@@ -33,7 +38,6 @@ import com.sun.source.tree.ModifiersTree;
  */
 
 public class Utils {
-	
 	
 	private static final ResourceBundle wildcards = ResourceBundle.getBundle("wildcards");
 	private final static String anyVariable = wildcards.getString("anyVariable");
@@ -417,7 +421,7 @@ public class Utils {
 					return retorno.getChildren().get(0);
 					
 				default:
-					Node fakeNode = new Node(null);
+					Node fakeNode = new Node();
 					fakeNode.getChildren().addAll(retorno.getChildren());
 					
 					return fakeNode;
@@ -429,13 +433,14 @@ public class Utils {
 	
 	///////////////////////////////////////////////////
 	
-	public static Iterator<? extends CompilationUnitTree> parserFileToCompilationUnitTree(File... files) {
+	public static CompilationUnitStruct parserFileToCompilationUnit(File... files) {
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(files);
 		JavacTask javacTask = (JavacTask) compiler.getTask(null, fileManager, null, null, null, compilationUnits);
+		SourcePositions pos = Trees.instance(javacTask).getSourcePositions();
 		
 		Iterable<? extends CompilationUnitTree> compilationUnitTrees;
 		Iterator<? extends CompilationUnitTree> iter = null;
@@ -448,7 +453,7 @@ public class Utils {
 			e.printStackTrace();
 		}
 		
-		return iter;
+		return new CompilationUnitStruct(iter,pos);
 
 	}
 	
@@ -464,18 +469,24 @@ public class Utils {
 		
 		List<Node> retorno = new ArrayList<>();
 		
-		File[] filesCode = FileHandler.getFiles(pathCode);
-		
-		Iterator<? extends CompilationUnitTree> compilationUnitsCode = Utils.parserFileToCompilationUnitTree(filesCode);
-		
 		File[] filesPatterns = FileHandler.getFiles(pathPattern);
 		
-		Iterator<? extends CompilationUnitTree> compilationUnitsPattern = Utils.parserFileToCompilationUnitTree(filesPatterns);
+		CompilationUnitStruct compilationUnitStructPattern = Utils.parserFileToCompilationUnit(filesPatterns);
+		
+		Iterator<? extends CompilationUnitTree> compilationUnitsPattern = compilationUnitStructPattern.getCompilationUnitTree();
 		
         List<Tree> listPattern = new ArrayList<>(); 
   
         // Add each element of iterator to the List 
         compilationUnitsPattern.forEachRemaining(listPattern::add); 
+		
+		File[] filesCode = FileHandler.getFiles(pathCode);
+		
+		CompilationUnitStruct compilationUnitStructCode = Utils.parserFileToCompilationUnit(filesCode);
+		
+		Iterator<? extends CompilationUnitTree> compilationUnitsCode = compilationUnitStructCode.getCompilationUnitTree();
+		
+		SourcePositions posCode = compilationUnitStructCode.getPos();
 		
 		while(compilationUnitsCode.hasNext()) {
 			
@@ -489,10 +500,27 @@ public class Utils {
 			
 		}
 		
+		//TODO editar saida do retorno (Arquivo, linhas e colunas)
+		
+		String arquivoAtual = "";
+		
+		for(Node r : retorno) {
+			r.setStartPosition(posCode.getStartPosition(r.getCompilatioUnitTree(), r.getNode()));
+			r.setEndPosition(posCode.getEndPosition(r.getCompilatioUnitTree(), r.getNode()));
+			
+			if(!r.getFilePath().equals(arquivoAtual)) {
+				arquivoAtual = r.getFilePath();
+				System.out.println(arquivoAtual);
+			}
+			
+			System.out.println("Inicio: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
+			System.out.println("Fim: L: " +r.getEndLine() +" C: " +r.getEndColumn());
+			
+		}
+		
 		System.out.println(retorno.size());
 		
 		return retorno;
 	}
-	
 	
 }
