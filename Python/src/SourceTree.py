@@ -10,7 +10,7 @@ class SourceTree:
 
     def __init__(self, root_tree):
         """Geracao de objeto Source Tree
-        
+
         Arguments:
             root_tree {AST} -- Codigo fonte convertido por ast.parse
         """
@@ -19,22 +19,22 @@ class SourceTree:
 
     def __handle_tree(self, root):
         """Tratar processos inicias para o funcionamento da arvore
-        
+
         Arguments:
             root {AST} -- Codigo fonte pertecente ao objeto Source Tree.
-        """        
+        """
         new_root = self.__add_parent(root)
         self.root = new_root
 
     def __add_parent(self, tree):
         """Adicionar pai em cada NODE da arvore.
-        
+
         Arguments:
             tree {AST} -- codigo fonte pertecente ao objeto Source Tree.
-        
+
         Returns:
             AST -- Arvore com o atributo parent adicionado em cada node.
-        """        
+        """
         for node in ast.walk(tree):
             for child in ast.iter_child_nodes(node):
                 child.parent = node
@@ -42,7 +42,7 @@ class SourceTree:
 
     def draw(self, subtree):
         """Mostrar Represetacao grafica do objeto e a subarvore.
-        
+
         Arguments:
             subtree {AST} -- Codigo da a subtree a ser mostrada
         """
@@ -50,10 +50,10 @@ class SourceTree:
 
     def is_equals(self, other_tree):
         """Verificar igualdade entre o objeto e arvore passada
-        
+
         Arguments:
             other_tree {Ast} --  Codigo da subtree a ser verificada
-        
+
         Returns:
             [Boolean] -- Respostas se arvores sao iguais
         """
@@ -63,14 +63,14 @@ class SourceTree:
 
     def __equals_tree(self, node1, node2):
         """Verificar igualdade entre dois "nodes raiz"
-        
+
         Arguments:
             node1 {AST} -- node1 a ser comparado
             node2 {AST} -- node2: node a ser comparado
-        
+
         Returns:
             Boolean -- Respostas se arvores sao iguais
-        """ 
+        """
         if type(node1) != type(node2):
             return False
         if (isinstance(node1, ast.AST)):
@@ -103,15 +103,15 @@ class SourceTree:
             return node1 == node2
 
     def is_subtree(self, root_pattern):
-       """Verificar se objeto possui o padrao passado como parametro como subarvore
-        
-        Arguments:
-            node1 {AST} -- node1 a ser comparado
-            node2 {AST} -- node2: node a ser comparado
-        
-        Returns:
-            Boolean -- Respostas se root_pattern é subavore do Objeto
-        """
+        """Verificar se objeto possui o padrao passado como parametro como subarvore
+
+         Arguments:
+             node1 {AST} -- node1 a ser comparado
+             node2 {AST} -- node2: node a ser comparado
+
+         Returns:
+             Boolean -- Respostas se root_pattern é subavore do Objeto
+         """
         mytree = self.root
         founded_tree = self.__find_subtree(mytree, root_pattern)
         if founded_tree and self.amount_of_patterns_found(root_pattern) > 0:
@@ -136,13 +136,13 @@ class SourceTree:
         """Percorrer todas as ocorrencias de um padrao(root_pattern) em uma arvore(root_mytree), 
         encontrando todos os nodes possiveis. OBS: informando ate os padroes parciais, isto é
         padroes nos quais uma instancia foi encontrada, independente se o bloco de intruncao foi contemplado por completo.
-        
+
         Arguments:
             root_mytree {AST} -- Node raiz da arvore que sera processada
             root_pattern {AST} -- Node raiz do padrao do padrao procurado
         Returns:
             Array -- Todas as ocorrencias encontradas do padrao
-        """                
+        """
         occurrences = []
         for node_my_tree in ast.walk(root_mytree):
             for node_pattern in ast.iter_child_nodes(root_pattern):
@@ -172,13 +172,16 @@ class SourceTree:
 
     def amount_of_patterns_found(self, root_pattern):
         mytree = self.root
-        occurrences_no_handle = self.__walking_all_occurrences(mytree, root_pattern)
-        status_value = self.__len_occurrences(occurrences_no_handle, root_pattern)
+        occurrences_no_handle = self.__walking_all_occurrences(
+            mytree, root_pattern)
+        status_value = self.__len_occurrences(
+            occurrences_no_handle, root_pattern)
         return status_value
 
     def get_all_occurrences(self, root_pattern):
         mytree = self.root
-        occurrences_no_handle = self.__walking_all_occurrences(mytree, root_pattern)
+        occurrences_no_handle = self.__walking_all_occurrences(
+            mytree, root_pattern)
         root_pattern = list(ast.iter_child_nodes(root_pattern))
         error_node = []
         error_node_subtree = []
