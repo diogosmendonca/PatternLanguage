@@ -3,33 +3,74 @@ from src.gui.gui import *
 from src.utils.tree_utils import *
 
 
-class SourceTree():
+class SourceTree:
+    """ Classe utilizada para a representação do código fonte """
     root = None
     __occurrences = []
 
     def __init__(self, root_tree):
+        """Geracao de objeto Source Tree
+        
+        Arguments:
+            root_tree {AST} -- Codigo fonte convertido por ast.parse
+        """
         self.root = root_tree
         self.__handle_tree(self.root)
 
     def __handle_tree(self, root):
+        """Tratar processos inicias para o funcionamento da arvore
+        
+        Arguments:
+            root {AST} -- Codigo fonte pertecente ao objeto Source Tree.
+        """        
         new_root = self.__add_parent(root)
         self.root = new_root
 
     def __add_parent(self, tree):
+        """Adicionar pai em cada NODE da arvore.
+        
+        Arguments:
+            tree {AST} -- codigo fonte pertecente ao objeto Source Tree.
+        
+        Returns:
+            AST -- Arvore com o atributo parent adicionado em cada node.
+        """        
         for node in ast.walk(tree):
             for child in ast.iter_child_nodes(node):
                 child.parent = node
         return tree
 
     def draw(self, subtree):
+        """Mostrar Represetacao grafica do objeto e a subarvore.
+        
+        Arguments:
+            subtree {AST} -- Codigo da a subtree a ser mostrada
+        """
         draw_gui(self.root, subtree)
 
     def is_equals(self, other_tree):
+        """Verificar igualdade entre o objeto e arvore passada
+        
+        Arguments:
+            other_tree {Ast} --  Codigo da subtree a ser verificada
+        
+        Returns:
+            [Boolean] -- Respostas se arvores sao iguais
+        """
         my_root = self.root
         result = self.__equals_tree(my_root, other_tree)
         return result
 
     def __equals_tree(self, node1, node2):
+        """Verificar igualdade entre dois "nodes raiz"
+        
+        Arguments:
+            node1 {AST} -- node1 a ser comparado
+            node2 {AST} -- node2: node a ser comparado
+        
+        Returns:
+            Boolean -- Respostas se arvores sao iguais
+        """ 
         if type(node1) != type(node2):
             return False
         if (isinstance(node1, ast.AST)):
@@ -62,6 +103,15 @@ class SourceTree():
             return node1 == node2
 
     def is_subtree(self, root_pattern):
+       """Verificar se objeto possui o padrao passado como parametro como subarvore
+        
+        Arguments:
+            node1 {AST} -- node1 a ser comparado
+            node2 {AST} -- node2: node a ser comparado
+        
+        Returns:
+            Boolean -- Respostas se root_pattern é subavore do Objeto
+        """
         mytree = self.root
         founded_tree = self.__find_subtree(mytree, root_pattern)
         if founded_tree and self.amount_of_patterns_found(root_pattern) > 0:
@@ -70,6 +120,11 @@ class SourceTree():
             return False
 
     def __find_subtree(self, mytree, root_pattern):
+        """ Informar se arvore(mytree) possui o determinado padrao (root_pattern)
+
+            entrada: mytree: codigo da arvore a ser verificada
+                     root_pattern: Codigo do padrao a ser verificado
+        """
         for node_my_tree in ast.walk(mytree):
             for node_pattern in ast.walk(root_pattern):
                 result = self.__equals_tree(node_my_tree, node_pattern)
@@ -78,6 +133,16 @@ class SourceTree():
         return False
 
     def __walking_all_occurrences(self, root_mytree, root_pattern):
+        """Percorrer todas as ocorrencias de um padrao(root_pattern) em uma arvore(root_mytree), 
+        encontrando todos os nodes possiveis. OBS: informando ate os padroes parciais, isto é
+        padroes nos quais uma instancia foi encontrada, independente se o bloco de intruncao foi contemplado por completo.
+        
+        Arguments:
+            root_mytree {AST} -- Node raiz da arvore que sera processada
+            root_pattern {AST} -- Node raiz do padrao do padrao procurado
+        Returns:
+            Array -- Todas as ocorrencias encontradas do padrao
+        """                
         occurrences = []
         for node_my_tree in ast.walk(root_mytree):
             for node_pattern in ast.iter_child_nodes(root_pattern):
