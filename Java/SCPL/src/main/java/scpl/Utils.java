@@ -433,6 +433,15 @@ public class Utils {
 	
 	///////////////////////////////////////////////////
 	
+	/**
+	 * Faz o parse dos arquivos java e retorna as ASTs e um objeto com as posições de cada nó.
+	 * 
+	 * 
+	 * @param files array de arquivos de código-fonte java
+	 * @return CompilationUnitStruct correspondente aos arquivos passados, 
+	 * que contém um iterator de CompilationUnitTree e um onjsto SourcePositions(guarda as posições do nós)
+	 */
+	
 	public static CompilationUnitStruct parserFileToCompilationUnit(File... files) {
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -464,6 +473,16 @@ public class Utils {
 		
 		return nodes;
 	}
+	
+	
+	/**
+	 * Recebe o path da pasta do código-fonte alvo e a pasta com os padrões buscados.
+	 * Retorna as ocorrências dos padrões em cada arquivo de código-fonte
+	 * 
+	 * @param pathCode Caminho da pasta com os arquivos de código-fonte alvos da busca
+	 * @param pathPattern Caminho da pasta com os arquivos da regras dos padrões buscados
+	 * @return
+	 */
 	
 	public static  List<Node> searchOcorrences(String pathCode, String pathPattern){
 		
