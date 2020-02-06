@@ -40,10 +40,13 @@ import com.sun.source.tree.ModifiersTree;
 public class Utils {
 	
 	private static final ResourceBundle wildcards = ResourceBundle.getBundle("wildcards");
-	private final static String anyVariable = wildcards.getString("anyVariable");
-	private final static String someVariable = wildcards.getString("someVariable");
+	private final static String anyClass = wildcards.getString("anyClass");
 	private final static String anyMethod = wildcards.getString("anyMethod");
 	private final static String someMethod = wildcards.getString("someMethod");
+	private final static String anyVariable = wildcards.getString("anyVariable");
+	private final static String someVariable = wildcards.getString("someVariable");
+	
+	private static List<Node> globalOcorrences = new ArrayList<>();
 	
 	
 	/***
@@ -135,6 +138,24 @@ public class Utils {
 		return true;
 	}
 	
+	public static List<Node> searchAux(Node a, Node b, Map<String, String> wildcardsMap) {
+		
+		List<Node> ocorrences = new ArrayList<>();
+		
+		//Se os nós são iguais, a sub-árvore é toda a ávore
+		if(isEquals(a, b, wildcardsMap)) {
+			if(isFakeNode(b)) {
+				ocorrences.addAll(a.getChildren());
+			}else {
+				ocorrences.add(a);
+			}
+			
+			return ocorrences;
+		}
+		
+		return searchChildren2(a, b, wildcardsMap);
+	}
+	
 	/**
 	 * Verifica se uma árvore é sub árvore de outra e retorna todas as ocorrências
 	 * 
@@ -158,7 +179,7 @@ public class Utils {
 			return ocorrences;
 		}
 		
-		List<Node> childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>());
+		List<Node> childrenNodesAux = searchChildren2(a, b, new LinkedHashMap<>());
 		ocorrences.addAll(childrenNodesAux);
 		
 		List<Node> aux = new ArrayList<>();
@@ -259,6 +280,94 @@ public class Utils {
 		return ocorrences;
 	}
 	
+private static List<Node> searchChildren2(Node a, Node b, Map<String, String> wildcardsMap) {
+		
+		//Lista de ocorrências do padrão
+		List<Node> ocorrences = new ArrayList<>();
+		
+		//Se as raízes são diferentes, retorna vazio
+		if(!basicComparation(a, b, wildcardsMap)) {
+			return ocorrences;
+		}
+		
+		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
+		if(a.getChildren().size()<b.getChildren().size()) {
+			return ocorrences;
+		}
+		
+		//Lista auxiliar que guarda as ocorrências da busca atual
+		List<Node> currentOcorrences = new ArrayList<>();
+		
+		//Lista que contém os índices das ocorrências já encontradas, para não serem comparadas novamente quando recomeçar a busca
+		List<Integer> ocorrencesIndex = new ArrayList<>();
+		
+		List<Node> subtreeAux;
+		
+		boolean searching = false;
+		int counter = 0;
+		int i = 0;
+		
+		for(i =0;i<b.getChildren().size();i++) { 
+			
+			//Se o que falta > o que resta ou ainda está buscando (ou seja, não achou o filho anterior do padrão no código-fonte)
+			if(b.getChildren().size()-i > a.getChildren().size()-counter || searching) {
+				return ocorrences;
+			}
+			
+			searching=true;
+			
+			//Enquanto está buscando e contador é menor que número de filhos de do código fonte
+			while(searching && counter<a.getChildren().size() ) {
+				//Se o índice atual não está na lista de índices das ocorrências
+				if(ocorrencesIndex.contains(counter)) {
+					
+					subtreeAux = searchAux(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
+					if(!globalOcorrences.containsAll(subtreeAux)) {
+						
+						currentOcorrences.addAll(subtreeAux);
+						searching=false;
+					}
+					
+				}else{
+					//TODO Sub árvores parciais
+					//Se é igual é adicionado a lista de ocorrencias auxiliar
+					subtreeAux = searchAux(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
+					if(subtreeAux.size() > 0) {
+						currentOcorrences.addAll(subtreeAux);
+						ocorrencesIndex.add(counter);
+						searching=false;
+					}
+				}
+				counter++;
+			}
+			
+			//Se for o último filho do padrão
+			if(i == b.getChildren().size() - 1) {
+				// E ainda estiver buscando
+				if(searching) {
+					//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
+					if(!wildcardsMap.isEmpty()) {
+						counter = 0;
+						i =-1;
+						searching=false;
+					}
+				}else {
+					//Recomeça a busca para achar outras ocorrências
+					ocorrences.addAll(currentOcorrences);
+					counter = 0;
+					i =-1;
+				}
+				globalOcorrences.addAll(currentOcorrences);
+				currentOcorrences.clear();
+				wildcardsMap.clear();
+				
+			}
+		}
+					
+		return ocorrences;
+	}
+
+	
 	/**
 	 * 
 	 * Realiza a comparação do nome dos nós passados, de acordo com o tipo do nó.
@@ -280,6 +389,10 @@ public class Utils {
 				
 				name1 = ((ClassTree) node1.getNode()).getSimpleName().toString();
 				name2 = ((ClassTree) node2.getNode()).getSimpleName().toString();
+				
+				if(name2.equalsIgnoreCase(anyClass)) {
+					return true;
+				}
 				
 				return name1.equals(name2);
 				
@@ -514,7 +627,7 @@ public class Utils {
 			for(Tree treePattern: listPattern) {
 				
 				retorno.addAll(Utils.subtree(Utils.getCompilationUnitTree(Utils.buildTree(treeCode)), Utils.removeStub(Utils.buildTree(treePattern))));
-				
+				globalOcorrences.clear();
 			}
 			
 		}
