@@ -75,6 +75,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 					Collection<Node> children = nodes.get(node.getNode());
 					if(children != null) {
 						node.getChildren().addAll(children);
+						for(Node child: children) {
+							child.setParent(node);
+						}
+						
 					}
 				}
 			}

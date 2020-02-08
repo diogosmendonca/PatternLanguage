@@ -149,11 +149,11 @@ public class Utils {
 			}else {
 				ocorrences.add(a);
 			}
-			
+			a.setFullVisited(true);
 			return ocorrences;
 		}
 		
-		return searchChildren2(a, b, wildcardsMap);
+		return searchChildren3(a, b, wildcardsMap);
 	}
 	
 	/**
@@ -175,20 +175,22 @@ public class Utils {
 			}else {
 				ocorrences.add(a);
 			}
-			
+			a.setFullVisited(true);
 			return ocorrences;
 		}
 		
-		List<Node> childrenNodesAux = searchChildren2(a, b, new LinkedHashMap<>());
-		ocorrences.addAll(childrenNodesAux);
+		List<Node> childrenNodesAux = new ArrayList<Node>();
 		
-		List<Node> aux = new ArrayList<>();
-		aux.addAll(a.getChildren());		
-		aux.removeAll(childrenNodesAux);
+		do {
+			childrenNodesAux = searchChildren3(a, b, new LinkedHashMap<>());
+			ocorrences.addAll(childrenNodesAux);
+		}while(childrenNodesAux.size() > 0);
 		
 		//Chama recursivamente para todos os filhos do nó
-		for(Node child : aux) {
-			ocorrences.addAll(subtree(child, b));
+		for(Node child : a.getChildren()) {
+			if(!child.getFullVisited()) {
+				ocorrences.addAll(subtree(child, b));
+			}
 		}
 		
 		return ocorrences;
@@ -319,17 +321,7 @@ private static List<Node> searchChildren2(Node a, Node b, Map<String, String> wi
 			//Enquanto está buscando e contador é menor que número de filhos de do código fonte
 			while(searching && counter<a.getChildren().size() ) {
 				//Se o índice atual não está na lista de índices das ocorrências
-				if(ocorrencesIndex.contains(counter)) {
-					
-					subtreeAux = searchAux(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
-					if(!globalOcorrences.containsAll(subtreeAux)) {
-						
-						currentOcorrences.addAll(subtreeAux);
-						searching=false;
-					}
-					
-				}else{
-					//TODO Sub árvores parciais
+				if(!a.getChildren().get(counter).getFullVisited()) {
 					//Se é igual é adicionado a lista de ocorrencias auxiliar
 					subtreeAux = searchAux(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
 					if(subtreeAux.size() > 0) {
@@ -367,7 +359,65 @@ private static List<Node> searchChildren2(Node a, Node b, Map<String, String> wi
 		return ocorrences;
 	}
 
+
+private static List<Node> searchChildren3(Node a, Node b, Map<String, String> wildcardsMap) {
 	
+	//Lista de ocorrências do padrão
+	List<Node> ocorrences = new ArrayList<>();
+	
+	//Se as raízes são diferentes, retorna vazio
+	if(!basicComparation(a, b, wildcardsMap)) {
+		return ocorrences;
+	}
+	
+	//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
+	if(a.getChildren().size()<b.getChildren().size()) {
+		return ocorrences;
+	}
+	
+	//Lista auxiliar que guarda as ocorrências da busca atual
+	List<Node> currentOcorrences = new ArrayList<>();
+	
+	List<Node> subtreeAux;
+	
+	boolean searching = false;
+	int counter = 0;
+	int i = 0;
+	
+	for(i =0;i<b.getChildren().size();i++) { 
+		
+		//Se o que falta > o que resta ou ainda está buscando (ou seja, não achou o filho anterior do padrão no código-fonte)
+		if(b.getChildren().size()-i > a.getChildren().size()-counter || searching) {
+			return ocorrences;
+		}
+		
+		searching=true;
+		
+		//Enquanto está buscando e contador é menor que número de filhos de do código fonte
+		while(searching && counter<a.getChildren().size() ) {
+			//Se o índice atual não está na lista de índices das ocorrências
+			if(!a.getChildren().get(counter).getFullVisited()) {
+				//Se é igual é adicionado a lista de ocorrencias auxiliar
+				subtreeAux = searchAux(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
+				if(subtreeAux.size() > 0) {
+					currentOcorrences.addAll(subtreeAux);
+					searching=false;
+				}
+			}
+			counter++;
+		}
+		
+		if(i == b.getChildren().size() - 1) {
+			if(!searching) {
+				ocorrences.addAll(currentOcorrences);
+			}	
+		}
+		
+	}
+				
+	return ocorrences;
+}
+
 	/**
 	 * 
 	 * Realiza a comparação do nome dos nós passados, de acordo com o tipo do nó.

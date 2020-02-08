@@ -7,10 +7,12 @@ import java.util.List;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.Tree.Kind;
+import com.sun.source.tree.TreeVisitor;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
-public class Node {
+public class Node implements Tree {
 	
 	private Tree parent;
 	private Tree node;
@@ -18,6 +20,7 @@ public class Node {
 	private CompilationUnitTree compilatioUnitTree;
 	private Long startPosition;
 	private Long endPosition;
+	private Boolean fullVisited;
 	
 	public Node() {
 		this.children = new ArrayList<Node>();
@@ -28,6 +31,7 @@ public class Node {
 		this.node = node;
 		this.children = new ArrayList<Node>();
 		this.compilatioUnitTree = compilatioUnitTree;
+		this.fullVisited = false;
 	}
 	
 	
@@ -96,5 +100,35 @@ public class Node {
 	
 	public long getEndColumn() {
 		return this.getLineMap().getColumnNumber(this.endPosition);
+	}
+
+	public Boolean getFullVisited() {
+		return fullVisited;
+	}
+
+	public void setFullVisited(Boolean fullVisited) {
+		if(!this.hasBrother(Tree.Kind.BLOCK)) {
+			this.fullVisited = fullVisited;
+		}
+	}
+
+	@Override
+	public Kind getKind() {
+		return this.node.getKind();
+	}
+
+	@Override
+	public <R, D> R accept(TreeVisitor<R, D> visitor, D data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Boolean hasBrother(Kind kind) {
+		for(Node brother: ((Node)this.getParent()).getChildren()) {
+			if(brother.getKind() == kind) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
