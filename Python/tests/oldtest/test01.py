@@ -2,8 +2,7 @@ from oldcode import subtree
 import ast
 
 source = """
-def anyFunction(varA, varB):
-    print(varA)
+print(1)
 """
 source2 = """   
 print(var3)
