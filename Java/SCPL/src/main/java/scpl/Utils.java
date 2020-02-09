@@ -18,10 +18,15 @@ import javax.tools.ToolProvider;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.LiteralTree;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.Trees;
@@ -40,6 +45,7 @@ import com.sun.source.tree.ModifiersTree;
 public class Utils {
 	
 	private static final ResourceBundle wildcards = ResourceBundle.getBundle("wildcards");
+	private final static String anyLiteralValue = wildcards.getString("anyLiteralValue");
 	private final static String anyClass = wildcards.getString("anyClass");
 	private final static String anyMethod = wildcards.getString("anyMethod");
 	private final static String someMethod = wildcards.getString("someMethod");
@@ -107,15 +113,31 @@ public class Utils {
 		
 		//Se é um nó fake não realiza as verificações
 		if(!isFakeNode(b)) {
-		
+			
+			boolean flagAnyLiteralvalue = false;
+			
+			if(b.getNode().getKind() == Kind.STRING_LITERAL &&
+					((String)((LiteralTree)b.getNode()).getValue()).equals(anyLiteralValue)) {
+				
+				flagAnyLiteralvalue = true;
+				
+			}
+			
 			//Compara se os tipos sao iguais.
 			if(a.getNode().getKind()!=b.getNode().getKind()) {
-				return false;
+				if(!flagAnyLiteralvalue) {
+					return false;
+				}
 			}
 			
 			if(!compareName(a, b, wildcardsMap)) {
 				return false;
 			}
+			
+			if(!compareValue(a, b, flagAnyLiteralvalue, wildcardsMap)) {
+				return false;
+			}
+			
 		
 		}
 		
@@ -428,10 +450,10 @@ private static List<Node> searchChildren3(Node a, Node b, Map<String, String> wi
 	 * @return booleano que indica se os nós possuem o mesmo nome
 	 */
 	
-	static boolean compareName(Node node1, Node node2, Map<String, String> wildcardsMap) {
+	private static boolean compareName(Node node1, Node node2, Map<String, String> wildcardsMap) {
 		
-		String name1;
-		String name2;
+		String name1 = null;
+		String name2 = null;
 		
 		switch(node1.getNode().getKind()) {
 		
@@ -469,8 +491,27 @@ private static List<Node> searchChildren3(Node a, Node b, Map<String, String> wi
 				
 			case METHOD_INVOCATION:	
 				
-				name1 = ((MethodTree) node1.getNode()).getName().toString();
-				name2 = ((MethodTree) node2.getNode()).getName().toString();
+				ExpressionTree e1 = ((MethodInvocationTree) node1.getNode()).getMethodSelect();
+				ExpressionTree e2 = ((MethodInvocationTree) node2.getNode()).getMethodSelect();
+				
+				if(e1.getKind() != e2.getKind()) {
+					return false;
+				}
+				
+				switch (e1.getKind()) {
+				
+				case MEMBER_SELECT: 
+					
+					name1 = ((MemberSelectTree) e1).getIdentifier().toString();
+					name2 = ((MemberSelectTree) e2).getIdentifier().toString();
+					
+					break;
+				
+				case IDENTIFIER :
+					
+					break;
+					
+				}
 				
 				if(name2.equalsIgnoreCase(anyMethod)) {
 					return true;
@@ -534,6 +575,63 @@ private static List<Node> searchChildren3(Node a, Node b, Map<String, String> wi
 				return true;
 		}
 		
+	}
+	
+	private static boolean compareValue(Node node1, Node node2, boolean flagAnyLiteralValue, Map<String, String> wildcardsMap) {
+		
+		if(flagAnyLiteralValue) {
+			return true;
+		}
+		
+		Object value1 = null;
+		Object value2 = null;
+		
+		switch(node1.getNode().getKind()) {
+		
+			case INT_LITERAL:
+				value1 = ((Integer)((LiteralTree)node1.getNode()).getValue());
+				value2 = ((Integer)((LiteralTree)node2.getNode()).getValue());
+				return value1.equals(value2);
+
+				
+			case LONG_LITERAL:
+				value1 = ((Long)((LiteralTree)node1.getNode()).getValue());
+				value2 = ((Long)((LiteralTree)node2.getNode()).getValue());
+				return value1.equals(value2);
+				
+			case FLOAT_LITERAL:
+				value1 = ((Float)((LiteralTree)node1.getNode()).getValue());
+				value2 = ((Float)((LiteralTree)node2.getNode()).getValue());
+				return value1.equals(value2);
+				
+			case DOUBLE_LITERAL:
+				value1 = ((Double)((LiteralTree)node1.getNode()).getValue());
+				value2 = ((Double)((LiteralTree)node2.getNode()).getValue());
+				return value1.equals(value2);
+				
+			case BOOLEAN_LITERAL:
+				value1 = ((Boolean)((LiteralTree)node1.getNode()).getValue());
+				value2 = ((Boolean)((LiteralTree)node2.getNode()).getValue());
+				return value1.equals(value2);
+				
+			case CHAR_LITERAL:
+				value1 = ((char)((LiteralTree)node1.getNode()).getValue());
+				value2 = ((char)((LiteralTree)node2.getNode()).getValue());
+				return value1.equals(value2);
+				
+			case STRING_LITERAL:
+				value1 = ((String)((LiteralTree)node1.getNode()).getValue());
+				value2 = ((String)((LiteralTree)node2.getNode()).getValue());
+				return value1.equals(value2);
+				
+			case NULL_LITERAL:
+				//value1 = ((?)((LiteralTree)node1.getNode()).getValue());
+				break;
+				
+		}
+		
+		
+		return true;
 	}
 	
 	/**
