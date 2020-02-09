@@ -12,9 +12,9 @@ import com.sun.source.tree.TreeVisitor;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
-public class Node implements Tree {
+public class Node {
 	
-	private Tree parent;
+	private Node parent;
 	private Tree node;
 	private List<Node> children;
 	private CompilationUnitTree compilatioUnitTree;
@@ -26,8 +26,7 @@ public class Node implements Tree {
 		this.children = new ArrayList<Node>();
 	}
 	
-	public Node(Tree parent, Tree node, CompilationUnitTree compilatioUnitTree) {
-		this.parent = parent;
+	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
 		this.node = node;
 		this.children = new ArrayList<Node>();
 		this.compilatioUnitTree = compilatioUnitTree;
@@ -35,10 +34,10 @@ public class Node implements Tree {
 	}
 	
 	
-	public Tree getParent() {
+	public Node getParent() {
 		return parent;
 	}
-	public void setParent(Tree parent) {
+	public void setParent(Node parent) {
 		this.parent = parent;
 	}
 	public Tree getNode() {
@@ -112,20 +111,9 @@ public class Node implements Tree {
 		}
 	}
 
-	@Override
-	public Kind getKind() {
-		return this.node.getKind();
-	}
-
-	@Override
-	public <R, D> R accept(TreeVisitor<R, D> visitor, D data) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public Boolean hasBrother(Kind kind) {
 		for(Node brother: ((Node)this.getParent()).getChildren()) {
-			if(brother.getKind() == kind) {
+			if(brother.getNode().getKind() == kind) {
 				return true;
 			}
 		}

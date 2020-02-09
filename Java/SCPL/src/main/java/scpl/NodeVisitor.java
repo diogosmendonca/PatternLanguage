@@ -32,7 +32,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 	  public static String build(Tree tree, Map<Tree, List<Node>> nodes) {
 	    NodeVisitor nv = new NodeVisitor(tree);
 	    nv.scan(tree, nodes);
-	    addChildren(nodes);
+	    addInfos(nodes);
 	    return nv.sb.toString();
 	  }
 
@@ -56,10 +56,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 				List<Node> l = new ArrayList<>();
 				
 				//Criando nó raiz com sua Tree equivalente e add no mapeamento.
-				l.add(new Node(parent,tree,compilatioUnitTree));
+				l.add(new Node(tree,compilatioUnitTree));
 				nodes.put(parent, l);
 			}else {
-				nodes.get(parent).add(new Node(parent,tree,compilatioUnitTree));
+				nodes.get(parent).add(new Node(tree,compilatioUnitTree));
 			}
 	        
      	  }
@@ -69,7 +69,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 		 return null;
 	  }
 	  
-	  private static void addChildren(Map<Tree, List<Node>> nodes) {
+	  private static void addInfos(Map<Tree, List<Node>> nodes) {
 		  for(Tree key : nodes.keySet()) {
 				for(Node node :  nodes.get(key)) {
 					Collection<Node> children = nodes.get(node.getNode());
