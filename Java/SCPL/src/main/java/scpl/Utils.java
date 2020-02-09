@@ -130,14 +130,13 @@ public class Utils {
 				}
 			}
 			
-			if(!compareName(a, b, wildcardsMap)) {
-				return false;
-			}
-			
 			if(!compareValue(a, b, flagAnyLiteralvalue, wildcardsMap)) {
 				return false;
 			}
 			
+			if(!compareName(a, b, wildcardsMap)) {
+				return false;
+			}
 		
 		}
 		
@@ -175,7 +174,7 @@ public class Utils {
 			return ocorrences;
 		}
 		
-		return searchChildren3(a, b, wildcardsMap);
+		return searchChildren(a, b, wildcardsMap);
 	}
 	
 	/**
@@ -204,7 +203,7 @@ public class Utils {
 		List<Node> childrenNodesAux = new ArrayList<Node>();
 		
 		do {
-			childrenNodesAux = searchChildren3(a, b, new LinkedHashMap<>());
+			childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>());
 			ocorrences.addAll(childrenNodesAux);
 		}while(childrenNodesAux.size() > 0);
 		
@@ -218,171 +217,8 @@ public class Utils {
 		return ocorrences;
 	}
 	
-	
-	/**
-	 * 
-	 * Quando as árvores não são idênticas, é necessário verificar se o nó raíz é igual e todos os 
-	 * filhos do padrão estáo presentes no código-fonte.
-	 * 
-	 * @param a Árvore do código-fonte alvo
-	 * @param b Árvore do padrão buscado
-	 * @param wildcardsMap Mapa de wildcards
-	 * @return 
-	 */
-	
-	private static List<Node> searchChildren(Node a, Node b, Map<String, String> wildcardsMap) {
-		
-		//Lista de ocorrências do padrão
-		List<Node> ocorrences = new ArrayList<>();
-		
-		//Se as raízes são diferentes, retorna vazio
-		if(!basicComparation(a, b, wildcardsMap)) {
-			return ocorrences;
-		}
-		
-		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
-		if(a.getChildren().size()<b.getChildren().size()) {
-			return ocorrences;
-		}
-		
-		//Lista auxiliar que guarda as ocorrências da busca atual
-		List<Node> ocorrencesAux = new ArrayList<>();
-		//Lista que contém os índices das ocorrências já encontradas, para não serem comparadas novamente quando recomeçar a busca
-		List<Integer> ocorrencesIndex = new ArrayList<>();
-		
-		boolean searching = false;
-		int counter = 0;
-		int i = 0;
-		
-		for(i =0;i<b.getChildren().size();i++) { 
-			
-			//Se o que falta > o que resta ou ainda está buscando (ou seja, não achou o filho anterior do padrão no código-fonte)
-			if(b.getChildren().size()-i > a.getChildren().size()-counter || searching) {
-				return ocorrences;
-			}
-			
-			searching=true;
-			
-			//Enquanto está buscando e contador é menor que número de filhos de do código fonte
-			while(searching && counter<a.getChildren().size() ) {
-				//Se o índice atual não está na lista de índices das ocorrências
-				if(!ocorrencesIndex.contains(counter)) {
-					//TODO Sub árvores parciais
-					//Se é igual é adicionado a lista de ocorrencias auxiliar
-					if(isEquals(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap)) {
-						ocorrencesAux.add(a.getChildren().get(counter));
-						ocorrencesIndex.add(counter);
-						searching=false;
-					}
-				}
-				counter++;
-			}
-			
-			//Se for o último filho do padrão
-			if(i == b.getChildren().size() - 1) {
-				// E ainda estiver buscando
-				if(searching) {
-					//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
-					if(!wildcardsMap.isEmpty()) {
-						ocorrencesAux.clear();
-						wildcardsMap.clear();
-						counter = 0;
-						i =-1;
-						searching=false;
-					}
-				}else {
-					//Recomeça a busca para achar outras ocorrências
-					ocorrences.addAll(ocorrencesAux);
-					ocorrencesAux.clear();
-					wildcardsMap.clear();
-					counter = 0;
-					i =-1;
-				}
-			}
-		}
-					
-		return ocorrences;
-	}
-	
-private static List<Node> searchChildren2(Node a, Node b, Map<String, String> wildcardsMap) {
-		
-		//Lista de ocorrências do padrão
-		List<Node> ocorrences = new ArrayList<>();
-		
-		//Se as raízes são diferentes, retorna vazio
-		if(!basicComparation(a, b, wildcardsMap)) {
-			return ocorrences;
-		}
-		
-		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
-		if(a.getChildren().size()<b.getChildren().size()) {
-			return ocorrences;
-		}
-		
-		//Lista auxiliar que guarda as ocorrências da busca atual
-		List<Node> currentOcorrences = new ArrayList<>();
-		
-		//Lista que contém os índices das ocorrências já encontradas, para não serem comparadas novamente quando recomeçar a busca
-		List<Integer> ocorrencesIndex = new ArrayList<>();
-		
-		List<Node> subtreeAux;
-		
-		boolean searching = false;
-		int counter = 0;
-		int i = 0;
-		
-		for(i =0;i<b.getChildren().size();i++) { 
-			
-			//Se o que falta > o que resta ou ainda está buscando (ou seja, não achou o filho anterior do padrão no código-fonte)
-			if(b.getChildren().size()-i > a.getChildren().size()-counter || searching) {
-				return ocorrences;
-			}
-			
-			searching=true;
-			
-			//Enquanto está buscando e contador é menor que número de filhos de do código fonte
-			while(searching && counter<a.getChildren().size() ) {
-				//Se o índice atual não está na lista de índices das ocorrências
-				if(!a.getChildren().get(counter).getFullVisited()) {
-					//Se é igual é adicionado a lista de ocorrencias auxiliar
-					subtreeAux = searchAux(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
-					if(subtreeAux.size() > 0) {
-						currentOcorrences.addAll(subtreeAux);
-						ocorrencesIndex.add(counter);
-						searching=false;
-					}
-				}
-				counter++;
-			}
-			
-			//Se for o último filho do padrão
-			if(i == b.getChildren().size() - 1) {
-				// E ainda estiver buscando
-				if(searching) {
-					//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
-					if(!wildcardsMap.isEmpty()) {
-						counter = 0;
-						i =-1;
-						searching=false;
-					}
-				}else {
-					//Recomeça a busca para achar outras ocorrências
-					ocorrences.addAll(currentOcorrences);
-					counter = 0;
-					i =-1;
-				}
-				globalOcorrences.addAll(currentOcorrences);
-				currentOcorrences.clear();
-				wildcardsMap.clear();
-				
-			}
-		}
-					
-		return ocorrences;
-	}
 
-
-private static List<Node> searchChildren3(Node a, Node b, Map<String, String> wildcardsMap) {
+private static List<Node> searchChildren(Node a, Node b, Map<String, String> wildcardsMap) {
 	
 	//Lista de ocorrências do padrão
 	List<Node> ocorrences = new ArrayList<>();
@@ -405,6 +241,7 @@ private static List<Node> searchChildren3(Node a, Node b, Map<String, String> wi
 	boolean searching = false;
 	int counter = 0;
 	int i = 0;
+	int tries = 0;
 	
 	for(i =0;i<b.getChildren().size();i++) { 
 		
@@ -430,9 +267,20 @@ private static List<Node> searchChildren3(Node a, Node b, Map<String, String> wi
 		}
 		
 		if(i == b.getChildren().size() - 1) {
-			if(!searching) {
+			if(searching){ 
+				//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
+				if(!wildcardsMap.isEmpty() && tries<= a.getChildren().size()) {
+					counter = 0;
+					i =-1;
+					searching=false;
+					currentOcorrences.clear();
+					wildcardsMap.clear();
+				}
+			}else{
 				ocorrences.addAll(currentOcorrences);
-			}	
+			}
+			
+			tries++;
 		}
 		
 	}
@@ -598,6 +446,7 @@ private static List<Node> searchChildren3(Node a, Node b, Map<String, String> wi
 				value1 = ((Long)((LiteralTree)node1.getNode()).getValue());
 				value2 = ((Long)((LiteralTree)node2.getNode()).getValue());
 				return value1.equals(value2);
+				
 				
 			case FLOAT_LITERAL:
 				value1 = ((Float)((LiteralTree)node1.getNode()).getValue());
