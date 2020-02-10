@@ -155,7 +155,15 @@ class SourceTree:
                     break
         return occurrences
 
-    def __len_occurrences(self, error, root_pattern):
+    def __filter_all_occurrences(self, error, root_pattern):
+        """Filtrar ocorrencias não tratadas para retornando a quantidade nodes encontrados.
+
+            Arguments:
+                error {Array} -- Lista de ocorrencias não tratadas
+
+            Returns:
+                Number -- Quantidade de ocorrencias encontradas.
+        """
         root_pattern = list(ast.iter_child_nodes(root_pattern))
         error_node = []
         error_node_subtree = []
@@ -170,23 +178,23 @@ class SourceTree:
                        if error_node_subtree[indexI:indexI + len(root_pattern)] == root_pattern)
             return cont
 
-    def amount_of_patterns_found(self, root_pattern): 
+    def amount_of_patterns_found(self, root_pattern):
         mytree = self.root
         occurrences_no_handle = self.__walking_all_occurrences(
             mytree, root_pattern)
-        status_value = self.__len_occurrences(
+        status_value = self.__filter_all_occurrences(
             occurrences_no_handle, root_pattern)
         return status_value
 
     def get_all_occurrences(self, root_pattern):
         """Informar todas as ocorrencias dos padrões encontrados na arvore.
-        
+
         Arguments:
             root_pattern {Array} -- Node raiz da arvore que será processada
-        
+
         Returns:
             Array -- todas as ocorrencias em um Objeto Iteravel.
-        """        
+        """
         mytree = self.root
         occurrences_no_handle = self.__walking_all_occurrences(
             mytree, root_pattern)
@@ -206,13 +214,12 @@ class SourceTree:
 
         return occurrences
 
-        
     def get_all_name_variable(self):
         """Informar todos os nomes de todas as variaveis.
-        
+
         Returns:
             Array -- Nome de todas as variaveis na arvore.
-        """        
+        """
         mytree = self.root
         all_ast_name = []
         for node_my_tree in ast.walk(mytree):
@@ -223,10 +230,10 @@ class SourceTree:
 
     def prettier_occurrences(self, root_pattern):
         """Informar de forma detalhada os detalhes das ocorrencias da arvore.
-        
+
         Arguments:
             root_pattern {AST} -- Node raiz da arvore que será processada.
-        """        
+        """
         occurrences = self.get_all_occurrences(root_pattern)
         for occurr in occurrences:
             for node_occur in occurr:
