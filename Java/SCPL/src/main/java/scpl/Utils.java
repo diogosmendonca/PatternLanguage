@@ -243,6 +243,9 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	int i = 0;
 	int tries = 0;
 	
+	Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
+	wildcardsMapBefore.putAll(wildcardsMap);
+	
 	for(i =0;i<b.getChildren().size();i++) { 
 		
 		//Se o que falta > o que resta ou ainda está buscando (ou seja, não achou o filho anterior do padrão no código-fonte)
@@ -269,18 +272,20 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 		if(i == b.getChildren().size() - 1) {
 			if(searching){ 
 				//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
-				if(!wildcardsMap.isEmpty() && tries<= a.getChildren().size()) {
-					counter = 0;
+				if(!wildcardsMap.isEmpty() && tries+1< a.getChildren().size()) {
+					tries++;
+					counter = tries;
 					i =-1;
 					searching=false;
 					currentOcorrences.clear();
 					wildcardsMap.clear();
+					wildcardsMap.putAll(wildcardsMapBefore);
 				}
 			}else{
 				ocorrences.addAll(currentOcorrences);
 			}
 			
-			tries++;
+			
 		}
 		
 	}
@@ -387,6 +392,17 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 				}
 				
 				if(name2.startsWith(someVariable)) {
+					
+					if(node1.getChildren().size()==node2.getChildren().size()) {
+						for(int i = 0;i<node1.getChildren().size();i++) {
+							if(!isEquals(node1.getChildren().get(i), node2.getChildren().get(i), wildcardsMap)) {
+								return false;
+							}
+						}
+					}else {
+						return false;
+					}
+					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
 						return true;
