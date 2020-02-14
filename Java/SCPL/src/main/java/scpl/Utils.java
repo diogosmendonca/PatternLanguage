@@ -241,7 +241,6 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	boolean searching = false;
 	int counter = 0;
 	int i = 0;
-	int tries = 0;
 	
 	Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 	wildcardsMapBefore.putAll(wildcardsMap);
@@ -272,9 +271,8 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 		if(i == b.getChildren().size() - 1) {
 			if(searching){ 
 				//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
-				if(!wildcardsMap.isEmpty() && tries+1< a.getChildren().size()) {
-					tries++;
-					counter = tries;
+				if(!wildcardsMap.equals(wildcardsMapBefore)) {
+					counter = 0;
 					i =-1;
 					searching=false;
 					currentOcorrences.clear();
@@ -331,6 +329,20 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 				}
 				
 				if(name2.startsWith(someMethod)) {
+					
+					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
+					wildcardsMapAux.putAll(wildcardsMap);
+					
+					if(node1.getChildren().size()==node2.getChildren().size()) {
+						for(int i = 0;i<node1.getChildren().size();i++) {
+							if(!isEquals(node1.getChildren().get(i), node2.getChildren().get(i), wildcardsMapAux)) {
+								return false;
+							}
+						}
+					}else {
+						return false;
+					}
+					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
 						return true;
@@ -371,6 +383,20 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 				}
 				
 				if(name2.startsWith(someMethod)) {
+					
+					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
+					wildcardsMapAux.putAll(wildcardsMap);
+					
+					if(node1.getChildren().size()==node2.getChildren().size()) {
+						for(int i = 0;i<node1.getChildren().size();i++) {
+							if(!isEquals(node1.getChildren().get(i), node2.getChildren().get(i), wildcardsMapAux)) {
+								return false;
+							}
+						}
+					}else {
+						return false;
+					}
+					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
 						return true;
@@ -393,9 +419,12 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 				
 				if(name2.startsWith(someVariable)) {
 					
+					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
+					wildcardsMapAux.putAll(wildcardsMap);
+					
 					if(node1.getChildren().size()==node2.getChildren().size()) {
 						for(int i = 0;i<node1.getChildren().size();i++) {
-							if(!isEquals(node1.getChildren().get(i), node2.getChildren().get(i), wildcardsMap)) {
+							if(!isEquals(node1.getChildren().get(i), node2.getChildren().get(i), wildcardsMapAux)) {
 								return false;
 							}
 						}
@@ -424,6 +453,20 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 				}
 				
 				if(name2.startsWith(someVariable)) {
+					
+					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
+					wildcardsMapAux.putAll(wildcardsMap);
+					
+					if(node1.getChildren().size()==node2.getChildren().size()) {
+						for(int i = 0;i<node1.getChildren().size();i++) {
+							if(!isEquals(node1.getChildren().get(i), node2.getChildren().get(i), wildcardsMapAux)) {
+								return false;
+							}
+						}
+					}else {
+						return false;
+					}
+					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
 						return true;
