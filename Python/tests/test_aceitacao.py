@@ -22,3 +22,22 @@ print("Ola Mundo")
     print("Posicao do padrao: ", positions)
 
     assert True == (tree.is_equals(pattern)), ERR_MESSAGE
+
+def test_tc02_igualdade_entre_arvores_uma_linha_diferente():
+    str_source = """
+print("Ola Mundo")
+        """
+
+    str_pattern = """
+a = 10
+        """
+
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "As AST deveriam ser diferentes."
+
+    assert False == (tree.is_equals(pattern)), ERR_MESSAGE
+
