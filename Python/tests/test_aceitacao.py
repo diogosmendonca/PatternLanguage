@@ -85,3 +85,28 @@ print(10)
     print("Posicao do padrao: ", positions)
 
     assert True == (tree.is_subtree(pattern)), ERR_MESSAGE
+
+def test_tc04_comparacao_subarvore_multiplas_linhas_nao_existe():
+    str_source = """
+def exemplo ():
+    a = 10
+    print(10)
+    """
+
+    str_pattern = """
+print("String")
+string = "String"
+    """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte nao deveria conter o padrão"
+
+    positions = tree.get_positions_pattern(pattern)
+    print("Posicao do padrao: ", positions)
+
+    assert False == (tree.is_subtree(pattern)), ERR_MESSAGE
+
+
