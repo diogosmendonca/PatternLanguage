@@ -73,8 +73,7 @@ class SourceTree:
         """
         if type(node1) != type(node2):
             return False
-        if (isinstance(node1, ast.AST)):
-
+        if isinstance(node1, ast.AST):
             # Ignorando nomes de variaveis, considerando valores.
             if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
                 num_node1 = vars(node1).get("value")
@@ -152,18 +151,10 @@ class SourceTree:
                     lis_aux.append(node_my_tree)
                     lis_aux.append(node_pattern)
                     occurrences.append(lis_aux)
-                    break
         return occurrences
 
-    def __filter_all_occurrences(self, error, root_pattern):
-        """Filtrar ocorrencias não tratadas para retornando a quantidade nodes encontrados.
+    def __len_occurrences(self, error, root_pattern):
 
-            Arguments:
-                error {Array} -- Lista de ocorrencias não tratadas
-
-            Returns:
-                Number -- Quantidade de ocorrencias encontradas.
-        """
         root_pattern = list(ast.iter_child_nodes(root_pattern))
         error_node = []
         error_node_subtree = []
@@ -171,22 +162,51 @@ class SourceTree:
             error_node.append(error[indexJ][0])
             error_node_subtree.append(error[indexJ][1])
 
+        cont = 0;
         if len(root_pattern) == 1:
             return len(error)
         else:
-            cont = sum(1 for indexI in range(len(error_node_subtree))
-                       if error_node_subtree[indexI:indexI + len(root_pattern)] == root_pattern)
-            return cont
+            for indexI in range(len(error_node_subtree)):
+                val = error_node_subtree[indexI:indexI + len(root_pattern)]
+                if val == root_pattern:
+                    cont += 1
+        return cont
+
+
+    def __handle_occurrences(self, occurrences, root_pattern):
+        """Filtrar ocorrencias não tratadas retornando os nodes
+
+                Arguments:
+                    error {Array} -- Lista de ocorrencias não tratadas
+
+                Returns:
+                    Array -- Ocorrencias.
+                """
+        root_pattern = list(ast.iter_child_nodes(root_pattern))
+        occurrences_nodes = []
+        occurrences_nodes_subtree = []
+        for indexJ in range(len(occurrences)):
+            occurrences_nodes.append(occurrences[indexJ][0])
+            occurrences_nodes_subtree.append(occurrences[indexJ][1])
+
+        occurrences_final = []
+        for indexI in range(len(occurrences_nodes_subtree)):
+            occurrences_found_subtree = occurrences_nodes_subtree[indexI:indexI + len(root_pattern)]
+            occurrences_found_source = occurrences_nodes[indexI:indexI + len(root_pattern)]
+            if occurrences_found_subtree == root_pattern:
+
+                occurrences_final.append({'node_source': occurrences_found_source, 'node_pattern':root_pattern})
+        return occurrences_final
 
     def amount_of_patterns_found(self, root_pattern):
         mytree = self.root
         occurrences_no_handle = self.__walking_all_occurrences(
             mytree, root_pattern)
-        status_value = self.__filter_all_occurrences(
+        status_value = self.__len_occurrences(
             occurrences_no_handle, root_pattern)
         return status_value
 
-    def get_all_occurrences(self, root_pattern):
+    def __get_array_all_occurrences(self, root_pattern):
         """Informar todas as ocorrencias dos padrões encontrados na arvore.
 
         Arguments:
@@ -198,20 +218,10 @@ class SourceTree:
         mytree = self.root
         occurrences_no_handle = self.__walking_all_occurrences(
             mytree, root_pattern)
-        root_pattern = list(ast.iter_child_nodes(root_pattern))
-        error_node = []
-        error_node_subtree = []
-        for indexJ in range(len(occurrences_no_handle)):
-            error_node.append(occurrences_no_handle[indexJ][0])
-            error_node_subtree.append(occurrences_no_handle[indexJ][1])
-
+        occurrences_with_pattern = self.__handle_occurrences(occurrences_no_handle, root_pattern)
         occurrences = []
-
-        for indexI in range(len(error_node_subtree)):
-            if error_node_subtree[indexI:indexI + len(root_pattern)] == root_pattern:
-                node_found = error_node[indexI:indexI + len(root_pattern)]
-                occurrences.append(node_found)
-
+        for occ in occurrences_with_pattern:
+            occurrences.append(occ.get("node_source"))
         return occurrences
 
     def get_all_name_variable(self):
@@ -228,17 +238,18 @@ class SourceTree:
                     all_ast_name.append(node_my_tree)
         return all_ast_name
 
-    def prettier_occurrences(self, root_pattern):
+    def get_all_occurrences(self, root_pattern):
         """Informar de forma detalhada os detalhes das ocorrencias da arvore.
 
         Arguments:
             root_pattern {AST} -- Node raiz da arvore que será processada.
         """
-        occurrences = self.get_all_occurrences(root_pattern)
-        for occurr in occurrences:
-            for node_occur in occurr:
-                print(vars(node_occur))
-            print("-------------------")
+        mytree = self.root;
+        occurrences_no_handle = self.__walking_all_occurrences(mytree, root_pattern)
+        occurrences = self.__handle_occurrences(occurrences_no_handle, root_pattern)
+
+
+        return occurrences
 
     def get_positions_pattern(self, root_pattern):
         """Informar a linha e a coluna do padrão referente ao código.
@@ -246,13 +257,15 @@ class SourceTree:
         Return:
             position {Array} -- [lineno, col_offset] linha e coluna do padrao.
         """
-        occurrences = self.get_all_occurrences(root_pattern)
-        positions = []
+        occurrences = self.__get_array_all_occurrences(root_pattern)
+        all_position = []
         for occurr in occurrences:
+            positions = []
             for node_occur in occurr:
                 dict_node = vars(node_occur)
                 lineno = dict_node.get('lineno')
                 col_offset = dict_node.get('col_offset')
-                positions.append([lineno, col_offset])
+                positions.append({'lineno': lineno, 'col_offset': col_offset})
+            all_position.append(positions)
+        return all_position
 
-        return positions
