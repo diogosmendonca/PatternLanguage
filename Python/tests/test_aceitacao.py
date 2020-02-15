@@ -63,7 +63,7 @@ a = 10
 
     assert True == (tree.is_subtree(pattern)), ERR_MESSAGE
 
-def test_tc04_comparacao_subarvore_multiplas_linhas_igual():
+def test_tc04_comparacao_subarvore_multiplas_linhas_existe():
     str_source = """
 def exemplo ():
     a = 10
@@ -86,7 +86,7 @@ print(10)
 
     assert True == (tree.is_subtree(pattern)), ERR_MESSAGE
 
-def test_tc04_comparacao_subarvore_multiplas_linhas_nao_existe():
+def test_tc05_comparacao_subarvore_multiplas_linhas_nao_existe():
     str_source = """
 def exemplo ():
     a = 10
