@@ -239,3 +239,20 @@ class SourceTree:
             for node_occur in occurr:
                 print(vars(node_occur))
             print("-------------------")
+
+    def get_positions_pattern(self, root_pattern):
+        """Informar a linha e a coluna do padrão referente ao código.
+
+        Return:
+            position {Array} -- [lineno, col_offset] linha e coluna do padrao.
+        """
+        occurrences = self.get_all_occurrences(root_pattern)
+        positions = []
+        for occurr in occurrences:
+            for node_occur in occurr:
+                dict_node = vars(node_occur)
+                lineno = dict_node.get('lineno')
+                col_offset = dict_node.get('col_offset')
+                positions.append([lineno, col_offset])
+
+        return positions
