@@ -7,6 +7,7 @@ class SourceTree:
     """ Classe utilizada para a representação do código fonte """
     root = None
     __occurrences = []
+    __variable_dict_wildcards= {}
 
     def __init__(self, root_tree):
         """Geracao de objeto Source Tree
@@ -61,6 +62,8 @@ class SourceTree:
         result = self.__equals_tree(my_root, other_tree)
         return result
 
+
+
     def __equals_tree(self, node1, node2):
         """Verificar igualdade entre dois "nodes raiz"
 
@@ -74,19 +77,35 @@ class SourceTree:
         if type(node1) != type(node2):
             return False
         if isinstance(node1, ast.AST):
-            # Ignorando nomes de variaveis, considerando valores.
+
             if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
                 num_node1 = vars(node1).get("value")
                 num_node2 = vars(node2).get("value")
-                return self.__equals_tree(num_node1, num_node2)
+                targets1 = vars(node2).get('targets')
+                targets2 = vars(node1).get('targets')
+                name_targets1 = ""
+                name_targets2 = ""
+                for node in targets1:
+                    if isinstance(node, ast.Name):
+                        name_targets1 = vars(node).get('id')
+                        result = 'anyVariable' in name_targets1
+                        if result:
+                            return self.__equals_tree(num_node1, num_node2)
+                for node2 in targets2:
+                    if isinstance(node2, ast.Name):
+                        name_targets2 = vars(node2).get('id')
+                        if (name_targets1 == name_targets2):
+                            return self.__equals_tree(num_node1, num_node2)
+
+
 
             for tipe, var in vars(node1).items():
                 if tipe not in ('lineno', 'col_offset', 'ctx', 'parent',):
-                    if isinstance(node1, ast.Call) and tipe == 'args':
-                        list_node1 = vars(node1).get(tipe)
-                        list_node2 = vars(node2).get(tipe)
-                        if len(list_node1) == len(list_node2):
-                            return True
+                    # if isinstance(node1, ast.Call) and tipe == 'args':
+                    #     list_node1 = vars(node1).get(tipe)
+                    #     list_node2 = vars(node2).get(tipe)
+                    #     if len(list_node1) == len(list_node2):
+                    #         return True
                     var2 = vars(node2).get(tipe)
                     if not self.__equals_tree(var, var2):
                         return False
@@ -194,8 +213,8 @@ class SourceTree:
             occurrences_found_subtree = occurrences_nodes_subtree[indexI:indexI + len(root_pattern)]
             occurrences_found_source = occurrences_nodes[indexI:indexI + len(root_pattern)]
             if occurrences_found_subtree == root_pattern:
-
                 occurrences_final.append({'node_source': occurrences_found_source, 'node_pattern':root_pattern})
+
         return occurrences_final
 
     def amount_of_patterns_found(self, root_pattern):
@@ -238,17 +257,17 @@ class SourceTree:
                     all_ast_name.append(node_my_tree)
         return all_ast_name
 
+
+
     def get_all_occurrences(self, root_pattern):
         """Informar de forma detalhada os detalhes das ocorrencias da arvore.
 
         Arguments:
             root_pattern {AST} -- Node raiz da arvore que será processada.
         """
-        mytree = self.root;
+        mytree = self.root
         occurrences_no_handle = self.__walking_all_occurrences(mytree, root_pattern)
         occurrences = self.__handle_occurrences(occurrences_no_handle, root_pattern)
-
-
         return occurrences
 
     def get_positions_pattern(self, root_pattern):
@@ -268,4 +287,41 @@ class SourceTree:
                 positions.append({'lineno': lineno, 'col_offset': col_offset})
             all_position.append(positions)
         return all_position
+
+    def search_pattern(self, root_pattern):
+        occurrences = self.get_all_occurrences(root_pattern)
+        name_variable = self.get_all_name_variable()
+        root_pattern_variable = []
+        source_code_variable = []
+        for occ in occurrences:
+            node_source = occ['node_source']
+            for node_s in node_source:
+                print("1----")
+                for node in ast.walk(node_s):
+                    print("2----")
+                    if isinstance(node, ast.Name):
+                        source_code_variable.append(node)
+
+        for occ2 in occurrences:
+            node_pattern = occ2['node_pattern']
+            for node_p in node_pattern:
+                print("1----")
+                for node in ast.walk(node_p):
+                    print("2----")
+                    if isinstance(node, ast.Name):
+                        root_pattern_variable.append(node)
+
+
+
+
+
+
+        return occurrences
+
+
+
+
+
+
+
 
