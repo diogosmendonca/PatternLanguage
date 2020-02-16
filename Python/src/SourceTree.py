@@ -1,6 +1,7 @@
 import ast
 from src.gui.gui import *
 from src.utils.tree_utils import *
+from src.enum_wildcards import *
 
 
 class SourceTree:
@@ -63,6 +64,22 @@ class SourceTree:
         return result
 
 
+    def __wildcards_validate_any_name(self, node1, node2):
+        name_targets1 = vars(node2).get('id')
+        name_targets2 = vars(node1).get('id')
+
+        result = "any" in name_targets1
+        if result:
+            return True
+        if name_targets1 == name_targets2:
+            return True
+        return False
+
+    def __validate_wildcards(self, node1, node2):
+        if isinstance(node1, ast.Name) and isinstance(node2, ast.Name):
+            return self.__wildcards_validate_any_name(node1, node2)
+        return False
+
 
     def __equals_tree(self, node1, node2):
         """Verificar igualdade entre dois "nodes raiz"
@@ -77,35 +94,11 @@ class SourceTree:
         if type(node1) != type(node2):
             return False
         if isinstance(node1, ast.AST):
-
-            if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
-                num_node1 = vars(node1).get("value")
-                num_node2 = vars(node2).get("value")
-                targets1 = vars(node2).get('targets')
-                targets2 = vars(node1).get('targets')
-                name_targets1 = ""
-                name_targets2 = ""
-                for node in targets1:
-                    if isinstance(node, ast.Name):
-                        name_targets1 = vars(node).get('id')
-                        result = 'anyVariable' in name_targets1
-                        if result:
-                            return self.__equals_tree(num_node1, num_node2)
-                for node2 in targets2:
-                    if isinstance(node2, ast.Name):
-                        name_targets2 = vars(node2).get('id')
-                        if (name_targets1 == name_targets2):
-                            return self.__equals_tree(num_node1, num_node2)
-
-
+            if self.__validate_wildcards(node1, node2):
+                return self.__equals_tree(vars(node1).get("value"), vars(node2).get("value"))
 
             for tipe, var in vars(node1).items():
                 if tipe not in ('lineno', 'col_offset', 'ctx', 'parent',):
-                    # if isinstance(node1, ast.Call) and tipe == 'args':
-                    #     list_node1 = vars(node1).get(tipe)
-                    #     list_node2 = vars(node2).get(tipe)
-                    #     if len(list_node1) == len(list_node2):
-                    #         return True
                     var2 = vars(node2).get(tipe)
                     if not self.__equals_tree(var, var2):
                         return False
@@ -290,32 +283,6 @@ class SourceTree:
 
     def search_pattern(self, root_pattern):
         occurrences = self.get_all_occurrences(root_pattern)
-        name_variable = self.get_all_name_variable()
-        root_pattern_variable = []
-        source_code_variable = []
-        for occ in occurrences:
-            node_source = occ['node_source']
-            for node_s in node_source:
-                print("1----")
-                for node in ast.walk(node_s):
-                    print("2----")
-                    if isinstance(node, ast.Name):
-                        source_code_variable.append(node)
-
-        for occ2 in occurrences:
-            node_pattern = occ2['node_pattern']
-            for node_p in node_pattern:
-                print("1----")
-                for node in ast.walk(node_p):
-                    print("2----")
-                    if isinstance(node, ast.Name):
-                        root_pattern_variable.append(node)
-
-
-
-
-
-
         return occurrences
 
 
