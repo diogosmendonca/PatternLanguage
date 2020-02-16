@@ -109,4 +109,26 @@ string = "String"
 
     assert False == (tree.is_subtree(pattern)), ERR_MESSAGE
 
+def test_tc06_wildcards_any_variable_uma_variavel():
+    str_source = """
+print("String")
+def ola_mundo():
+    a = 10
+string = "String"
+    """
+
+    str_pattern = """
+anyVariable = 10
+    """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte deveria conter o padrão"
+
+    positions = tree.get_positions_pattern(pattern)
+
+    assert [[{'lineno': 4, 'col_offset': 4}]] == positions
+    assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
 
