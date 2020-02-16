@@ -2,10 +2,12 @@ import ast
 from src.SourceTree import SourceTree
 
 str_source_pattern = """
-
+anyVariable = 10
+outraVariavel = "someValue"
 """
 str_source_code = """ 
-
+variavel = 10
+outraVariavel = 10
 """
 
 source_code = ast.parse(str_source_code)

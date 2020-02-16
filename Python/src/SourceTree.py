@@ -1,7 +1,6 @@
 import ast
 from src.gui.gui import *
 from src.utils.tree_utils import *
-from src.enum_wildcards import *
 
 
 class SourceTree:
@@ -63,11 +62,44 @@ class SourceTree:
         result = self.__equals_tree(my_root, other_tree)
         return result
 
+    def __wildcards_validate_some_value(self, node1, node2):
+        print(node1, node2)
+
+    def __type_targets(self, targets1, targets2):
+        if type(targets1) != type(targets2):
+            return False
+        if len(targets1) == len(targets2):
+            for t1, t2 in zip(targets1, targets2):
+                if type(t1) != type(t2):
+                    return False
+        return True
+
+    def __value_str(self, node):
+        if isinstance(node, ast.Str):
+            return vars(node).get("s")
+        return ""
+
+    def __wildcards_validate_assign(self, node1, node2):
+        node1_targets = vars(node1).get('targets')
+        node2_targets = vars(node2).get('targets')
+
+        node1_value = vars(node1).get('value')
+        node2_value = vars(node2).get('value')
+
+        if not self.__type_targets(node1_targets, node2_targets):
+            return False
+        if isinstance(node1_value, ast.Num) and isinstance(node2_value, ast.Str):
+            print(node1, node2)
+            if  "someValue" in self.__value_str(node2_value) :
+                return True
+        return False
+
+
+
 
     def __wildcards_validate_any_name(self, node1, node2):
         name_targets1 = vars(node2).get('id')
         name_targets2 = vars(node1).get('id')
-
         result = "any" in name_targets1
         if result:
             return True
@@ -94,6 +126,11 @@ class SourceTree:
         if type(node1) != type(node2):
             return False
         if isinstance(node1, ast.AST):
+
+            if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
+                if self.__wildcards_validate_assign(node1, node2):
+                    return True
+
             if self.__validate_wildcards(node1, node2):
                 return self.__equals_tree(vars(node1).get("value"), vars(node2).get("value"))
 
