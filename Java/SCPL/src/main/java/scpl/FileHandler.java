@@ -45,6 +45,6 @@ public class FileHandler {
 		log.info("Total de arquivos: " +files.size());
 		log.info("Fim da Busca de arquivos.");
 		return files.isEmpty() ? null : files.toArray(new File[0]);
-	}
+	} 
 
 }

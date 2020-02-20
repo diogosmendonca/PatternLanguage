@@ -30,5 +30,5 @@ public class CompilationUnitStruct {
 	public void setPos(SourcePositions pos) {
 		this.pos = pos;
 	}
-	
+	 
 }
