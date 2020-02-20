@@ -549,7 +549,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	 * @param nodes Lista de nós da árvore
 	 * @return CompilationUnitTree(raíz)  correspondente a árvore passada
 	 */
-	public static Node getCompilationUnitTree(Map<Tree, List<Node>> nodes) {
+	public static Node getCompilationUnitTree(Map<Node, List<Node>> nodes) {
 		
 		return nodes.get(null).iterator().next();
 	}
@@ -563,21 +563,21 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	 * @return O nó raíz do padrão
 	 */
 	
-	public static Node removeStub(Map<Tree, List<Node>> nodes) {
+	public static Node removeStub(Map<Node, List<Node>> nodes) {
 		
-		Node retorno = nodes.get(getCompilationUnitTree(nodes).getNode()).get(0);
+		Node retorno = nodes.get(getCompilationUnitTree(nodes)).get(0);
 		
 		if(retorno.getNode().getKind() != Tree.Kind.CLASS) {
 			return retorno;
 		}
 		
-		retorno = nodes.get(retorno.getNode()).get(nodes.get(retorno.getNode()).size()-1);
+		retorno = nodes.get(retorno).get(nodes.get(retorno).size()-1);
 		
 		if(retorno.getNode().getKind() != Tree.Kind.METHOD) {
 			return retorno;
 		}
 		
-		retorno = nodes.get(retorno.getNode()).get(nodes.get(retorno.getNode()).size()-1);
+		retorno = nodes.get(retorno).get(nodes.get(retorno).size()-1);
 		
 		if(retorno.getNode().getKind() == Tree.Kind.BLOCK) {
 			
@@ -635,9 +635,9 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 
 	}
 	
-	public static Map<Tree, List<Node>> buildTree(Tree tree){
-		Map<Tree, List<Node>> nodes = new LinkedHashMap<>();
-		NodeVisitor.build(tree,nodes);
+	public static Map<Node, List<Node>> buildTree(Tree tree){
+		Map<Node, List<Node>> nodes = new LinkedHashMap<>();
+		VisitorNode.build(tree,nodes);
 		//System.out.println(NodeVisitor.build(tree,nodes));
 		
 		return nodes;

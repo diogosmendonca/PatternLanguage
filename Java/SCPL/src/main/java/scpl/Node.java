@@ -21,16 +21,18 @@ public class Node {
 	private Long startPosition;
 	private Long endPosition;
 	private Boolean fullVisited;
+	private Boolean exists;
 	
 	public Node() {
 		this.children = new ArrayList<Node>();
 	}
 	
-	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
+	public Node(Tree node, CompilationUnitTree compilatioUnitTree, boolean exists) {
 		this.node = node;
 		this.children = new ArrayList<Node>();
 		this.compilatioUnitTree = compilatioUnitTree;
 		this.fullVisited = false;
+		this.exists = exists;
 	}
 	
 	
@@ -112,11 +114,25 @@ public class Node {
 	}
 
 	public Boolean hasBrother(Kind kind) {
-		for(Node brother: ((Node)this.getParent()).getChildren()) {
+		
+		if(this.parent == null) {
+			return false;
+		}
+		
+		for(Node brother: this.parent.getChildren()) {
 			if(brother.getNode().getKind() == kind) {
 				return true;
 			}
 		}
 		return false;
 	}
+
+	public Boolean getExists() {
+		return exists;
+	}
+
+	public void setExists(Boolean exists) {
+		this.exists = exists;
+	}
+	
 }

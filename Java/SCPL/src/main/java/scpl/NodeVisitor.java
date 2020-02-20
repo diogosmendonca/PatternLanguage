@@ -56,10 +56,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Tree, List<Node>>> {
 				List<Node> l = new ArrayList<>();
 				
 				//Criando nó raiz com sua Tree equivalente e add no mapeamento.
-				l.add(new Node(tree,compilatioUnitTree));
+				l.add(new Node(tree,compilatioUnitTree,true));
 				nodes.put(parent, l);
 			}else {
-				nodes.get(parent).add(new Node(tree,compilatioUnitTree));
+				nodes.get(parent).add(new Node(tree,compilatioUnitTree,true));
 			}
 	        
      	  }
