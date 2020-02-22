@@ -312,9 +312,10 @@ class SourceTree:
             positions = []
             for node_occur in occurr:
                 dict_node = vars(node_occur)
-                lineno = dict_node.get('lineno')
-                col_offset = dict_node.get('col_offset')
-                positions.append({'lineno': lineno, 'col_offset': col_offset})
+                node_position = []
+                for node_child in ast.iter_child_nodes(node_occur):
+                    node_position.append(self.get_position_node(node_child))
+                positions.append(node_position)
             all_position.append(positions)
         return all_position
 
@@ -322,8 +323,12 @@ class SourceTree:
         occurrences = self.get_all_occurrences(root_pattern)
         return occurrences
 
-
-
+    def get_position_node(self, node):
+        dict_node = vars(node)
+        tipe = type(node)
+        col = dict_node.get("col_offset")
+        line = dict_node.get("lineno")
+        return {"type": tipe,"col_offset": col, "lineno": line}
 
 
 
