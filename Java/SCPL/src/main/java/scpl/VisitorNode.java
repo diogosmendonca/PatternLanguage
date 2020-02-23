@@ -64,7 +64,7 @@ public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	        Node node;
 	        
 	        if(nodesMap.get(tree) == null) {
-	        	node = new Node(tree,compilatioUnitTree, true);
+	        	node = new Node(tree,compilatioUnitTree);
 	        	nodesMap.put(tree,node);
 	        }else {
 	        	node = nodesMap.get(tree);
@@ -147,9 +147,16 @@ public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
 							parentAux.getChildren().add(node);
 							node.setParent(parentAux);
 							
+							while(parentAux != null) {
+								parentAux.setUsingExistsOperator(true);
+								parentAux = parentAux.getParent();
+							}
+							
 							node.setExists(exists);
+							
 							for(Node child : node.getChildren()) {
 								child.setExists(exists);
+								child.setUsingExistsOperator(true);
 							}
 								
 					  }

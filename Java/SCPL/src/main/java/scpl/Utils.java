@@ -22,6 +22,7 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.LabeledStatementTree;
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MemberSelectTree;
@@ -191,13 +192,15 @@ public class Utils {
 		
 		//Se os nós são iguais, a sub-árvore é toda a ávore
 		if(isEquals(a, b, new LinkedHashMap<>())) {
-			if(isFakeNode(b)) {
-				ocorrences.addAll(a.getChildren());
-			}else {
-				ocorrences.add(a);
+			if(!b.getUsingExistsOperator()) {
+				if(isFakeNode(b)) {
+					ocorrences.addAll(a.getChildren());
+				}else {
+					ocorrences.add(a);
+				}
+				a.setFullVisited(true);
+				return ocorrences;
 			}
-			a.setFullVisited(true);
-			return ocorrences;
 		}
 		
 		List<Node> childrenNodesAux = new ArrayList<Node>();
@@ -228,9 +231,23 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 		return ocorrences;
 	}
 	
+	int notChilds = 0;
+	
 	//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
 	if(a.getChildren().size()<b.getChildren().size()) {
-		return ocorrences;
+		int diff = a.getChildren().size()-b.getChildren().size();
+		
+		for(Node child : b.getChildren()) {
+			if(!child.getExists()) {
+				notChilds++;
+			}
+		}
+		
+		diff = diff + notChilds;
+		
+		if(diff<0) {
+			return ocorrences;
+		}
 	}
 	
 	//Lista auxiliar que guarda as ocorrências da busca atual
@@ -241,6 +258,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	boolean searching = false;
 	int counter = 0;
 	int i = 0;
+	int lastOcorrenceIndex = 0;
 	
 	Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 	wildcardsMapBefore.putAll(wildcardsMap);
@@ -248,7 +266,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	for(i =0;i<b.getChildren().size();i++) { 
 		
 		//Se o que falta > o que resta ou ainda está buscando (ou seja, não achou o filho anterior do padrão no código-fonte)
-		if(b.getChildren().size()-i > a.getChildren().size()-counter || searching) {
+		if(b.getChildren().size()-i-notChilds > a.getChildren().size()-counter || searching) {
 			return ocorrences;
 		}
 		
@@ -261,24 +279,42 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 				//Se é igual é adicionado a lista de ocorrencias auxiliar
 				subtreeAux = searchAux(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
 				if(subtreeAux.size() > 0) {
-					currentOcorrences.addAll(subtreeAux);
-					searching=false;
+					if(b.getChildren().get(i).getExists()) {
+						currentOcorrences.addAll(subtreeAux);
+						searching=false;
+						lastOcorrenceIndex = counter;
+					}else {
+						//FIXME
+						return ocorrences;
+					}
 				}
 			}
 			counter++;
 		}
 		
+		if(searching && !(i == b.getChildren().size() - 1)) {
+			if(!b.getChildren().get(i).getExists()) {
+				counter = lastOcorrenceIndex++;
+				searching = false;
+			}
+		}
+		
 		if(i == b.getChildren().size() - 1) {
-			if(searching){ 
-				//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
-				if(!wildcardsMap.equals(wildcardsMapBefore)) {
-					counter = 0;
-					i =-1;
-					searching=false;
-					currentOcorrences.clear();
-					wildcardsMap.clear();
-					wildcardsMap.putAll(wildcardsMapBefore);
+			if(searching){
+				if(!b.getChildren().get(i).getExists()) {
+					ocorrences.addAll(currentOcorrences);
+				}else {
+					//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
+					if(!wildcardsMap.equals(wildcardsMapBefore)) {
+						counter = 0;
+						i =-1;
+						searching=false;
+						currentOcorrences.clear();
+						wildcardsMap.clear();
+						wildcardsMap.putAll(wildcardsMapBefore);
+					}
 				}
+				
 			}else{
 				ocorrences.addAll(currentOcorrences);
 			}
@@ -592,6 +628,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 				default:
 					Node fakeNode = new Node();
 					fakeNode.getChildren().addAll(retorno.getChildren());
+					fakeNode.setUsingExistsOperator(retorno.getUsingExistsOperator());
 					
 					return fakeNode;
 			}
@@ -709,6 +746,17 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 		System.out.println(retorno.size());
 		
 		return retorno;
+	}
+	
+	public static boolean usingNotOperator(Node node) {
+		
+		if(node.getNode().getKind() == Kind.LABELED_STATEMENT) {
+			if(((LabeledStatementTree) node.getNode()).getLabel().toString().equalsIgnoreCase("not")) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 }

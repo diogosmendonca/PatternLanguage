@@ -22,17 +22,19 @@ public class Node {
 	private Long endPosition;
 	private Boolean fullVisited;
 	private Boolean exists;
+	private Boolean usingExistsOperator;
 	
 	public Node() {
 		this.children = new ArrayList<Node>();
 	}
 	
-	public Node(Tree node, CompilationUnitTree compilatioUnitTree, boolean exists) {
+	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
 		this.node = node;
 		this.children = new ArrayList<Node>();
 		this.compilatioUnitTree = compilatioUnitTree;
 		this.fullVisited = false;
-		this.exists = exists;
+		this.exists = true;
+		this.usingExistsOperator = false;
 	}
 	
 	
@@ -134,5 +136,14 @@ public class Node {
 	public void setExists(Boolean exists) {
 		this.exists = exists;
 	}
+
+	public Boolean getUsingExistsOperator() {
+		return usingExistsOperator;
+	}
+
+	public void setUsingExistsOperator(Boolean usingExistsOperator) {
+		this.usingExistsOperator = usingExistsOperator;
+	}
+	
 	
 }
