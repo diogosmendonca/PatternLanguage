@@ -132,6 +132,11 @@ public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
 					  listToRemove.add(key);
 					  listToRemove.add(key.getParent());
 					  
+					  int nodesIndexAux = 0;
+					  int parenIndexAux = 0;
+					  
+					  boolean booleanIndexAux = true; 
+					  
 					  for(Node node :  nodes.get(key)) {
 						  	Node parentAux;
 						  	
@@ -141,10 +146,22 @@ public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
 						  		parentAux = node.getParent().getParent().getParent();
 						  	}
 						  	
-						  	nodes.get(parentAux).remove(key.getParent());
-						  	parentAux.getChildren().remove(key.getParent());
-						  	nodes.get(parentAux).add(node);
-							parentAux.getChildren().add(node);
+						  	if(booleanIndexAux) {
+						  		nodesIndexAux = nodes.get(parentAux).indexOf(key.getParent());
+						  		nodes.get(parentAux).remove(key.getParent());
+						  	}
+						  	nodes.get(parentAux).add(nodesIndexAux,node);
+						  	nodesIndexAux++;
+						  	
+						  	if(booleanIndexAux) {
+						  		parenIndexAux = parentAux.getChildren().indexOf(key.getParent());
+						  		parentAux.getChildren().remove(key.getParent());
+						  	}
+							parentAux.getChildren().add(parenIndexAux,node);
+							parenIndexAux++;
+							
+							booleanIndexAux = false;
+							
 							node.setParent(parentAux);
 							
 							while(parentAux != null) {

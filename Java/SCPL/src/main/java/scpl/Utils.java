@@ -259,6 +259,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	int counter = 0;
 	int i = 0;
 	int lastOcorrenceIndex = 0;
+	int maxIndexA = a.getChildren().size();
 	
 	Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 	wildcardsMapBefore.putAll(wildcardsMap);
@@ -273,7 +274,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 		searching=true;
 		
 		//Enquanto está buscando e contador é menor que número de filhos de do código fonte
-		while(searching && counter<a.getChildren().size() ) {
+		while(searching && counter<maxIndexA ) {
 			//Se o índice atual não está na lista de índices das ocorrências
 			if(!a.getChildren().get(counter).getFullVisited()) {
 				//Se é igual é adicionado a lista de ocorrencias auxiliar
@@ -283,9 +284,15 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 						currentOcorrences.addAll(subtreeAux);
 						searching=false;
 						lastOcorrenceIndex = counter;
+						maxIndexA = a.getChildren().size();
 					}else {
 						//FIXME
-						return ocorrences;
+						if(i == b.getChildren().size() - 1) {
+							return ocorrences;
+						}
+						searching=false;
+						maxIndexA = counter;
+						counter = lastOcorrenceIndex;
 					}
 				}
 			}
