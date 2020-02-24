@@ -1,9 +1,9 @@
 import ast
 from src.gui.gui import *
 from src.utils.tree_utils import *
+from src.utils.data_utils import *
 
-
-class SourceTree:
+class SourceTree():
     """ Classe utilizada para a representação do código fonte """
     root = None
     __occurrences = []
@@ -218,6 +218,7 @@ class SourceTree:
                     return True
         return False
 
+
     def __walking_all_occurrences(self, root_mytree, root_pattern):
         """Percorrer todas as ocorrencias de um padrao(root_pattern) em uma arvore(root_mytree), 
         encontrando todos os nodes possiveis. OBS: informando ate os padroes parciais, isto é
@@ -230,15 +231,24 @@ class SourceTree:
             Array -- Todas as ocorrencias encontradas do padrao
         """
         occurrences = []
+        childPattern = list(ast.iter_child_nodes(root_pattern))
         for node_my_tree in ast.walk(root_mytree):
 
-            for node_pattern in ast.iter_child_nodes(root_pattern):
+            for node_pattern in (childPattern):
                 result = self.__equals_tree(node_my_tree, node_pattern)
-                if (result):
+                if result :
                     lis_aux = []
                     lis_aux.append(node_my_tree)
                     lis_aux.append(node_pattern)
                     occurrences.append(lis_aux)
+                    childPattern.remove(node_pattern)
+
+            if len(childPattern) == 0:
+                childPattern.extend(ast.iter_child_nodes(root_pattern))
+
+
+
+        print(occurrences)
         return occurrences
 
     def __len_occurrences(self, error, root_pattern):
@@ -275,8 +285,9 @@ class SourceTree:
         for indexJ in range(len(occurrences)):
             occurrences_nodes.append(occurrences[indexJ][0])
             occurrences_nodes_subtree.append(occurrences[indexJ][1])
-
         occurrences_final = []
+
+
         for indexI in range(len(occurrences_nodes_subtree)):
             occurrences_found_subtree = occurrences_nodes_subtree[indexI:indexI + len(root_pattern)]
             occurrences_found_source = occurrences_nodes[indexI:indexI + len(root_pattern)]
