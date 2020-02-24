@@ -1,7 +1,6 @@
 import ast
 from src.gui.gui import *
 from src.utils.tree_utils import *
-from src.utils.data_utils import *
 
 
 class SourceTree():
