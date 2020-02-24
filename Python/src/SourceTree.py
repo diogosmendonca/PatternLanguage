@@ -7,7 +7,12 @@ class SourceTree:
     """ Classe utilizada para a representação do código fonte """
     root = None
     __occurrences = []
-    __variable_dict_wildcards= {}
+    __variable_dict_wildcards = {}
+    WILDCARD_ANY_LITERAL_VALUE = "anyLiteralValue"
+    WILDCARD_ANY_FUNCTION = "anyFunction"
+    WILDCARD_ANY_NUMBER = "anyNumber"
+    WILDCARD_ANY_ITEM = "any"
+    WILDCARD_ANY_NAME = "any"
 
     def __init__(self, root_tree):
         """Geracao de objeto Source Tree
@@ -59,20 +64,14 @@ class SourceTree:
             [Boolean] -- Respostas se arvores sao iguais
         """
         my_root = self.root
-        result = self.__equals_tree(my_root, other_tree)
+        result = self.__equals_tree_internal(my_root, other_tree)
         return result
 
     def __wildcards_validate_some_value(self, node1, node2):
-        print(node1, node2)
+        print("SOME VALUE VALIDATE", node1, node2)
 
     def __type_targets(self, targets1, targets2):
-        if type(targets1) != type(targets2):
-            return False
-        if len(targets1) == len(targets2):
-            for t1, t2 in zip(targets1, targets2):
-                if type(t1) != type(t2):
-                    return False
-        return True
+        return self.__equals_tree_internal(targets1, targets2)
 
     def __value_str(self, node):
         if isinstance(node, ast.Str):
@@ -88,32 +87,68 @@ class SourceTree:
 
         if not self.__type_targets(node1_targets, node2_targets):
             return False
-        if isinstance(node1_value, ast.Num) and isinstance(node2_value, ast.Str):
-            print(node1, node2)
-            if  "someValue" in self.__value_str(node2_value) :
+        # print(node1_value, node2_value)
+        if isinstance(node1_value, ast.Call) and isinstance(node2_value, ast.Call):
+            args1 = vars(node1_value).get('args')
+            args2 = vars(node2_value).get('args')
+            if len(args1) != len(args2):
+                return False
+            result = []
+            for t1, t2 in zip(args1, args2):
+                if not self.__equals_tree_internal(t1, t2):
+                    return False
+            return True
+
+        if isinstance(node1_value, ast.AST) and isinstance(node2_value, ast.Str):
+            if self.WILDCARD_ANY_ITEM == self.__value_str(node2_value):
                 return True
+
+        if isinstance(node1_value, ast.Num) and isinstance(node2_value, ast.Str):
+            if self.WILDCARD_ANY_NUMBER in self.__value_str(node2_value):
+                return True
+
+        if isinstance(node1_value, ast.Str) and isinstance(node2_value, ast.Str):
+            if self.WILDCARD_ANY_LITERAL_VALUE in self.__value_str(node2_value):
+                return True
+
         return False
-
-
-
 
     def __wildcards_validate_any_name(self, node1, node2):
         name_targets1 = vars(node2).get('id')
         name_targets2 = vars(node1).get('id')
-        result = "any" in name_targets1
+        result = self.WILDCARD_ANY_NAME in name_targets1
         if result:
             return True
         if name_targets1 == name_targets2:
             return True
         return False
 
-    def __validate_wildcards(self, node1, node2):
-        if isinstance(node1, ast.Name) and isinstance(node2, ast.Name):
-            return self.__wildcards_validate_any_name(node1, node2)
+    def __validate_wildcards(self, source_node, pattern_node):
+        #validate name
+        if isinstance(source_node, ast.Name) and isinstance(pattern_node, ast.Name):
+            return self.__wildcards_validate_any_name(source_node, pattern_node)
+
+        #validate assign
+        if isinstance(source_node, ast.Assign) and isinstance(pattern_node, ast.Assign):
+            return self.__wildcards_validate_assign(source_node, pattern_node)
+
+
         return False
 
+    def __wildcards_validate_str(self, source_node, pattern_node):
+        if isinstance(pattern_node, ast.Str) and isinstance(source_node, ast.AST):
+            if self.WILDCARD_ANY_ITEM == self.__value_str(pattern_node):
+                return True
 
-    def __equals_tree(self, node1, node2):
+        if isinstance(pattern_node, ast.Str) and isinstance(source_node, ast.Str):
+            if self.WILDCARD_ANY_LITERAL_VALUE in self.__value_str(pattern_node):
+                return True
+
+        if isinstance(pattern_node, ast.Str) and isinstance(source_node, ast.Num):
+            if self.WILDCARD_ANY_NUMBER in self.__value_str(pattern_node):
+                return True
+
+    def __equals_tree_internal(self, node1, node2):
         """Verificar igualdade entre dois "nodes raiz"
 
         Arguments:
@@ -123,17 +158,20 @@ class SourceTree:
         Returns:
             Boolean -- Respostas se arvores sao iguais
         """
+        if isinstance(node1, ast.AST) and isinstance(node2, ast.Str):
+            if self.__wildcards_validate_str(node1, node2):
+                return True
+
+        return self.__equals_tree(node1, node2)
+
+
+
+    def __equals_tree(self, node1, node2):
         if type(node1) != type(node2):
             return False
         if isinstance(node1, ast.AST):
-
-            if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
-                if self.__wildcards_validate_assign(node1, node2):
-                    return True
-
             if self.__validate_wildcards(node1, node2):
-                return self.__equals_tree(vars(node1).get("value"), vars(node2).get("value"))
-
+                return True
             for tipe, var in vars(node1).items():
                 if tipe not in ('lineno', 'col_offset', 'ctx', 'parent',):
                     var2 = vars(node2).get(tipe)
@@ -149,6 +187,7 @@ class SourceTree:
             return True
         else:
             return node1 == node2
+
 
     def is_subtree(self, root_pattern):
         """Verificar se objeto possui o padrao passado como parametro como subarvore
@@ -175,6 +214,7 @@ class SourceTree:
         """
         for node_my_tree in ast.walk(mytree):
             for node_pattern in ast.walk(root_pattern):
+                # print(node_my_tree, node_pattern)
                 result = self.__equals_tree(node_my_tree, node_pattern)
                 if (result):
                     return True
@@ -193,7 +233,9 @@ class SourceTree:
         """
         occurrences = []
         for node_my_tree in ast.walk(root_mytree):
+
             for node_pattern in ast.iter_child_nodes(root_pattern):
+                print(node_my_tree, node_pattern)
                 result = self.__equals_tree(node_my_tree, node_pattern)
                 if (result):
                     lis_aux = []
@@ -211,7 +253,7 @@ class SourceTree:
             error_node.append(error[indexJ][0])
             error_node_subtree.append(error[indexJ][1])
 
-        cont = 0;
+        cont = 0
         if len(root_pattern) == 1:
             return len(error)
         else:
@@ -220,7 +262,6 @@ class SourceTree:
                 if val == root_pattern:
                     cont += 1
         return cont
-
 
     def __handle_occurrences(self, occurrences, root_pattern):
         """Filtrar ocorrencias não tratadas retornando os nodes
@@ -243,7 +284,7 @@ class SourceTree:
             occurrences_found_subtree = occurrences_nodes_subtree[indexI:indexI + len(root_pattern)]
             occurrences_found_source = occurrences_nodes[indexI:indexI + len(root_pattern)]
             if occurrences_found_subtree == root_pattern:
-                occurrences_final.append({'node_source': occurrences_found_source, 'node_pattern':root_pattern})
+                occurrences_final.append({'node_source': occurrences_found_source, 'node_pattern': root_pattern})
 
         return occurrences_final
 
@@ -287,8 +328,6 @@ class SourceTree:
                     all_ast_name.append(node_my_tree)
         return all_ast_name
 
-
-
     def get_all_occurrences(self, root_pattern):
         """Informar de forma detalhada os detalhes das ocorrencias da arvore.
 
@@ -328,9 +367,4 @@ class SourceTree:
         tipe = type(node)
         col = dict_node.get("col_offset")
         line = dict_node.get("lineno")
-        return {"type": tipe,"col_offset": col, "lineno": line}
-
-
-
-
-
+        return {"type": tipe, "col_offset": col, "lineno": line}
