@@ -3,6 +3,7 @@ from src.gui.gui import *
 from src.utils.tree_utils import *
 from src.utils.data_utils import *
 
+
 class SourceTree():
     """ Classe utilizada para a representação do código fonte """
     root = None
@@ -123,14 +124,13 @@ class SourceTree():
         return False
 
     def __validate_wildcards(self, source_node, pattern_node):
-        #validate name
+        # validate name
         if isinstance(source_node, ast.Name) and isinstance(pattern_node, ast.Name):
             return self.__wildcards_validate_any_name(source_node, pattern_node)
 
-        #validate assign
+        # validate assign
         if isinstance(source_node, ast.Assign) and isinstance(pattern_node, ast.Assign):
             return self.__wildcards_validate_assign(source_node, pattern_node)
-
 
         return False
 
@@ -163,8 +163,6 @@ class SourceTree():
 
         return self.__equals_tree(node1, node2)
 
-
-
     def __equals_tree(self, node1, node2):
         if type(node1) != type(node2):
             return False
@@ -186,7 +184,6 @@ class SourceTree():
             return True
         else:
             return node1 == node2
-
 
     def is_subtree(self, root_pattern):
         """Verificar se objeto possui o padrao passado como parametro como subarvore
@@ -218,7 +215,6 @@ class SourceTree():
                     return True
         return False
 
-
     def __walking_all_occurrences(self, root_mytree, root_pattern):
         """Percorrer todas as ocorrencias de um padrao(root_pattern) em uma arvore(root_mytree), 
         encontrando todos os nodes possiveis. OBS: informando ate os padroes parciais, isto é
@@ -232,23 +228,18 @@ class SourceTree():
         """
         occurrences = []
         childPattern = list(ast.iter_child_nodes(root_pattern))
-        for node_my_tree in ast.walk(root_mytree):
 
-            for node_pattern in (childPattern):
+
+        for node_my_tree in ast.walk(root_mytree):
+            for node_pattern in childPattern:
                 result = self.__equals_tree(node_my_tree, node_pattern)
-                if result :
-                    lis_aux = []
-                    lis_aux.append(node_my_tree)
-                    lis_aux.append(node_pattern)
+                if result:
+                    lis_aux = [node_my_tree, node_pattern]
                     occurrences.append(lis_aux)
                     childPattern.remove(node_pattern)
-
             if len(childPattern) == 0:
                 childPattern.extend(ast.iter_child_nodes(root_pattern))
 
-
-
-        print(occurrences)
         return occurrences
 
     def __len_occurrences(self, error, root_pattern):
@@ -286,7 +277,6 @@ class SourceTree():
             occurrences_nodes.append(occurrences[indexJ][0])
             occurrences_nodes_subtree.append(occurrences[indexJ][1])
         occurrences_final = []
-
 
         for indexI in range(len(occurrences_nodes_subtree)):
             occurrences_found_subtree = occurrences_nodes_subtree[indexI:indexI + len(root_pattern)]
