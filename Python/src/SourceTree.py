@@ -87,7 +87,6 @@ class SourceTree:
 
         if not self.__type_targets(node1_targets, node2_targets):
             return False
-        # print(node1_value, node2_value)
         if isinstance(node1_value, ast.Call) and isinstance(node2_value, ast.Call):
             args1 = vars(node1_value).get('args')
             args2 = vars(node2_value).get('args')
@@ -214,7 +213,6 @@ class SourceTree:
         """
         for node_my_tree in ast.walk(mytree):
             for node_pattern in ast.walk(root_pattern):
-                # print(node_my_tree, node_pattern)
                 result = self.__equals_tree(node_my_tree, node_pattern)
                 if (result):
                     return True
@@ -235,7 +233,6 @@ class SourceTree:
         for node_my_tree in ast.walk(root_mytree):
 
             for node_pattern in ast.iter_child_nodes(root_pattern):
-                print(node_my_tree, node_pattern)
                 result = self.__equals_tree(node_my_tree, node_pattern)
                 if (result):
                     lis_aux = []
