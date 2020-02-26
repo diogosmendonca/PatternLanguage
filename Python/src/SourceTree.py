@@ -351,7 +351,7 @@ class SourceTree():
             all_position.append(padrao_position)
         return all_position
 
-    def simple_position_pattern(self, root_pattern):
+    def get_simple_position_pattern(self, root_pattern):
         occurrences = self.__get_array_all_occurrences(root_pattern)
         all_position = []
         for index_i, ocorrencia in enumerate(occurrences):
