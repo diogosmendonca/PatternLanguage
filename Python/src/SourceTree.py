@@ -6,6 +6,7 @@ from src.utils.tree_utils import *
 class SourceTree():
     """ Classe utilizada para a representação do código fonte """
     root = None
+    names = {}
     __occurrences = []
     __variable_dict_wildcards = {}
     WILDCARD_ANY_LITERAL_VALUE = "anyLiteralValue"
@@ -30,7 +31,9 @@ class SourceTree():
             root {AST} -- Codigo fonte pertecente ao objeto Source Tree.
         """
         new_root = self.__add_parent(root)
+        names = self.get_all_name_variable()
         self.root = new_root
+        self.names = names
 
     def __add_parent(self, tree):
         """Adicionar pai em cada NODE da arvore.
@@ -317,11 +320,14 @@ class SourceTree():
             Array -- Nome de todas as variaveis na arvore.
         """
         mytree = self.root
-        all_ast_name = []
+        all_ast_name = {}
         for node_my_tree in ast.walk(mytree):
             if isinstance(node_my_tree, ast.Name):
-                if parent_is(node_my_tree, ast.Assign):
-                    all_ast_name.append(node_my_tree)
+                id = vars(node_my_tree)['id']
+                if id in all_ast_name:
+                    all_ast_name[id].add(node_my_tree)
+                else:
+                    all_ast_name[id] = {node_my_tree}
         return all_ast_name
 
     def get_all_occurrences(self, root_pattern):
