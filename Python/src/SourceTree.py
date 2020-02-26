@@ -228,7 +228,6 @@ class SourceTree():
         occurrences = []
         childPattern = list(ast.iter_child_nodes(root_pattern))
 
-
         for node_my_tree in ast.walk(root_mytree):
             for node_pattern in childPattern:
                 result = self.__equals_tree(node_my_tree, node_pattern)
@@ -345,42 +344,21 @@ class SourceTree():
         occurrences = self.__get_array_all_occurrences(root_pattern)
         all_position = []
 
-        for index_i, occurr in enumerate(occurrences):
-            positions = []
-            initial_position = {"lineno": 0, "col_offset": 0}
-            end_position = {"lineno": 0, "col_offset": 0}
+        for index_i, ocorrencia in enumerate(occurrences):
+            padrao_position = []
+            for parte_ocorrencia in ocorrencia:
+                padrao_position.append(self.get_position_node(parte_ocorrencia))
+            all_position.append(padrao_position)
+        return all_position
 
-            for index_j, node_occur in enumerate(occurr):
-                if index_j == 0:
-                    initial_position['lineno'] = vars(node_occur)['lineno']
-                    initial_position['col_offset'] = vars(node_occur)['col_offset']
-                    end_position['lineno'] = vars(node_occur)['lineno']
-                    end_position['col_offset'] = vars(node_occur)['col_offset']
-
-                node_position = []
-
-                for index_k, node_child in enumerate(ast.iter_child_nodes(node_occur)):
-                    if initial_position['lineno'] > vars(node_child)['lineno']:
-                        initial_position['lineno'] = vars(node_child)['lineno']
-                        initial_position['lineno'] = vars(node_child)['lineno']
-
-                    if initial_position['lineno'] == vars(node_child)['lineno']:
-                        if initial_position['col_offset'] > vars(node_child)['col_offset']:
-                            initial_position['lineno'] = vars(node_child)['lineno']
-                            initial_position['col_offset'] = vars(node_child)['col_offset']
-
-                    if end_position['lineno'] < vars(node_child)['lineno']:
-                        end_position['lineno'] = vars(node_child)['lineno']
-                        end_position['lineno'] = vars(node_child)['lineno']
-
-                    if end_position['lineno'] == vars(node_child)['lineno']:
-                        if end_position['col_offset'] < vars(node_child)['col_offset']:
-                            end_position['lineno'] = vars(node_child)['lineno']
-                            end_position['col_offset'] = vars(node_child)['col_offset']
-
-                    node_position.append(self.get_position_node(node_child))
-            print({'initial_position': initial_position, 'end_position': end_position})
-            all_position.append({'initial_position': initial_position, 'end_position': end_position})
+    def simple_position_pattern(self, root_pattern):
+        occurrences = self.__get_array_all_occurrences(root_pattern)
+        all_position = []
+        for index_i, ocorrencia in enumerate(occurrences):
+            padrao_position = []
+            for parte_ocorrencia in ocorrencia:
+                padrao_position.append(self.get_simple_position_node(parte_ocorrencia))
+            all_position.append(padrao_position)
         return all_position
 
     def search_pattern(self, root_pattern):
@@ -388,8 +366,67 @@ class SourceTree():
         return occurrences
 
     def get_position_node(self, node):
-        dict_node = vars(node)
-        tipe = type(node)
-        col = dict_node.get("col_offset")
-        line = dict_node.get("lineno")
-        return {"type": tipe, "col_offset": col, "lineno": line}
+
+        initial_position = {"lineno": 0, "col_offset": 0, "type": None, 'value': None}
+        end_position = {"lineno": 0, "col_offset": 0, "type": None, 'value': None}
+
+        for index_k, node_child in enumerate(ast.iter_child_nodes(node)):
+            if index_k == 0:
+                initial_position['lineno'] = vars(node_child)['lineno']
+                initial_position['col_offset'] = vars(node_child)['col_offset']
+                initial_position['type'] = type(node_child)
+                initial_position['value'] = node_child
+
+                end_position['lineno'] = vars(node_child)['lineno']
+                end_position['col_offset'] = vars(node_child)['col_offset']
+                end_position['type'] = type(node_child)
+                end_position['value'] = node_child
+
+            if initial_position['lineno'] > vars(node_child)['lineno']:
+                initial_position['lineno'] = vars(node_child)['lineno']
+                initial_position['lineno'] = vars(node_child)['lineno']
+                initial_position['type'] = type(node_child)
+                initial_position['value'] = node_child
+
+            if initial_position['lineno'] == vars(node_child)['lineno']:
+                if initial_position['col_offset'] > vars(node_child)['col_offset']:
+                    initial_position['lineno'] = vars(node_child)['lineno']
+                    initial_position['col_offset'] = vars(node_child)['col_offset']
+                    initial_position['type'] = type(node_child)
+                    initial_position['value'] = node_child
+
+            if end_position['lineno'] < vars(node_child)['lineno']:
+                end_position['lineno'] = vars(node_child)['lineno']
+                end_position['lineno'] = vars(node_child)['lineno']
+                end_position['type'] = type(node_child)
+                end_position['value'] = node_child
+
+            if end_position['lineno'] == vars(node_child)['lineno']:
+                if end_position['col_offset'] < vars(node_child)['col_offset']:
+                    end_position['lineno'] = vars(node_child)['lineno']
+                    end_position['col_offset'] = vars(node_child)['col_offset']
+                    end_position['type'] = type(node_child)
+                    end_position['value'] = node_child
+
+        return {
+            'type': type(node),
+            'node': node,
+            'initial_position': initial_position,
+            'end_position': end_position
+        }
+
+    def get_simple_position_node(self, node):
+        position = self.get_position_node(node)
+        ini = position['initial_position']
+        end = position['end_position']
+
+        return (
+            {
+                'lineno':ini['lineno'],
+                'col_offset':ini['col_offset'],
+            },
+            {
+                'lineno': end['lineno'],
+                'col_offset': end['col_offset']
+            }
+        )
