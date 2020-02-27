@@ -100,7 +100,9 @@ public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
 						
 					}
 				}
-				
+		  }
+		  
+		  for(Node key : nodes.keySet()) {
 			  Boolean exists = null;
 			  Boolean parent = false;
 			  if(key != null) {
@@ -171,17 +173,10 @@ public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
 							
 							node.setExists(exists);
 							
-							for(Node child : node.getChildren()) {
-								child.setExists(exists);
-								child.setUsingExistsOperator(true);
-							}
-								
 					  }
 				  }
-				  
-				  
+			  }
 		  }
-		}
 		  
 		for(Node n : listToRemove) {
 			nodes.remove(n);

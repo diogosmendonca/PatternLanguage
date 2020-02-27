@@ -117,7 +117,7 @@ public class Utils {
 			
 			boolean flagAnyLiteralvalue = false;
 			
-			if(b.getNode().getKind() == Kind.STRING_LITERAL &&
+			if(a.getNode() instanceof LiteralTree && b.getNode().getKind() == Kind.STRING_LITERAL &&
 					((String)((LiteralTree)b.getNode()).getValue()).equals(anyLiteralValue)) {
 				
 				flagAnyLiteralvalue = true;
@@ -158,24 +158,6 @@ public class Utils {
 		}
 		
 		return true;
-	}
-	
-	public static List<Node> searchAux(Node a, Node b, Map<String, String> wildcardsMap) {
-		
-		List<Node> ocorrences = new ArrayList<>();
-		
-		//Se os nós são iguais, a sub-árvore é toda a ávore
-		if(isEquals(a, b, wildcardsMap)) {
-			if(isFakeNode(b)) {
-				ocorrences.addAll(a.getChildren());
-			}else {
-				ocorrences.add(a);
-			}
-			a.setFullVisited(true);
-			return ocorrences;
-		}
-		
-		return searchChildren(a, b, wildcardsMap);
 	}
 	
 	/**
@@ -278,7 +260,9 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 			//Se o índice atual não está na lista de índices das ocorrências
 			if(!a.getChildren().get(counter).getFullVisited()) {
 				//Se é igual é adicionado a lista de ocorrencias auxiliar
-				subtreeAux = searchAux(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
+				
+				subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
+				
 				if(subtreeAux.size() > 0) {
 					if(b.getChildren().get(i).getExists()) {
 						currentOcorrences.addAll(subtreeAux);
@@ -325,14 +309,88 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 			}else{
 				ocorrences.addAll(currentOcorrences);
 			}
-			
-			
 		}
-		
 	}
 				
 	return ocorrences;
 }
+	
+	public static List<Node> subtreeFirstOcorrence(Node a, Node b, Map<String, String> wildcardsMap){
+		
+		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
+		wildcardsMapBefore.putAll(wildcardsMap);
+		
+		List<Node> ocorrences = new ArrayList<>();
+			
+		//Se os nós são iguais, a sub-árvore é toda a ávore
+		if(isEquals(a, b, wildcardsMap)) {
+			if(!b.getUsingExistsOperator()) {
+				if(isFakeNode(b)) {
+					ocorrences.addAll(a.getChildren());
+				}else {
+					ocorrences.add(a);
+				}
+				a.setFullVisited(true);
+				return ocorrences;
+			}
+		}
+		
+		wildcardsMap.clear();
+		wildcardsMap.putAll(wildcardsMapBefore);
+		
+		ocorrences.addAll(searchChildren(a, b, wildcardsMap));
+		
+		if(ocorrences.size() > 0) {
+			return ocorrences;
+		}
+		
+		wildcardsMap.clear();
+		wildcardsMap.putAll(wildcardsMapBefore);
+		
+		//Chama recursivamente para todos os filhos do nó
+		for(Node child : a.getChildren()) {
+			if(!child.getFullVisited()) {
+				ocorrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap));
+				if(ocorrences.size() > 0) {
+					return ocorrences;
+				}
+				wildcardsMap.clear();
+				wildcardsMap.putAll(wildcardsMapBefore);
+			}
+		}
+		
+		return ocorrences;
+	}
+
+	public static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap) {
+		
+		List<Node> ocorrences = new ArrayList<Node>();
+		
+		//Se os nós são iguais, a sub-árvore é toda a árvore
+		if(isEquals(a, b, wildcardsMap)) {
+			if(!b.getUsingExistsOperator() || !changeOperator(b)) {
+				if(isFakeNode(b)) {
+					ocorrences.addAll(a.getChildren());
+				}else {
+					ocorrences.add(a);
+				}
+				a.setFullVisited(true);
+				return ocorrences;
+			}
+		}
+		
+		if(!b.getUsingExistsOperator() || !changeOperator(b) ) {
+			return searchChildren(a, b, wildcardsMap);
+		}else {
+			return searchSubtree(a, b, wildcardsMap);
+		}
+	}
+
+	private static List<Node> searchSubtree(Node a, Node b, Map<String, String> wildcardsMap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	/**
 	 * 
@@ -408,16 +466,19 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 				
 				switch (e1.getKind()) {
 				
-				case MEMBER_SELECT: 
+					case MEMBER_SELECT: 
+						
+						name1 = ((MemberSelectTree) e1).getIdentifier().toString();
+						name2 = ((MemberSelectTree) e2).getIdentifier().toString();
+						
+						break;
 					
-					name1 = ((MemberSelectTree) e1).getIdentifier().toString();
-					name2 = ((MemberSelectTree) e2).getIdentifier().toString();
-					
-					break;
-				
-				case IDENTIFIER :
-					
-					break;
+					case IDENTIFIER :
+						
+						name1 = ((IdentifierTree) e1).getName().toString();
+						name2 = ((IdentifierTree) e2).getName().toString();
+						
+						break;
 					
 				}
 				
@@ -755,10 +816,24 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 		return retorno;
 	}
 	
-	public static boolean usingNotOperator(Node node) {
+	/*public static boolean usingNotOperator(Node node) {
 		
 		if(node.getNode().getKind() == Kind.LABELED_STATEMENT) {
 			if(((LabeledStatementTree) node.getNode()).getLabel().toString().equalsIgnoreCase("not")) {
+				return true;
+			}
+		}
+		
+		return false;
+	}*/
+	
+	public static boolean changeOperator(Node node){
+		
+		for(Node child: node.getChildren()) {
+			if(node.getExists() != child.getExists()) {
+				return true;
+			}
+			if(changeOperator(child)) {
 				return true;
 			}
 		}

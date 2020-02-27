@@ -228,6 +228,23 @@ public class AceitacaoTest {
 		assertEquals(22, retorno.get(1).getEndColumn());
 	}
 	
+	@Test
+	public void tc17() throws IOException {
+		
+		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC17_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC17_Pattern.java");
+		
+		assertEquals(3, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(18, retorno.get(0).getEndColumn());
+		assertEquals(4, retorno.get(1).getStartLine());
+		assertEquals(9, retorno.get(1).getStartColumn());
+		assertEquals(4, retorno.get(1).getEndLine());
+		assertEquals(22, retorno.get(1).getEndColumn());
+	}
+	
 	private Path createJavaFile(String className, String code) throws IOException {
 		
 		Path temp = Paths.get(System.getProperty("java.io.tmpdir"), className);

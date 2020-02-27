@@ -135,6 +135,11 @@ public class Node {
 
 	public void setExists(Boolean exists) {
 		this.exists = exists;
+		
+		for(Node child : this.children) {
+			child.setExists(exists);
+			child.setUsingExistsOperator(true);
+		}
 	}
 
 	public Boolean getUsingExistsOperator() {
@@ -143,6 +148,10 @@ public class Node {
 
 	public void setUsingExistsOperator(Boolean usingExistsOperator) {
 		this.usingExistsOperator = usingExistsOperator;
+		
+		if(this.parent != null) {
+			this.parent.setUsingExistsOperator(usingExistsOperator);
+		}
 	}
 	
 	
