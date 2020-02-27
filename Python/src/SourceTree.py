@@ -7,6 +7,7 @@ class SourceTree():
     """ Classe utilizada para a representação do código fonte """
     root = None
     names = {}
+    __some_names = {}
     __occurrences = []
     __variable_dict_wildcards = {}
     WILDCARD_ANY_LITERAL_VALUE = "anyLiteralValue"
@@ -14,6 +15,7 @@ class SourceTree():
     WILDCARD_ANY_NUMBER = "anyNumber"
     WILDCARD_ANY_ITEM = "any"
     WILDCARD_ANY_NAME = "any"
+    WILDCARD_SOME_NAME = "some"
 
     def __init__(self, root_tree):
         """Geracao de objeto Source Tree
@@ -70,8 +72,26 @@ class SourceTree():
         result = self.__equals_tree_internal(my_root, other_tree)
         return result
 
-    def __wildcards_validate_some_value(self, node1, node2):
-        print("SOME VALUE VALIDATE", node1, node2)
+    def __filter_names_in_some_names(self, params):
+        key, value = params
+        if self.WILDCARD_SOME_NAME in key:
+            return True
+        return False
+
+    def filter_dict(self, dictObj, callback):
+        new_dict = dict()
+        # Iterate over all the items in dictionary
+        for (key, value) in dictObj.items():
+            # Check if item satisfies the given condition then add to new dict
+            if callback((key, value)):
+                new_dict[key] = value
+        return new_dict
+
+    def __wildcards_validate_some_name(self, source_code, source_pattern):
+        pattern_id = vars(source_pattern)['id']
+        if self.WILDCARD_SOME_NAME in pattern_id:
+            return True
+        return False
 
     def __type_targets(self, targets1, targets2):
         return self.__equals_tree_internal(targets1, targets2)
@@ -125,10 +145,21 @@ class SourceTree():
             return True
         return False
 
+    def __wildcards_validate_name(self, node1, node2):
+        name_targets1 = vars(node2).get('id')
+        name_targets2 = vars(node1).get('id')
+        if self.WILDCARD_ANY_NAME in name_targets1:
+            return self.__wildcards_validate_any_name(node1, node2)
+        elif self.WILDCARD_SOME_NAME in name_targets1:
+            return self.__wildcards_validate_some_name(node1, node2)
+        if name_targets1 == name_targets2:
+            return True
+        return False
+
     def __validate_wildcards(self, source_node, pattern_node):
         # validate name
         if isinstance(source_node, ast.Name) and isinstance(pattern_node, ast.Name):
-            return self.__wildcards_validate_any_name(source_node, pattern_node)
+            return self.__wildcards_validate_name(source_node, pattern_node)
 
         # validate assign
         if isinstance(source_node, ast.Assign) and isinstance(pattern_node, ast.Assign):
@@ -230,21 +261,24 @@ class SourceTree():
         """
         occurrences = []
         childPattern = list(ast.iter_child_nodes(root_pattern))
-
+        pattern_cont = set()
         for node_my_tree in ast.walk(root_mytree):
-            for node_pattern in childPattern:
-                result = self.__equals_tree(node_my_tree, node_pattern)
+            for index_i, node_pattern in enumerate(childPattern):
+                if node_pattern not in pattern_cont:
+                    result = self.__equals_tree(node_my_tree, node_pattern)
                 if result:
                     lis_aux = [node_my_tree, node_pattern]
                     occurrences.append(lis_aux)
+                    pattern_cont.add(node_pattern)
                     childPattern.remove(node_pattern)
+                    result = False
             if len(childPattern) == 0:
                 childPattern.extend(ast.iter_child_nodes(root_pattern))
+
 
         return occurrences
 
     def __len_occurrences(self, error, root_pattern):
-
         root_pattern = list(ast.iter_child_nodes(root_pattern))
         error_node = []
         error_node_subtree = []
@@ -283,9 +317,82 @@ class SourceTree():
             occurrences_found_subtree = occurrences_nodes_subtree[indexI:indexI + len(root_pattern)]
             occurrences_found_source = occurrences_nodes[indexI:indexI + len(root_pattern)]
             if occurrences_found_subtree == root_pattern:
+                if not self.wildcards_some_validate(occurrences_found_source, occurrences_found_subtree):
+                    continue
                 occurrences_final.append({'node_source': occurrences_found_source, 'node_pattern': root_pattern})
 
         return occurrences_final
+
+    def equals_occurrences_subtree(self, occurrences, pattern):
+        result_s = []
+        result_p = []
+        occurrences[0] = sorted(occurrences[0], key=lambda x: vars(x)['lineno'])
+        occurrences[1] = sorted(occurrences[1], key=lambda x: vars(x)['lineno'])
+
+        for s, p in occurrences:
+            if p in pattern:
+                if p not in result_p and s not in result_s:
+                    result_p.append(p)
+                    result_s.append(s)
+
+        print(pattern)
+        print(result_s)
+        print(result_p)
+        # print(source_occ)
+        # print(pattern_occ)
+        # print(pattern)
+
+    def equals_occurrences(self, occurrences, pattern):
+        setPattern = set(pattern)
+        if (len(occurrences) != len(pattern)):
+            return False
+        result = True
+        for occ, patt, in zip(occurrences, pattern):
+            print(occ, patt, self.__equals_tree(occ, patt))
+            if not self.__equals_tree(occ, patt):
+                result = False
+                break
+
+        return result
+
+    def wildcards_some_validate(self, source, pattern):
+        print(source, pattern)
+
+        source_names_some = []
+        pattern_names_some = []
+        for source_occ, pattern_occ in zip(source, pattern):
+            for intern_source, intern_pattern in zip(ast.walk(source_occ), ast.walk(pattern_occ)):
+                # if isinstance(node_intern, ast.Name):
+                #     id_node_intern = vars(node_intern)['id']
+                #     print(id_node_intern)
+
+                if isinstance(intern_source, ast.Name) and isinstance(intern_pattern, ast.Name):
+                    id_source = vars(intern_source)['id']
+                    id_pattern = vars(intern_pattern)['id']
+                    if self.WILDCARD_SOME_NAME in id_pattern:
+                        source_names_some.append(id_source)
+                        pattern_names_some.append(id_pattern)
+
+        print(source_names_some, pattern_names_some)
+        if len(source_names_some) != 0 or len(pattern_names_some) != 0:
+            return self.__all_variable_is_equals(source_names_some, pattern_names_some)
+        return True
+
+    def __all_variable_is_equals(self, source, pattern):
+        setSource = set(source)
+        setPattern = set(pattern)
+        variables = zip(source, pattern)
+        variablesDict = dict(zip(source, pattern))
+        if (len(setPattern) != len(setSource)):
+            return False
+
+        print(source, pattern)
+
+        for index, (s, p) in enumerate(variables):
+            if not variablesDict[s] == pattern[index]:
+                return False
+
+        return True
 
     def amount_of_patterns_found(self, root_pattern):
         mytree = self.root
@@ -428,8 +535,8 @@ class SourceTree():
 
         return (
             {
-                'lineno':ini['lineno'],
-                'col_offset':ini['col_offset'],
+                'lineno': ini['lineno'],
+                'col_offset': ini['col_offset'],
             },
             {
                 'lineno': end['lineno'],
