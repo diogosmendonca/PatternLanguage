@@ -122,3 +122,29 @@ anyVariable = 10
     print(positions)
     assert [[({'lineno': 4, 'col_offset': 4}, {'lineno': 4, 'col_offset': 8})]] == positions
     assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
+
+
+def test_tc_07_wildcards_some_variable_multiplas_instrucoes():
+    str_source = """
+def ola_mundo(): 
+    a = 10
+    print(a)
+        """
+
+    str_pattern = """
+someVariableA = 10
+print(someVariableA)
+        """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte deveria conter o padrão"
+
+    positions = tree.get_simple_position_pattern(pattern)
+    print(positions)
+    assert [[({'col_offset': 4, 'lineno': 3}, {'col_offset': 8, 'lineno': 3}), ({'col_offset': 4, 'lineno': 4}, {'col_offset': 4, 'lineno': 4})]] == positions
+    assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
+
+
