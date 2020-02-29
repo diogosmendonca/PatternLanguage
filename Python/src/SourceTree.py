@@ -262,21 +262,22 @@ class SourceTree():
         occurrences = []
         childPattern = list(ast.iter_child_nodes(root_pattern))
         pattern_cont = set()
+        newOcurrences = []
         for node_my_tree in ast.walk(root_mytree):
             for index_i, node_pattern in enumerate(childPattern):
-                if node_pattern not in pattern_cont:
-                    result = self.__equals_tree(node_my_tree, node_pattern)
+                result = self.__equals_tree(node_my_tree, node_pattern)
                 if result:
                     lis_aux = [node_my_tree, node_pattern]
                     occurrences.append(lis_aux)
-                    pattern_cont.add(node_pattern)
                     childPattern.remove(node_pattern)
                     result = False
             if len(childPattern) == 0:
                 childPattern.extend(ast.iter_child_nodes(root_pattern))
+                newOcurrences.append(occurrences)
+                occurrences = []
 
 
-        return occurrences
+        return newOcurrences
 
     def __len_occurrences(self, error, root_pattern):
         root_pattern = list(ast.iter_child_nodes(root_pattern))
@@ -296,7 +297,7 @@ class SourceTree():
                     cont += 1
         return cont
 
-    def __handle_occurrences(self, occurrences, root_pattern):
+    def __handle_occurrences(self, all_ocurrences, root_pattern):
         """Filtrar ocorrencias não tratadas retornando os nodes
 
                 Arguments:
@@ -306,20 +307,25 @@ class SourceTree():
                     Array -- Ocorrencias.
                 """
         root_pattern = list(ast.iter_child_nodes(root_pattern))
-        occurrences_nodes = []
-        occurrences_nodes_subtree = []
-        for indexJ in range(len(occurrences)):
-            occurrences_nodes.append(occurrences[indexJ][0])
-            occurrences_nodes_subtree.append(occurrences[indexJ][1])
+        occurrences_pattern = []
+
+
         occurrences_final = []
 
-        for indexI in range(len(occurrences_nodes_subtree)):
-            occurrences_found_subtree = occurrences_nodes_subtree[indexI:indexI + len(root_pattern)]
-            occurrences_found_source = occurrences_nodes[indexI:indexI + len(root_pattern)]
-            if occurrences_found_subtree == root_pattern:
-                if not self.wildcards_some_validate(occurrences_found_source, occurrences_found_subtree):
-                    continue
-                occurrences_final.append({'node_source': occurrences_found_source, 'node_pattern': root_pattern})
+        for occurrences in all_ocurrences:
+            occurrences_nodes = []
+            occurrences_nodes_subtree = []
+            for indexJ in range(len(occurrences)):
+                occurrences_nodes.append(occurrences[indexJ][0])
+                occurrences_nodes_subtree.append(occurrences[indexJ][1])
+
+            for indexI in range(len(occurrences_nodes_subtree)):
+                occurrences_found_subtree = occurrences_nodes_subtree
+                occurrences_found_source = occurrences_nodes
+                if occurrences_found_subtree == root_pattern:
+                    if not self.wildcards_some_validate(occurrences_found_source, occurrences_found_subtree):
+                        continue
+                    occurrences_final.append({'node_source': occurrences_found_source, 'node_pattern': root_pattern})
 
         return occurrences_final
 
