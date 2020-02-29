@@ -260,6 +260,108 @@ a = 'anyLiteralValue'
 
     tree = SourceTree(source)
 
-    ERR_MESSAGE = "A AST do codigo fonte nao deveria conter o padrão"
+    ERR_MESSAGE = "A AST do codigo fonte deveria conter o padrão"
 
     assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
+
+
+def test_tc_13_multiplas_ocorrencias_multiplas_instrucoes():
+    str_source = """
+def ola_mundo():
+    a = 'texto'
+    
+    a = 'texto1'
+    
+    a = 'texto2'
+                    """
+
+    str_pattern = """
+a = 'anyLiteralValue'
+                    """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte deveria conter 3 instancias do padrão"
+    ERR_MESSAGE_POSITION = "As posiccoes do padrao nao coincidem "
+    position = tree.get_simple_position_pattern(pattern)
+    assert [[({'lineno': 3, 'col_offset': 4}, {'lineno': 3, 'col_offset': 8})],
+            [({'lineno': 5, 'col_offset': 4}, {'lineno': 5, 'col_offset': 8})],
+            [({'lineno': 7, 'col_offset': 4}, {'lineno': 7, 'col_offset': 8})]] == position, ERR_MESSAGE_POSITION
+    assert True == (len(tree.get_all_occurrences(pattern)) == 3), ERR_MESSAGE
+
+
+def test_tc_14_multiplas_ocorrencias_multiplas_instrucoes():
+    str_source = """
+def ola_mundo():
+
+    a = 'texto'
+    b = 2
+
+    a = 'texto1'
+    b = 2
+
+
+    a = 'texto2'
+    b = 2
+
+                    """
+
+    str_pattern = """
+a = 'anyLiteralValue'
+b = 'anyNumber'
+                    """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte deveria conter 3 instancias do padrão"
+    ERR_MESSAGE_POSITION = "As posiccoes do padrao nao coincidem "
+    position = tree.get_simple_position_pattern(pattern)
+    print(position)
+    assert [[({'lineno': 4, 'col_offset': 4}, {'lineno': 4, 'col_offset': 8}),
+             ({'lineno': 5, 'col_offset': 4}, {'lineno': 5, 'col_offset': 8})],
+            [({'lineno': 7, 'col_offset': 4}, {'lineno': 7, 'col_offset': 8}),
+             ({'lineno': 8, 'col_offset': 4}, {'lineno': 8, 'col_offset': 8})],
+            [({'lineno': 11, 'col_offset': 4}, {'lineno': 11, 'col_offset': 8}),
+             ({'lineno': 12, 'col_offset': 4}, {'lineno': 12, 'col_offset': 8})]] == position, ERR_MESSAGE_POSITION
+    assert True == (len(tree.get_all_occurrences(pattern)) == 3), ERR_MESSAGE
+
+def test_tc_15_any_literal_value_uma_instrucao_existe():
+    str_source = """
+a = 10
+                """
+
+    str_pattern = """
+a = 'anyNumber'
+                """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte deveria conter o padrão"
+    position = tree.get_simple_position_pattern(pattern)
+    assert [[({'lineno': 2, 'col_offset': 0}, {'lineno': 2, 'col_offset': 4})]] == position
+    assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
+
+
+def test_tc_16_any_literal_value_uma_instrucao_nao_existe():
+    str_source = """
+a = 'valorLiteral'
+                """
+
+    str_pattern = """
+a = 'anyNumber'
+                """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+
+    ERR_MESSAGE = "A AST do codigo fonte nao deveria conter o padrão"
+
+    assert True == (len(tree.get_all_occurrences(pattern)) == 0), ERR_MESSAGE
