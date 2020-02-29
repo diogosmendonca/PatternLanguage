@@ -228,12 +228,7 @@ class SourceTree():
          Returns:
              Boolean -- Respostas se root_pattern é subavore do Objeto
          """
-        mytree = self.root
-        founded_tree = self.__find_subtree(mytree, root_pattern)
-        if founded_tree and self.amount_of_patterns_found(root_pattern) > 0:
-            return True
-        else:
-            return False
+        return len(self.search_pattern(root_pattern))>0
 
     def __find_subtree(self, mytree, root_pattern):
         """ Informar se arvore(mytree) possui o determinado padrao (root_pattern)
@@ -273,14 +268,19 @@ class SourceTree():
                 for node_pattern in childPattern:
                     result = self.__equals_tree(node, node_pattern)
                     if result:
+                        print(vars(node)['lineno'], vars(node_pattern)['lineno'], node, node_pattern)
                         nodes_equals.append([node, node_pattern])
+                        if not set_encontrados[node_pattern] is None:
+                            continue
                         set_encontrados[node_pattern] = node
                         if self.found_a_pattern(set_encontrados):
                             occurrences.append(list(zip(set_encontrados.values(), set_encontrados.keys())))
                             set_encontrados = {i: None for i in childPattern}
                         break
 
+
             childPattern = list(ast.iter_child_nodes(root_pattern))
+        print(set_encontrados)
         return occurrences
 
     def found_a_pattern(self, dict):
