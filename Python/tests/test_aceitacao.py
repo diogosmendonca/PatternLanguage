@@ -100,7 +100,7 @@ string = "String"
     assert False == (tree.is_subtree(pattern)), ERR_MESSAGE
 
 
-def test_tc06_wildcards_any_variable_uma_variavel():
+def test_tc06_wildcards_any_variable_uma_variavel_existe():
     str_source = """
 print("String")
 def ola_mundo():
@@ -124,7 +124,7 @@ anyVariable = 10
     assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
 
 
-def test_tc_07_wildcards_some_variable_multiplas_instrucoes():
+def test_tc_07_wildcards_some_variable_multiplas_instrucoes_existe():
     str_source = """
 def ola_mundo(): 
     a = 10
@@ -144,7 +144,122 @@ print(someVariableA)
 
     positions = tree.get_simple_position_pattern(pattern)
     print(positions)
-    assert [[({'col_offset': 4, 'lineno': 3}, {'col_offset': 8, 'lineno': 3}), ({'col_offset': 4, 'lineno': 4}, {'col_offset': 4, 'lineno': 4})]] == positions
+    assert [[({'col_offset': 4, 'lineno': 3}, {'col_offset': 8, 'lineno': 3}),
+             ({'col_offset': 4, 'lineno': 4}, {'col_offset': 4, 'lineno': 4})]] == positions
     assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
 
 
+def test_tc_08_wildcards_some_variable_multiplas_instrucoes_nao_existe():
+    str_source = """
+def ola_mundo(): 
+    a = 10
+    print(b)
+        """
+
+    str_pattern = """
+someVariableA = 10
+print(someVariableA)
+        """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte deveria conter o padrão"
+
+    positions = tree.get_simple_position_pattern(pattern)
+    assert True == (len(tree.get_all_occurrences(pattern)) == 0), ERR_MESSAGE
+
+
+def test_tc_09_any_function_uma_instrucao_existe():
+    str_source = """
+print("String")
+def ola_mundo():
+    a = 10
+string = "String"
+        """
+
+    str_pattern = """
+anyFunction("String")
+        """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte deveria conter o padrão"
+
+    positions = tree.get_simple_position_pattern(pattern)
+    print(positions)
+    assert [[({'lineno': 2, 'col_offset': 0}, {'lineno': 2, 'col_offset': 0})]] == positions
+    assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
+
+
+def test_tc_10_some_function_multiplas_instrucoes_existe():
+    str_source = """
+print("String")
+def ola_mundo():
+    a = 10
+    print("String")
+    print("String")
+string = "String"
+            """
+
+    str_pattern = """
+someFunction("String")
+someFunction("String")
+            """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte deveria conter o padrão"
+
+    positions = tree.get_simple_position_pattern(pattern)
+    print(positions)
+    assert [[({'lineno': 5, 'col_offset': 4}, {'lineno': 5, 'col_offset': 4}),
+             ({'lineno': 6, 'col_offset': 4}, {'lineno': 6, 'col_offset': 4})]] == positions
+    assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
+
+
+def test_tc_11_some_function_multiplas_intrucoes_nao_existe():
+    str_source = """
+print("String")
+def ola_mundo():
+    a = 10
+    metodo("String")
+    outroMetodo("String")
+string = "String"
+                """
+
+    str_pattern = """
+someFunction("String")
+someFunction("String")
+                """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte nao deveria conter o padrão"
+
+    assert True == (len(tree.get_all_occurrences(pattern)) == 0), ERR_MESSAGE
+
+
+def test_tc_12_any_literal_value_uma_instrucao_existe():
+    str_source = """
+a = 'Texto'
+                """
+
+    str_pattern = """
+a = 'anyLiteralValue'
+                """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+    ERR_MESSAGE = "A AST do codigo fonte nao deveria conter o padrão"
+
+    assert True == (len(tree.get_all_occurrences(pattern)) == 1), ERR_MESSAGE
