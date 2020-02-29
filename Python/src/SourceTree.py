@@ -264,20 +264,30 @@ class SourceTree():
         pattern_cont = set()
         newOcurrences = []
         for node_my_tree in ast.walk(root_mytree):
-            for index_i, node_pattern in enumerate(childPattern):
-                result = self.__equals_tree(node_my_tree, node_pattern)
-                if result:
-                    lis_aux = [node_my_tree, node_pattern]
-                    occurrences.append(lis_aux)
-                    childPattern.remove(node_pattern)
-                    result = False
-            if len(childPattern) == 0:
-                childPattern.extend(ast.iter_child_nodes(root_pattern))
-                newOcurrences.append(occurrences)
-                occurrences = []
 
+            all_occurrences = []
+            nodes_equals = []
+            set_encontrados = {i: None for i in childPattern}
+            for node in ast.iter_child_nodes(node_my_tree):
 
-        return newOcurrences
+                for node_pattern in childPattern:
+                    result = self.__equals_tree(node, node_pattern)
+                    if result:
+                        nodes_equals.append([node, node_pattern])
+                        set_encontrados[node_pattern] = node
+                        if self.found_a_pattern(set_encontrados):
+                            occurrences.append(list(zip(set_encontrados.values(), set_encontrados.keys())))
+                            set_encontrados = {i: None for i in childPattern}
+                        break
+
+            childPattern = list(ast.iter_child_nodes(root_pattern))
+        return occurrences
+
+    def found_a_pattern(self, dict):
+        for k in dict:
+            if dict[k] is None:
+                return False
+        return True
 
     def __len_occurrences(self, error, root_pattern):
         root_pattern = list(ast.iter_child_nodes(root_pattern))
@@ -286,7 +296,6 @@ class SourceTree():
         for indexJ in range(len(error)):
             error_node.append(error[indexJ][0])
             error_node_subtree.append(error[indexJ][1])
-
         cont = 0
         if len(root_pattern) == 1:
             return len(error)
@@ -307,26 +316,17 @@ class SourceTree():
                     Array -- Ocorrencias.
                 """
         root_pattern = list(ast.iter_child_nodes(root_pattern))
-        occurrences_pattern = []
-
-
         occurrences_final = []
-
-        for occurrences in all_ocurrences:
-            occurrences_nodes = []
-            occurrences_nodes_subtree = []
-            for indexJ in range(len(occurrences)):
-                occurrences_nodes.append(occurrences[indexJ][0])
-                occurrences_nodes_subtree.append(occurrences[indexJ][1])
-
-            for indexI in range(len(occurrences_nodes_subtree)):
-                occurrences_found_subtree = occurrences_nodes_subtree
-                occurrences_found_source = occurrences_nodes
-                if occurrences_found_subtree == root_pattern:
-                    if not self.wildcards_some_validate(occurrences_found_source, occurrences_found_subtree):
-                        continue
-                    occurrences_final.append({'node_source': occurrences_found_source, 'node_pattern': root_pattern})
-
+        for occurrence in all_ocurrences:
+            occurrences_source = []
+            occurrences_pattern = []
+            for source, pattern in occurrence:
+                occurrences_source.append(source)
+                occurrences_pattern.append(pattern)
+            if occurrences_pattern == root_pattern:
+                if not self.wildcards_some_validate(occurrences_source, occurrences_pattern):
+                    continue
+                occurrences_final.append({'node_source': occurrences_source, 'node_pattern': root_pattern})
         return occurrences_final
 
     def equals_occurrences_subtree(self, occurrences, pattern):
