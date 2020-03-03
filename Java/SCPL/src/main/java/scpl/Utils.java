@@ -368,7 +368,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 		
 		//Se os nós são iguais, a sub-árvore é toda a árvore
 		if(isEquals(a, b, wildcardsMap)) {
-			if(!b.getUsingExistsOperator() || !changeOperator(b)) {
+			if(!b.getUsingExistsOperator() || !b.getChangeOperator()) {
 				if(isFakeNode(b)) {
 					ocorrences.addAll(a.getChildren());
 				}else {
@@ -379,7 +379,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 			}
 		}
 		
-		if(!b.getUsingExistsOperator() || !changeOperator(b) ) {
+		if(!b.getUsingExistsOperator() || !b.getChangeOperator() ) {
 			return searchChildren(a, b, wildcardsMap);
 		}else {
 			return searchSubtree(a, b, wildcardsMap);
@@ -387,6 +387,13 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	}
 
 	private static List<Node> searchSubtree(Node a, Node b, Map<String, String> wildcardsMap) {
+		
+		if(b.getExists()) {
+			
+		}else {
+			
+		}
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -691,7 +698,9 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 					return null;
 					
 				case 1:
-					return retorno.getChildren().get(0);
+					if(!retorno.getChildren().get(0).getUsingExistsOperator()) {
+						return retorno.getChildren().get(0);
+					}
 					
 				default:
 					Node fakeNode = new Node();

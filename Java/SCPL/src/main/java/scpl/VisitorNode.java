@@ -172,6 +172,9 @@ public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
 							}
 							
 							node.setExists(exists);
+							if(node.getParent().getExists()!=exists) {
+								node.getParent().setChangeOperator(true);
+							}
 							
 					  }
 				  }

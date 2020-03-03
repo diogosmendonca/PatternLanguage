@@ -23,6 +23,7 @@ public class Node {
 	private Boolean fullVisited;
 	private Boolean exists;
 	private Boolean usingExistsOperator;
+	private Boolean changeOperator;
 	
 	public Node() {
 		this.children = new ArrayList<Node>();
@@ -35,6 +36,7 @@ public class Node {
 		this.fullVisited = false;
 		this.exists = true;
 		this.usingExistsOperator = false;
+		this.changeOperator = false;
 	}
 	
 	
@@ -152,6 +154,23 @@ public class Node {
 		if(this.parent != null) {
 			this.parent.setUsingExistsOperator(usingExistsOperator);
 		}
+	}
+	
+	public Boolean getChangeOperator() {
+		return changeOperator;
+	}
+
+	public void setChangeOperator(Boolean changeOperator) {
+		this.changeOperator = changeOperator;
+		
+		if(this.parent != null) {
+			this.parent.setChangeOperator(changeOperator);
+		}
+		
+	}
+
+	public String toString() {
+		return this.node.toString();
 	}
 	
 	
