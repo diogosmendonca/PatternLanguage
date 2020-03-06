@@ -1,13 +1,24 @@
 import ast
+import tokenize
+import io
+from collections import defaultdict
 from src.gui.gui import *
 from src.utils.tree_utils import *
 
 
-class SourceTree:
+class SourceTree():
     """ Classe utilizada para a representação do código fonte """
     root = None
+    names = {}
+    __some_names = {}
     __occurrences = []
-    __variable_dict_wildcards= {}
+    __variable_dict_wildcards = {}
+    WILDCARD_ANY_LITERAL_VALUE = "anyLiteralValue"
+    WILDCARD_ANY_FUNCTION = "anyFunction"
+    WILDCARD_ANY_NUMBER = "anyNumber"
+    WILDCARD_ANY_ITEM = "any"
+    WILDCARD_ANY_NAME = "any"
+    WILDCARD_SOME_NAME = "some"
 
     def __init__(self, root_tree):
         """Geracao de objeto Source Tree
@@ -25,7 +36,9 @@ class SourceTree:
             root {AST} -- Codigo fonte pertecente ao objeto Source Tree.
         """
         new_root = self.__add_parent(root)
+        names = self.get_all_name_variable()
         self.root = new_root
+        self.names = names
 
     def __add_parent(self, tree):
         """Adicionar pai em cada NODE da arvore.
@@ -59,20 +72,32 @@ class SourceTree:
             [Boolean] -- Respostas se arvores sao iguais
         """
         my_root = self.root
-        result = self.__equals_tree(my_root, other_tree)
+        result = self.__equals_tree_internal(my_root, other_tree)
         return result
 
-    def __wildcards_validate_some_value(self, node1, node2):
-        print(node1, node2)
+    def __filter_names_in_some_names(self, params):
+        key, value = params
+        if self.WILDCARD_SOME_NAME in key:
+            return True
+        return False
+
+    def filter_dict(self, dictObj, callback):
+        new_dict = dict()
+        # Iterate over all the items in dictionary
+        for (key, value) in dictObj.items():
+            # Check if item satisfies the given condition then add to new dict
+            if callback((key, value)):
+                new_dict[key] = value
+        return new_dict
+
+    def __wildcards_validate_some_name(self, source_code, source_pattern):
+        pattern_id = vars(source_pattern)['id']
+        if self.WILDCARD_SOME_NAME in pattern_id:
+            return True
+        return False
 
     def __type_targets(self, targets1, targets2):
-        if type(targets1) != type(targets2):
-            return False
-        if len(targets1) == len(targets2):
-            for t1, t2 in zip(targets1, targets2):
-                if type(t1) != type(t2):
-                    return False
-        return True
+        return self.__equals_tree_internal(targets1, targets2)
 
     def __value_str(self, node):
         if isinstance(node, ast.Str):
@@ -88,32 +113,77 @@ class SourceTree:
 
         if not self.__type_targets(node1_targets, node2_targets):
             return False
-        if isinstance(node1_value, ast.Num) and isinstance(node2_value, ast.Str):
-            print(node1, node2)
-            if  "someValue" in self.__value_str(node2_value) :
+        if isinstance(node1_value, ast.Call) and isinstance(node2_value, ast.Call):
+            args1 = vars(node1_value).get('args')
+            args2 = vars(node2_value).get('args')
+            if len(args1) != len(args2):
+                return False
+            result = []
+            for t1, t2 in zip(args1, args2):
+                if not self.__equals_tree_internal(t1, t2):
+                    return False
+            return True
+
+        if isinstance(node1_value, ast.AST) and isinstance(node2_value, ast.Str):
+            if self.WILDCARD_ANY_ITEM == self.__value_str(node2_value):
                 return True
+
+        if isinstance(node1_value, ast.Num) and isinstance(node2_value, ast.Str):
+            if self.WILDCARD_ANY_NUMBER in self.__value_str(node2_value):
+                return True
+
+        if isinstance(node1_value, ast.Str) and isinstance(node2_value, ast.Str):
+            if self.WILDCARD_ANY_LITERAL_VALUE in self.__value_str(node2_value):
+                return True
+
         return False
-
-
-
 
     def __wildcards_validate_any_name(self, node1, node2):
         name_targets1 = vars(node2).get('id')
         name_targets2 = vars(node1).get('id')
-        result = "any" in name_targets1
+        result = self.WILDCARD_ANY_NAME in name_targets1
         if result:
             return True
         if name_targets1 == name_targets2:
             return True
         return False
 
-    def __validate_wildcards(self, node1, node2):
-        if isinstance(node1, ast.Name) and isinstance(node2, ast.Name):
+    def __wildcards_validate_name(self, node1, node2):
+        name_targets1 = vars(node2).get('id')
+        name_targets2 = vars(node1).get('id')
+        if self.WILDCARD_ANY_NAME in name_targets1:
             return self.__wildcards_validate_any_name(node1, node2)
+        elif self.WILDCARD_SOME_NAME in name_targets1:
+            return self.__wildcards_validate_some_name(node1, node2)
+        if name_targets1 == name_targets2:
+            return True
         return False
 
+    def __validate_wildcards(self, source_node, pattern_node):
+        # validate name
+        if isinstance(source_node, ast.Name) and isinstance(pattern_node, ast.Name):
+            return self.__wildcards_validate_name(source_node, pattern_node)
 
-    def __equals_tree(self, node1, node2):
+        # validate assign
+        if isinstance(source_node, ast.Assign) and isinstance(pattern_node, ast.Assign):
+            return self.__wildcards_validate_assign(source_node, pattern_node)
+
+        return False
+
+    def __wildcards_validate_str(self, source_node, pattern_node):
+        if isinstance(pattern_node, ast.Str) and isinstance(source_node, ast.AST):
+            if self.WILDCARD_ANY_ITEM == self.__value_str(pattern_node):
+                return True
+
+        if isinstance(pattern_node, ast.Str) and isinstance(source_node, ast.Str):
+            if self.WILDCARD_ANY_LITERAL_VALUE in self.__value_str(pattern_node):
+                return True
+
+        if isinstance(pattern_node, ast.Str) and isinstance(source_node, ast.Num):
+            if self.WILDCARD_ANY_NUMBER in self.__value_str(pattern_node):
+                return True
+
+    def __equals_tree_internal(self, node1, node2):
         """Verificar igualdade entre dois "nodes raiz"
 
         Arguments:
@@ -123,17 +193,18 @@ class SourceTree:
         Returns:
             Boolean -- Respostas se arvores sao iguais
         """
+        if isinstance(node1, ast.AST) and isinstance(node2, ast.Str):
+            if self.__wildcards_validate_str(node1, node2):
+                return True
+
+        return self.__equals_tree(node1, node2)
+
+    def __equals_tree(self, node1, node2):
         if type(node1) != type(node2):
             return False
         if isinstance(node1, ast.AST):
-
-            if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
-                if self.__wildcards_validate_assign(node1, node2):
-                    return True
-
             if self.__validate_wildcards(node1, node2):
-                return self.__equals_tree(vars(node1).get("value"), vars(node2).get("value"))
-
+                return True
             for tipe, var in vars(node1).items():
                 if tipe not in ('lineno', 'col_offset', 'ctx', 'parent',):
                     var2 = vars(node2).get(tipe)
@@ -160,12 +231,7 @@ class SourceTree:
          Returns:
              Boolean -- Respostas se root_pattern é subavore do Objeto
          """
-        mytree = self.root
-        founded_tree = self.__find_subtree(mytree, root_pattern)
-        if founded_tree and self.amount_of_patterns_found(root_pattern) > 0:
-            return True
-        else:
-            return False
+        return len(self.search_pattern(root_pattern))>0
 
     def __find_subtree(self, mytree, root_pattern):
         """ Informar se arvore(mytree) possui o determinado padrao (root_pattern)
@@ -192,26 +258,72 @@ class SourceTree:
             Array -- Todas as ocorrencias encontradas do padrao
         """
         occurrences = []
+        childPattern = list(ast.iter_child_nodes(root_pattern))
+        pattern_cont = set()
+        newOcurrences = []
         for node_my_tree in ast.walk(root_mytree):
-            for node_pattern in ast.iter_child_nodes(root_pattern):
-                result = self.__equals_tree(node_my_tree, node_pattern)
-                if (result):
-                    lis_aux = []
-                    lis_aux.append(node_my_tree)
-                    lis_aux.append(node_pattern)
-                    occurrences.append(lis_aux)
+
+            all_occurrences = []
+            nodes_equals = []
+            set_encontrados = {i: None for i in childPattern}
+            for node in ast.iter_child_nodes(node_my_tree):
+
+                for node_pattern in childPattern:
+                    result = self.__equals_tree(node, node_pattern)
+                    if result:
+                        print(vars(node)['lineno'], vars(node_pattern)['lineno'], node, node_pattern)
+                        nodes_equals.append([node, node_pattern])
+                        if not set_encontrados[node_pattern] is None:
+                            continue
+                        set_encontrados[node_pattern] = node
+                        if self.found_a_pattern(set_encontrados):
+                            occurrences.append(list(zip(set_encontrados.values(), set_encontrados.keys())))
+                            set_encontrados = {i: None for i in childPattern}
+                        break
+
+
+            childPattern = list(ast.iter_child_nodes(root_pattern))
+        print(set_encontrados)
         return occurrences
 
-    def __len_occurrences(self, error, root_pattern):
+    def found_a_pattern(self, dict):
+        for k in dict:
+            if dict[k] is None:
+                return False
+        return True
 
+    def get_not(self, string):
+        map_code = {}
+        for token in tokenize.generate_tokens(string.readline):
+            map_code[token.start[0]] = token.line
+        nots = defaultdict(list)
+        enable = False
+        indexI = 0
+        for k in sorted(map_code):
+            if "#start-not\n" in map_code[k]:
+                indexI += 1
+                nots[indexI].append(map_code[k])
+                enable = True
+                continue
+            if "#end-not\n" in map_code[k]:
+                nots[indexI].append(map_code[k])
+                enable = False
+                indexI -= 1
+
+            if enable:
+                nots[indexI].append(map_code[k])
+
+        for key in nots:
+            nots[key] = ast.parse("".join(nots[key]))
+        return nots
+    def __len_occurrences(self, error, root_pattern):
         root_pattern = list(ast.iter_child_nodes(root_pattern))
         error_node = []
         error_node_subtree = []
         for indexJ in range(len(error)):
             error_node.append(error[indexJ][0])
             error_node_subtree.append(error[indexJ][1])
-
-        cont = 0;
+        cont = 0
         if len(root_pattern) == 1:
             return len(error)
         else:
@@ -221,8 +333,7 @@ class SourceTree:
                     cont += 1
         return cont
 
-
-    def __handle_occurrences(self, occurrences, root_pattern):
+    def __handle_occurrences(self, all_ocurrences, root_pattern):
         """Filtrar ocorrencias não tratadas retornando os nodes
 
                 Arguments:
@@ -232,20 +343,89 @@ class SourceTree:
                     Array -- Ocorrencias.
                 """
         root_pattern = list(ast.iter_child_nodes(root_pattern))
-        occurrences_nodes = []
-        occurrences_nodes_subtree = []
-        for indexJ in range(len(occurrences)):
-            occurrences_nodes.append(occurrences[indexJ][0])
-            occurrences_nodes_subtree.append(occurrences[indexJ][1])
-
         occurrences_final = []
-        for indexI in range(len(occurrences_nodes_subtree)):
-            occurrences_found_subtree = occurrences_nodes_subtree[indexI:indexI + len(root_pattern)]
-            occurrences_found_source = occurrences_nodes[indexI:indexI + len(root_pattern)]
-            if occurrences_found_subtree == root_pattern:
-                occurrences_final.append({'node_source': occurrences_found_source, 'node_pattern':root_pattern})
-
+        for occurrence in all_ocurrences:
+            occurrences_source = []
+            occurrences_pattern = []
+            for source, pattern in occurrence:
+                occurrences_source.append(source)
+                occurrences_pattern.append(pattern)
+            if occurrences_pattern == root_pattern:
+                if not self.wildcards_some_validate(occurrences_source, occurrences_pattern):
+                    continue
+                occurrences_final.append({'node_source': occurrences_source, 'node_pattern': root_pattern})
         return occurrences_final
+
+    def equals_occurrences_subtree(self, occurrences, pattern):
+        result_s = []
+        result_p = []
+        occurrences[0] = sorted(occurrences[0], key=lambda x: vars(x)['lineno'])
+        occurrences[1] = sorted(occurrences[1], key=lambda x: vars(x)['lineno'])
+
+        for s, p in occurrences:
+            if p in pattern:
+                if p not in result_p and s not in result_s:
+                    result_p.append(p)
+                    result_s.append(s)
+
+        print(pattern)
+        print(result_s)
+        print(result_p)
+        # print(source_occ)
+        # print(pattern_occ)
+        # print(pattern)
+
+    def equals_occurrences(self, occurrences, pattern):
+        setPattern = set(pattern)
+        if (len(occurrences) != len(pattern)):
+            return False
+        result = True
+        for occ, patt, in zip(occurrences, pattern):
+            print(occ, patt, self.__equals_tree(occ, patt))
+            if not self.__equals_tree(occ, patt):
+                result = False
+                break
+
+        return result
+
+    def wildcards_some_validate(self, source, pattern):
+        print(source, pattern)
+
+        source_names_some = []
+        pattern_names_some = []
+        for source_occ, pattern_occ in zip(source, pattern):
+            for intern_source, intern_pattern in zip(ast.walk(source_occ), ast.walk(pattern_occ)):
+                # if isinstance(node_intern, ast.Name):
+                #     id_node_intern = vars(node_intern)['id']
+                #     print(id_node_intern)
+
+                if isinstance(intern_source, ast.Name) and isinstance(intern_pattern, ast.Name):
+                    id_source = vars(intern_source)['id']
+                    id_pattern = vars(intern_pattern)['id']
+                    if self.WILDCARD_SOME_NAME in id_pattern:
+                        source_names_some.append(id_source)
+                        pattern_names_some.append(id_pattern)
+
+        print(source_names_some, pattern_names_some)
+        if len(source_names_some) != 0 or len(pattern_names_some) != 0:
+            return self.__all_variable_is_equals(source_names_some, pattern_names_some)
+        return True
+
+    def __all_variable_is_equals(self, source, pattern):
+        setSource = set(source)
+        setPattern = set(pattern)
+        variables = zip(source, pattern)
+        variablesDict = dict(zip(source, pattern))
+        if (len(setPattern) != len(setSource)):
+            return False
+
+        print(source, pattern)
+
+        for index, (s, p) in enumerate(variables):
+            if not variablesDict[s] == pattern[index]:
+                return False
+
+        return True
 
     def amount_of_patterns_found(self, root_pattern):
         mytree = self.root
@@ -280,14 +460,15 @@ class SourceTree:
             Array -- Nome de todas as variaveis na arvore.
         """
         mytree = self.root
-        all_ast_name = []
+        all_ast_name = {}
         for node_my_tree in ast.walk(mytree):
             if isinstance(node_my_tree, ast.Name):
-                if parent_is(node_my_tree, ast.Assign):
-                    all_ast_name.append(node_my_tree)
+                id = vars(node_my_tree)['id']
+                if id in all_ast_name:
+                    all_ast_name[id].add(node_my_tree)
+                else:
+                    all_ast_name[id] = {node_my_tree}
         return all_ast_name
-
-
 
     def get_all_occurrences(self, root_pattern):
         """Informar de forma detalhada os detalhes das ocorrencias da arvore.
@@ -308,24 +489,90 @@ class SourceTree:
         """
         occurrences = self.__get_array_all_occurrences(root_pattern)
         all_position = []
-        for occurr in occurrences:
-            positions = []
-            for node_occur in occurr:
-                dict_node = vars(node_occur)
-                lineno = dict_node.get('lineno')
-                col_offset = dict_node.get('col_offset')
-                positions.append({'lineno': lineno, 'col_offset': col_offset})
-            all_position.append(positions)
+
+        for index_i, ocorrencia in enumerate(occurrences):
+            padrao_position = []
+            for parte_ocorrencia in ocorrencia:
+                padrao_position.append(self.get_position_node(parte_ocorrencia))
+            all_position.append(padrao_position)
+        return all_position
+
+    def get_simple_position_pattern(self, root_pattern):
+        occurrences = self.__get_array_all_occurrences(root_pattern)
+        all_position = []
+        for index_i, ocorrencia in enumerate(occurrences):
+            padrao_position = []
+            for parte_ocorrencia in ocorrencia:
+                padrao_position.append(self.get_simple_position_node(parte_ocorrencia))
+            all_position.append(padrao_position)
         return all_position
 
     def search_pattern(self, root_pattern):
         occurrences = self.get_all_occurrences(root_pattern)
         return occurrences
 
+    def get_position_node(self, node):
 
+        initial_position = {"lineno": 0, "col_offset": 0, "type": None, 'value': None}
+        end_position = {"lineno": 0, "col_offset": 0, "type": None, 'value': None}
 
+        for index_k, node_child in enumerate(ast.iter_child_nodes(node)):
+            if index_k == 0:
+                initial_position['lineno'] = vars(node_child)['lineno']
+                initial_position['col_offset'] = vars(node_child)['col_offset']
+                initial_position['type'] = type(node_child)
+                initial_position['value'] = node_child
 
+                end_position['lineno'] = vars(node_child)['lineno']
+                end_position['col_offset'] = vars(node_child)['col_offset']
+                end_position['type'] = type(node_child)
+                end_position['value'] = node_child
 
+            if initial_position['lineno'] > vars(node_child)['lineno']:
+                initial_position['lineno'] = vars(node_child)['lineno']
+                initial_position['lineno'] = vars(node_child)['lineno']
+                initial_position['type'] = type(node_child)
+                initial_position['value'] = node_child
 
+            if initial_position['lineno'] == vars(node_child)['lineno']:
+                if initial_position['col_offset'] > vars(node_child)['col_offset']:
+                    initial_position['lineno'] = vars(node_child)['lineno']
+                    initial_position['col_offset'] = vars(node_child)['col_offset']
+                    initial_position['type'] = type(node_child)
+                    initial_position['value'] = node_child
 
+            if end_position['lineno'] < vars(node_child)['lineno']:
+                end_position['lineno'] = vars(node_child)['lineno']
+                end_position['lineno'] = vars(node_child)['lineno']
+                end_position['type'] = type(node_child)
+                end_position['value'] = node_child
 
+            if end_position['lineno'] == vars(node_child)['lineno']:
+                if end_position['col_offset'] < vars(node_child)['col_offset']:
+                    end_position['lineno'] = vars(node_child)['lineno']
+                    end_position['col_offset'] = vars(node_child)['col_offset']
+                    end_position['type'] = type(node_child)
+                    end_position['value'] = node_child
+
+        return {
+            'type': type(node),
+            'node': node,
+            'initial_position': initial_position,
+            'end_position': end_position
+        }
+
+    def get_simple_position_node(self, node):
+        position = self.get_position_node(node)
+        ini = position['initial_position']
+        end = position['end_position']
+
+        return (
+            {
+                'lineno': ini['lineno'],
+                'col_offset': ini['col_offset'],
+            },
+            {
+                'lineno': end['lineno'],
+                'col_offset': end['col_offset']
+            }
+        )
