@@ -1,4 +1,7 @@
 import ast
+import tokenize
+import io
+from collections import defaultdict
 from src.gui.gui import *
 from src.utils.tree_utils import *
 
@@ -289,6 +292,30 @@ class SourceTree():
                 return False
         return True
 
+    def get_not(self, string):
+        map_code = {}
+        for token in tokenize.generate_tokens(string.readline):
+            map_code[token.start[0]] = token.line
+        nots = defaultdict(list)
+        enable = False
+        indexI = 0
+        for k in sorted(map_code):
+            if "#start-not\n" in map_code[k]:
+                indexI += 1
+                nots[indexI].append(map_code[k])
+                enable = True
+                continue
+            if "#end-not\n" in map_code[k]:
+                nots[indexI].append(map_code[k])
+                enable = False
+                indexI -= 1
+
+            if enable:
+                nots[indexI].append(map_code[k])
+
+        for key in nots:
+            nots[key] = ast.parse("".join(nots[key]))
+        return nots
     def __len_occurrences(self, error, root_pattern):
         root_pattern = list(ast.iter_child_nodes(root_pattern))
         error_node = []

@@ -365,3 +365,22 @@ a = 'anyNumber'
     ERR_MESSAGE = "A AST do codigo fonte nao deveria conter o padrão"
 
     assert True == (len(tree.get_all_occurrences(pattern)) == 0), ERR_MESSAGE
+
+def test_tc_16_any_literal_value_uma_instrucao_nao_existe():
+    str_source = """
+a = 'valorLiteral'
+                """
+
+    str_pattern = """
+a = 'anyNumber'
+                """
+    source = ast.parse(str_source)
+    pattern = ast.parse(str_pattern)
+
+    tree = SourceTree(source)
+
+
+    ERR_MESSAGE = "A AST do codigo fonte nao deveria conter o padrão"
+
+    assert True == (len(tree.get_all_occurrences(pattern)) == 0), ERR_MESSAGE
+

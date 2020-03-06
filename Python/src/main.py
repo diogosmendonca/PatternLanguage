@@ -2,13 +2,11 @@ import ast
 from src.SourceTree import SourceTree
 
 str_source_pattern = """
-any = Math('anyNumber')
+
 """
 str_source_code = """ 
 def olaMundo():    
-    a = Math(1, "OlaMundo")
-    a = Math(1)
-    a = Math(1)
+   
 """
 
 source_code = ast.parse(str_source_code)
