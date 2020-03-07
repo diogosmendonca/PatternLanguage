@@ -11,6 +11,7 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
+import org.apache.commons.lang3.SerializationUtils;
 
 public class Node {
 	
@@ -27,6 +28,10 @@ public class Node {
 	
 	public Node() {
 		this.children = new ArrayList<Node>();
+		this.fullVisited = false;
+		this.exists = true;
+		this.usingExistsOperator = false;
+		this.changeOperator = false;
 	}
 	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
@@ -173,5 +178,5 @@ public class Node {
 		return this.node.toString();
 	}
 	
-	
 }
+	

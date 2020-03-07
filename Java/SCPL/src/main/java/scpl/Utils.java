@@ -174,7 +174,7 @@ public class Utils {
 		
 		//Se os nós são iguais, a sub-árvore é toda a ávore
 		if(isEquals(a, b, new LinkedHashMap<>())) {
-			if(!b.getUsingExistsOperator()) {
+			if(!b.getUsingExistsOperator()|| !b.getChangeOperator()) {
 				if(isFakeNode(b)) {
 					ocorrences.addAll(a.getChildren());
 				}else {
@@ -210,10 +210,17 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	
 	//Se as raízes são diferentes, retorna vazio
 	if(!basicComparation(a, b, wildcardsMap)) {
+		
 		return ocorrences;
 	}
 	
 	int notChilds = 0;
+	
+	//FIXME
+	if(b.getChildren().size() == 0 && b.getNode().getKind() == Kind.BLOCK) {
+		return null;
+	}
+	
 	
 	//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
 	if(a.getChildren().size()<b.getChildren().size()) {
@@ -263,6 +270,14 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 				
 				subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
 				
+				if(subtreeAux==null) {
+					searching=false;
+					lastOcorrenceIndex = counter;
+					maxIndexA = a.getChildren().size();
+					counter++;
+					continue;
+				}
+				
 				if(subtreeAux.size() > 0) {
 					if(b.getChildren().get(i).getExists()) {
 						currentOcorrences.addAll(subtreeAux);
@@ -270,13 +285,20 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 						lastOcorrenceIndex = counter;
 						maxIndexA = a.getChildren().size();
 					}else {
-						//FIXME
-						if(i == b.getChildren().size() - 1) {
-							return ocorrences;
+						if(b.getChildren().get(i).getChangeOperator()) {
+							currentOcorrences.addAll(subtreeAux);
+							searching=false;
+							lastOcorrenceIndex = counter;
+							maxIndexA = a.getChildren().size();
+						}else {
+							//FIXME
+							if(i == b.getChildren().size() - 1) {
+								return ocorrences;
+							}
+							searching=false;
+							maxIndexA = counter;
+							counter = lastOcorrenceIndex;							
 						}
-						searching=false;
-						maxIndexA = counter;
-						counter = lastOcorrenceIndex;
 					}
 				}
 			}
@@ -324,7 +346,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 			
 		//Se os nós são iguais, a sub-árvore é toda a ávore
 		if(isEquals(a, b, wildcardsMap)) {
-			if(!b.getUsingExistsOperator()) {
+			if(!b.getUsingExistsOperator()|| !b.getChangeOperator()) {
 				if(isFakeNode(b)) {
 					ocorrences.addAll(a.getChildren());
 				}else {
@@ -391,11 +413,40 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 		if(b.getExists()) {
 			
 		}else {
-			
+			List<BlockCodeStruct> retorno = new ArrayList<BlockCodeStruct>();
+			visit(b, b.getExists(), new ArrayList<Node>(),retorno);
+			List<Node> ocorrence = subtreeFirstOcorrence(a,retorno.get(0).getNode(), wildcardsMap);
 		}
 		
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+	
+	private static void visit(Node node, Boolean exists, List<Node> path , List<BlockCodeStruct> retorno) {
+		path.add(node);
+		List<Node> nodeList = new ArrayList<Node>();
+		for(Node child: node.getChildren()) {
+			if(child.getExists()!=exists) {
+				nodeList.add(child);
+				continue;
+			}
+			
+			if(nodeList.size() > 0) {
+				retorno.add(new BlockCodeStruct(path, nodeList));
+				nodeList.clear();
+			}
+			
+			if(child.getChangeOperator()) {
+				visit(child,exists, path, retorno);				
+			}
+		}
+		if(nodeList.size() > 0) {
+			retorno.add(new BlockCodeStruct(path, nodeList));
+			nodeList.clear();
+		}
+		path.remove(node);
 	}
 
 
@@ -706,6 +757,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 					Node fakeNode = new Node();
 					fakeNode.getChildren().addAll(retorno.getChildren());
 					fakeNode.setUsingExistsOperator(retorno.getUsingExistsOperator());
+					fakeNode.setChangeOperator(retorno.getChangeOperator());
 					
 					return fakeNode;
 			}
