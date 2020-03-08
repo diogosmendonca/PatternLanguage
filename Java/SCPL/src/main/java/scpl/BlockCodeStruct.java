@@ -1,14 +1,18 @@
 package scpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlockCodeStruct {
 	
 	private List<Node> path;
 	private Node node;
+	private Node context;
 	
-	public BlockCodeStruct(List<Node> path, List<Node> nodeList) {
-		this.path = path;
+	public BlockCodeStruct(List<Node> path, List<Node> nodeList, Node context) {
+		List<Node> pathAux = new ArrayList<Node>();
+		pathAux.addAll(path);
+		this.path = pathAux;
 		
 		if(nodeList.size() == 1) {
 			this.node = nodeList.get(0);
@@ -19,8 +23,7 @@ public class BlockCodeStruct {
 			this.node = fakeNode;
 		}
 		
-		
-		
+		this.context = context;
 	}
 	
 	public List<Node> getPath() {
@@ -35,6 +38,12 @@ public class BlockCodeStruct {
 	public void setNode(Node node) {
 		this.node = node;
 	}
-	
+	public Node getContext() {
+		return context;
+	}
+
+	public void setContext(Node context) {
+		this.context = context;
+	}
 	
 }

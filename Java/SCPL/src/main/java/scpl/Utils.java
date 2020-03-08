@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -189,6 +190,9 @@ public class Utils {
 		
 		do {
 			childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>());
+			if(childrenNodesAux.size() > 0 && ocorrences.containsAll(childrenNodesAux)) {
+				break;
+			}
 			ocorrences.addAll(childrenNodesAux);
 		}while(childrenNodesAux.size() > 0);
 		
@@ -216,7 +220,7 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 	
 	int notChilds = 0;
 	
-	//FIXME
+	//FIXME Problema do padrão de bloco vazio
 	if(b.getChildren().size() == 0 && b.getNode().getKind() == Kind.BLOCK) {
 		return null;
 	}
@@ -266,10 +270,11 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 		while(searching && counter<maxIndexA ) {
 			//Se o índice atual não está na lista de índices das ocorrências
 			if(!a.getChildren().get(counter).getFullVisited()) {
-				//Se é igual é adicionado a lista de ocorrencias auxiliar
+				//Se é igual é adicionado a lista de ocorrencias auxiliar 
 				
 				subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
 				
+				//FIXME Problema do padrão de bloco vazio
 				if(subtreeAux==null) {
 					searching=false;
 					lastOcorrenceIndex = counter;
@@ -410,21 +415,70 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 
 	private static List<Node> searchSubtree(Node a, Node b, Map<String, String> wildcardsMap) {
 		
+		List<Node> ocorrences = new ArrayList<Node>();
+		
+		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
+		wildcardsMapBefore.putAll(wildcardsMap);
+		
 		if(b.getExists()) {
 			
 		}else {
-			List<BlockCodeStruct> retorno = new ArrayList<BlockCodeStruct>();
-			visit(b, b.getExists(), new ArrayList<Node>(),retorno);
-			List<Node> ocorrence = subtreeFirstOcorrence(a,retorno.get(0).getNode(), wildcardsMap);
+			List<BlockCodeStruct> blockWanted = new ArrayList<BlockCodeStruct>();
+			getDiferentOperatorBlock(b, new ArrayList<Node>(),blockWanted);
+			
+			//FIXME Sempre será apenas um bloco de código ?
+			BlockCodeStruct block = blockWanted.get(0);
+			Node wanted = block.getNode();
+			
+			List<Node> ocorrenceWanted = subtreeFirstOcorrence(a, wanted, wildcardsMap);
+			
+			if(ocorrenceWanted.size() > 0) {
+				//Cópia do padrão para buscar apenas o trecho com operador de existência diferente
+				Node clone = new Node(b);
+				
+				//Lista dos nós com operador de existência diferente para serem removidos
+				List<Node> listToRemove = new ArrayList<Node>();
+				
+				//Se é um nó fake adiciona seus filhos, se não, adiciona o nó
+				if(isFakeNode(block.getNode())) {
+					listToRemove.addAll(block.getNode().getChildren()); 
+				}else {
+					listToRemove.add(block.getNode());
+				}
+				
+				//Busca no mapeamento qual é o seu nó clone, dado o nó
+				listToRemove = listToRemove.stream()
+						.map(m -> Node.getCloneNodeMap().get(m))
+						.collect(Collectors.toList());
+				
+				//Remove
+				Node.getCloneNodeMap().get(block.getContext()).getChildren().removeAll(listToRemove);
+				
+				List<Node> ocorrencesAux;
+				
+				//FIXME Pensar melhor o contexto de busca
+				Node context = ocorrenceWanted.get(0).getParent();
+				while (context != null) {
+					ocorrencesAux = searchChildren(context,clone, wildcardsMap);
+					if(ocorrencesAux.size() > 0) {
+						return ocorrences;
+					}
+					context = context.getParent(); 
+				}
+				
+				ocorrences.addAll(ocorrenceWanted);
+				return ocorrences;
+			}else {
+				wildcardsMap.putAll(wildcardsMapBefore);
+			}
 		}
 		
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	
-	private static void visit(Node node, Boolean exists, List<Node> path , List<BlockCodeStruct> retorno) {
+		
+	private static void getDiferentOperatorBlock(Node node, List<Node> path , List<BlockCodeStruct> retorno) {
+		Boolean exists = node.getExists(); 
 		path.add(node);
 		List<Node> nodeList = new ArrayList<Node>();
 		for(Node child: node.getChildren()) {
@@ -434,16 +488,16 @@ private static List<Node> searchChildren(Node a, Node b, Map<String, String> wil
 			}
 			
 			if(nodeList.size() > 0) {
-				retorno.add(new BlockCodeStruct(path, nodeList));
+				retorno.add(new BlockCodeStruct(path, nodeList, node));
 				nodeList.clear();
 			}
 			
 			if(child.getChangeOperator()) {
-				visit(child,exists, path, retorno);				
+				getDiferentOperatorBlock(child, path, retorno);				
 			}
 		}
 		if(nodeList.size() > 0) {
-			retorno.add(new BlockCodeStruct(path, nodeList));
+			retorno.add(new BlockCodeStruct(path, nodeList, node));
 			nodeList.clear();
 		}
 		path.remove(node);

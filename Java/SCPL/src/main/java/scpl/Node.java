@@ -2,7 +2,9 @@ package scpl;
 
 import java.lang.management.CompilationMXBean;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
@@ -25,6 +27,7 @@ public class Node {
 	private Boolean exists;
 	private Boolean usingExistsOperator;
 	private Boolean changeOperator;
+	private static final Map<Node,Node> cloneNodeMap = new LinkedHashMap<>();
 	
 	public Node() {
 		this.children = new ArrayList<Node>();
@@ -44,6 +47,24 @@ public class Node {
 		this.changeOperator = false;
 	}
 	
+	public Node(Node node) {
+		this.parent = null;
+		this.node = node.getNode();
+		
+		List<Node> children = new ArrayList<Node>();
+		
+		for(Node child: node.getChildren()) {
+			children.add(new Node(child));
+		}
+		
+		this.children = children;		
+		this.compilatioUnitTree = node.getCompilatioUnitTree();
+		this.fullVisited = false;
+		this.exists = true;
+		this.usingExistsOperator = false;
+		this.changeOperator = false;
+		cloneNodeMap.put(node, this);
+	}
 	
 	public Node getParent() {
 		return parent;
@@ -176,6 +197,10 @@ public class Node {
 
 	public String toString() {
 		return this.node.toString();
+	}
+
+	public static Map<Node, Node> getCloneNodeMap() {
+		return cloneNodeMap;
 	}
 	
 }
