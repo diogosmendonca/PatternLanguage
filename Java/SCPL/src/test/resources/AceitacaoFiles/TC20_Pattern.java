@@ -1,8 +1,9 @@
 public class AnyClass {
     void anyMethod() {
-        int someVariable;
+        String someVariable;
 		not:{
             someVariable = "anyLiteralValue";
         }
+        someVariable.anyMethod();
     }
 }

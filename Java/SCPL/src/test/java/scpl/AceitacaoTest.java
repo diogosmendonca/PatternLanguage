@@ -12,6 +12,7 @@ import java.util.List;
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class AceitacaoTest {
@@ -172,19 +173,17 @@ public class AceitacaoTest {
 		assertEquals(20, retorno.get(0).getEndColumn());
 	}
 	
+	@Ignore
 	@Test
 	public void tc13() throws IOException {
 		
 		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC13_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC13_Pattern.java");
 		
-		assertEquals(1, retorno.size());
-		assertEquals(3, retorno.get(0).getStartLine());
-		assertEquals(9, retorno.get(0).getStartColumn());
-		assertEquals(3, retorno.get(0).getEndLine());
-		assertEquals(15, retorno.get(0).getEndColumn());
+		assertEquals(0, retorno.size());
 	}
 	
+	@Ignore
 	@Test
 	public void tc14() throws IOException {
 		
@@ -194,38 +193,24 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
+	@Ignore
 	@Test
 	public void tc15() throws IOException {
 		
 		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC15_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC15_Pattern.java");
 		
-		assertEquals(2, retorno.size());
-		assertEquals(3, retorno.get(0).getStartLine());
-		assertEquals(9, retorno.get(0).getStartColumn());
-		assertEquals(3, retorno.get(0).getEndLine());
-		assertEquals(18, retorno.get(0).getEndColumn());
-		assertEquals(4, retorno.get(1).getStartLine());
-		assertEquals(9, retorno.get(1).getStartColumn());
-		assertEquals(4, retorno.get(1).getEndLine());
-		assertEquals(22, retorno.get(1).getEndColumn());
+		assertEquals(0, retorno.size());
 	}
 	
+	@Ignore
 	@Test
 	public void tc16() throws IOException {
 		
 		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC16_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC16_Pattern.java");
 		
-		assertEquals(2, retorno.size());
-		assertEquals(3, retorno.get(0).getStartLine());
-		assertEquals(9, retorno.get(0).getStartColumn());
-		assertEquals(3, retorno.get(0).getEndLine());
-		assertEquals(18, retorno.get(0).getEndColumn());
-		assertEquals(4, retorno.get(1).getStartLine());
-		assertEquals(9, retorno.get(1).getStartColumn());
-		assertEquals(4, retorno.get(1).getEndLine());
-		assertEquals(22, retorno.get(1).getEndColumn());
+		assertEquals(0, retorno.size());
 	}
 	
 	@Test
@@ -233,6 +218,94 @@ public class AceitacaoTest {
 		
 		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC17_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC17_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(15, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc18() throws IOException {
+		
+		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC18_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC18_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc19() throws IOException {
+		
+		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC19_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC19_Pattern.java");
+		
+		assertEquals(2, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(18, retorno.get(0).getEndColumn());
+		assertEquals(4, retorno.get(1).getStartLine());
+		assertEquals(9, retorno.get(1).getStartColumn());
+		assertEquals(4, retorno.get(1).getEndLine());
+		assertEquals(22, retorno.get(1).getEndColumn());
+	}
+	
+	@Test
+	public void tc20() throws IOException {
+		
+		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC20_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC20_Pattern.java");
+		
+		assertEquals(2, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(18, retorno.get(0).getEndColumn());
+		assertEquals(4, retorno.get(1).getStartLine());
+		assertEquals(9, retorno.get(1).getStartColumn());
+		assertEquals(4, retorno.get(1).getEndLine());
+		assertEquals(22, retorno.get(1).getEndColumn());
+	}
+	
+	@Test
+	public void tc21() throws IOException {
+		
+		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC21_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC21_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(28, retorno.get(0).getEndColumn());
+	}
+	
+	@Ignore
+	@Test
+	public void tc22() throws IOException {
+		
+		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC22_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC22_Pattern.java");
+		
+		assertEquals(3, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(18, retorno.get(0).getEndColumn());
+		assertEquals(4, retorno.get(1).getStartLine());
+		assertEquals(9, retorno.get(1).getStartColumn());
+		assertEquals(4, retorno.get(1).getEndLine());
+		assertEquals(22, retorno.get(1).getEndColumn());
+	}
+	
+	@Ignore
+	@Test
+	public void tc23() throws IOException {
+		
+		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC23_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC23_Pattern.java");
 		
 		assertEquals(3, retorno.size());
 		assertEquals(3, retorno.get(0).getStartLine());

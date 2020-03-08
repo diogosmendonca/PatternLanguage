@@ -1,17 +1,8 @@
 public class AnyClass {
     void anyMethod() {
-        String someVariable;
-
-        someVariable = anyMethod();
-
+        int someVariable;
 		not:{
-            try{
-                exists:{
-                    someVariable.anyMethod();
-                }
-            }catch(Exception e){
-                
-            }
+            someVariable = "anyLiteralValue";
         }
     }
 }
