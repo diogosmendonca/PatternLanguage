@@ -1,4 +1,4 @@
-package scpl;
+package br.scpl.model;
 
 import java.lang.management.CompilationMXBean;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ public class Node {
 	private CompilationUnitTree compilatioUnitTree;
 	private Long startPosition;
 	private Long endPosition;
+	private Boolean fakeNode;
 	private Boolean fullVisited;
 	private Boolean exists;
 	private Boolean usingExistsOperator;
@@ -31,6 +32,7 @@ public class Node {
 	
 	public Node() {
 		this.children = new ArrayList<Node>();
+		this.fakeNode = false;
 		this.fullVisited = false;
 		this.exists = true;
 		this.usingExistsOperator = false;
@@ -41,6 +43,7 @@ public class Node {
 		this.node = node;
 		this.children = new ArrayList<Node>();
 		this.compilatioUnitTree = compilatioUnitTree;
+		this.fakeNode = false;
 		this.fullVisited = false;
 		this.exists = true;
 		this.usingExistsOperator = false;
@@ -59,6 +62,7 @@ public class Node {
 		
 		this.children = children;		
 		this.compilatioUnitTree = node.getCompilatioUnitTree();
+		this.fakeNode = false;
 		this.fullVisited = false;
 		this.exists = true;
 		this.usingExistsOperator = false;
@@ -131,6 +135,14 @@ public class Node {
 	
 	public long getEndColumn() {
 		return this.getLineMap().getColumnNumber(this.endPosition);
+	}
+	
+	public Boolean getFakeNode() {
+		return fakeNode;
+	}
+
+	public void setFakeNode(Boolean fakeNode) {
+		this.fakeNode = fakeNode;
 	}
 
 	public Boolean getFullVisited() {

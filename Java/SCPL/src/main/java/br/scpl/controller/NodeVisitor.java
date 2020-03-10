@@ -1,4 +1,4 @@
-package scpl;
+package br.scpl.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +17,9 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 
-public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
+import br.scpl.model.Node;
+
+public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	
 	
 	  private static final int INDENT_SPACES = 2;
@@ -28,7 +30,7 @@ public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private Node root;
 	  private Map<Tree,Node> nodesMap;
 
-	  public VisitorNode(Tree tree) {
+	  public NodeVisitor(Tree tree) {
 		sb = new StringBuilder();
 	    indentLevel = 0;
 	    compilatioUnitTree = (CompilationUnitTree) tree;
@@ -37,7 +39,7 @@ public class VisitorNode extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  }
 
 	  public static String build(Tree tree, Map<Node, List<Node>> nodes) {
-	    VisitorNode nv = new VisitorNode(tree);
+	    NodeVisitor nv = new NodeVisitor(tree);
 	    nv.scan(tree, nodes);
 	    addInfos(nodes);
 	    System.out.println(nv.sb.toString());

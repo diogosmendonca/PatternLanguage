@@ -15,6 +15,9 @@ import javax.tools.StandardJavaFileManager;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import br.scpl.model.Node;
+import br.scpl.view.View;
+
 public class AceitacaoTest {
 	
 	final String toolsJarFileName = "tools.jar";
@@ -23,7 +26,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc01() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC01_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC01_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC01_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -36,7 +39,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc02() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC02_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC02_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC02_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -45,7 +48,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc03() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC03_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC03_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC03_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -58,7 +61,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc04() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC04_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC04_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC04_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -75,7 +78,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc05() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC05_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC05_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC05_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -84,7 +87,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc06() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC06_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC06_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC06_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -97,7 +100,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc07() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC07_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC07_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC07_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -114,7 +117,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc08() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC08_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC08_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC08_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -123,7 +126,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc09() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC09_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC09_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC09_Pattern.java");
 
 		assertEquals(1, retorno.size());
@@ -137,7 +140,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc10() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC10_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC10_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC10_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -154,7 +157,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc11() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC11_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC11_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC11_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -163,7 +166,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc12() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC12_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC12_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC12_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -177,7 +180,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc13() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC13_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC13_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC13_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -187,7 +190,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc14() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC14_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC14_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC14_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -197,7 +200,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc15() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC15_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC15_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC15_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -207,7 +210,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc16() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC16_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC16_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC16_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -216,7 +219,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc17() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC17_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC17_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC17_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -229,7 +232,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc18() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC18_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC18_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC18_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -238,7 +241,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc19() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC19_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC19_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC19_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -255,7 +258,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc20() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC20_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC20_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC20_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -272,7 +275,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc21() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC21_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC21_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC21_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -286,7 +289,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc22() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC22_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC22_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC22_Pattern.java");
 		
 		assertEquals(3, retorno.size());
@@ -304,7 +307,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc23() throws IOException {
 		
-		List<Node> retorno = Utils.searchOcorrences("./src/test/resources/AceitacaoFiles/TC23_Code.java"
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC23_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC23_Pattern.java");
 		
 		assertEquals(3, retorno.size());
@@ -318,26 +321,14 @@ public class AceitacaoTest {
 		assertEquals(22, retorno.get(1).getEndColumn());
 	}
 	
-	private Path createJavaFile(String className, String code) throws IOException {
+	@Ignore
+	@Test
+	public void tc24() throws IOException {
 		
-		Path temp = Paths.get(System.getProperty("java.io.tmpdir"), className);
-		Files.createDirectories(temp);
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC24_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC24_Pattern.java");
 		
-		Path javaSourceFile = Paths.get(temp.normalize().toAbsolutePath().toString(), className + ".java");
-		//System.out.println("The java source file is loacted at "+javaSourceFile);
-		
-		Files.write(javaSourceFile, code.getBytes());
-		
-		Path toolsJarFilePath = Paths.get(javaHome, "lib", toolsJarFileName);
-		if (!Files.exists(toolsJarFilePath)){
-			//System.out.println("The tools jar file ("+toolsJarFileName+") could not be found at ("+toolsJarFilePath+").");
-		}
-		
-		//System.out.println(javaSourceFile);
-		
-		
-		
-		return javaSourceFile;
+		assertEquals(3, retorno.size());
 	}
-
+	
 }

@@ -17,6 +17,9 @@ import javax.tools.ToolProvider;
 
 import org.apache.log4j.Logger;
 import com.sun.source.util.TreePath;
+
+import br.scpl.view.View;
+
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.JavacTask;
@@ -32,7 +35,7 @@ public class Main {
 		
 		String pathPattern = "./src/main/resources/codesPatterns";
 		
-		System.out.println(Utils.searchOcorrences(pathCode, pathPattern));
+		System.out.println(View.searchOcorrences(pathCode, pathPattern)); 
 		
 	}
 	

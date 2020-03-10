@@ -1,4 +1,4 @@
-package scpl;
+package br.scpl.model;
 
 import java.util.ArrayList;
 import java.util.List;

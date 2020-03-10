@@ -1,4 +1,4 @@
-package scpl;
+package br.scpl.model;
 
 import java.util.Iterator;
 
