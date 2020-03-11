@@ -132,7 +132,7 @@ public class SearchController {
 						searching=false;
 						lastOcorrenceIndex = counter;
 						maxIndexA = a.getChildren().size();
-						counter++;
+						//counter++;
 						continue;
 					}
 					
@@ -160,7 +160,9 @@ public class SearchController {
 						}
 					}
 				}
-				counter++;
+				if(searching==true) {
+					counter++;
+				}
 			}
 			
 			if(searching && !(i == b.getChildren().size() - 1)) {
@@ -260,7 +262,7 @@ public class SearchController {
 		}
 		
 		if(!b.getUsingExistsOperator() || !b.getChangeOperator() ) {
-			return searchChildren(a, b, wildcardsMap);
+			return subtreeFirstOcorrence(a, b, wildcardsMap);
 		}else {
 			return searchSubtree(a, b, wildcardsMap);
 		}

@@ -321,14 +321,21 @@ public class AceitacaoTest {
 		assertEquals(22, retorno.get(1).getEndColumn());
 	}
 	
-	@Ignore
 	@Test
 	public void tc24() throws IOException {
 		
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC24_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC24_Pattern.java");
 		
-		assertEquals(3, retorno.size());
+		assertEquals(2, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(18, retorno.get(0).getEndColumn());
+		assertEquals(5, retorno.get(1).getStartLine());
+		assertEquals(13, retorno.get(1).getStartColumn());
+		assertEquals(5, retorno.get(1).getEndLine());
+		assertEquals(26, retorno.get(1).getEndColumn());
 	}
 	
 }

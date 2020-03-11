@@ -140,15 +140,12 @@ public class Utils {
 			}
 		}
 		
-		return getCompilationUnitTree(nodes);
+		return getCompilationUnitTree(nodes);                                           
 	}
-	
-	///////////////////////////////////////////////////
 	
 	public static Map<Node, List<Node>> buildTree(Tree tree){
 		Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 		NodeVisitor.build(tree,nodes);
-		//System.out.println(NodeVisitor.build(tree,nodes));
 		
 		return nodes;
 	}
