@@ -4,7 +4,7 @@ public class AnyClass {
 		not:{
             if(true){
                 exists:{
-                    String someVariable = "anyLiteralValue";
+                    String someVariable = any;
                 }
             }
         }

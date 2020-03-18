@@ -1,8 +1,8 @@
 public class AnyClass {
     void anyMethod() {
-       String anyVariable;
+       String someVariable;
 
-       a.anyMethod();
+       someVariable.any();
        
     }
 }

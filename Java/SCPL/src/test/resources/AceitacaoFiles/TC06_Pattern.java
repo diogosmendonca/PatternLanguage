@@ -1,5 +1,5 @@
 public class AnyClass {
     void anyMethod() {
-        int anyVariable = 10;
+        int any = 10;
     }
 }

@@ -338,4 +338,17 @@ public class AceitacaoTest {
 		assertEquals(26, retorno.get(1).getEndColumn());
 	}
 	
+	@Test
+	public void tc26() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC26_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC26_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(28, retorno.get(0).getEndColumn());
+	}
+	
 }

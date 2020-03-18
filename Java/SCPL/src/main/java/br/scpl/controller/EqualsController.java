@@ -19,12 +19,12 @@ import br.scpl.model.Node;
 public class EqualsController {
 	
 	private static final ResourceBundle wildcards = ResourceBundle.getBundle("wildcards");
-	private final static String anyLiteralValue = wildcards.getString("anyLiteralValue");
 	private final static String anyClass = wildcards.getString("anyClass");
 	private final static String anyMethod = wildcards.getString("anyMethod");
 	private final static String someMethod = wildcards.getString("someMethod");
 	private final static String anyVariable = wildcards.getString("anyVariable");
 	private final static String someVariable = wildcards.getString("someVariable");
+	private final static String anyValue = wildcards.getString("anyValue");
 	
 	/***
 	 * Recebe duas árvores e um mapa com os wildcard já utilizados.
@@ -84,24 +84,24 @@ public class EqualsController {
 		
 		//Se é um nó fake não realiza as verificações
 		if(!b.getFakeNode()) {
+						
+			boolean flagAny = false;
 			
-			boolean flagAnyLiteralvalue = false;
-			
-			if(a.getNode() instanceof LiteralTree && b.getNode().getKind() == Kind.STRING_LITERAL &&
-					((String)((LiteralTree)b.getNode()).getValue()).equals(anyLiteralValue)) {
+			if(b.getNode().getKind() == Kind.IDENTIFIER &&
+					(((IdentifierTree) b.getNode()).getName().toString()).equals(anyValue)) {
 				
-				flagAnyLiteralvalue = true;
+				flagAny = true;
 				
 			}
 			
 			//Compara se os tipos sao iguais.
 			if(a.getNode().getKind()!=b.getNode().getKind()) {
-				if(!flagAnyLiteralvalue) {
+				if(!flagAny) {
 					return false;
 				}
 			}
 			
-			if(!compareValue(a, b, flagAnyLiteralvalue, wildcardsMap)) {
+			if(!compareValue(a, b, flagAny, wildcardsMap)) {
 				return false;
 			}
 			
@@ -310,9 +310,9 @@ public class EqualsController {
 		
 	}
 	
-	private static boolean compareValue(Node node1, Node node2, boolean flagAnyLiteralValue, Map<String, String> wildcardsMap) {
+	private static boolean compareValue(Node node1, Node node2, boolean flagAny, Map<String, String> wildcardsMap) {
 		
-		if(flagAnyLiteralValue) {
+		if(flagAny) {
 			return true;
 		}
 		

@@ -1,8 +1,8 @@
 public class AnyClass {
-    void anyMethod() {
+    void any() {
         int someVariable;
 		not:{
-            someVariable = "anyLiteralValue";
+            someVariable = any;
         }
     }
 }
