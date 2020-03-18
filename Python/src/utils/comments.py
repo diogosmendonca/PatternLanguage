@@ -6,9 +6,10 @@ import io
 import ast
 from collections import defaultdict
 string = io.StringIO("""
+#start-not
 print(ola_mundo)
+#end-not
 """)
-
 
 def get_not(string):
     map_code = {}
@@ -25,7 +26,7 @@ def get_not(string):
             enable = True
             continue
 
-        if  "#end-not\n" in map_code[k]:
+        if "#end-not\n" in map_code[k]:
             nots[indexI].append(map_code[k])
             enable = False
             indexI -= 1
