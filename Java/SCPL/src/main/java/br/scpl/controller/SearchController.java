@@ -42,7 +42,7 @@ public class SearchController {
 		List<Node> childrenNodesAux = new ArrayList<Node>();
 		
 		do {
-			childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>());
+			childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
 			if(childrenNodesAux.size() > 0 && ocorrences.containsAll(childrenNodesAux)) {
 				break;
 			}
@@ -60,7 +60,7 @@ public class SearchController {
 	}
 	
 
-	private static List<Node> searchChildren(Node a, Node b, Map<String, String> wildcardsMap) {
+	private static List<Node> searchChildren(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
 		//Lista de ocorrências do padrão
 		List<Node> ocorrences = new ArrayList<>();
@@ -102,13 +102,19 @@ public class SearchController {
 		List<Node> subtreeAux;
 		
 		boolean searching = false;
-		int counter = 0;
+		int counter = path.get(a) != null ? path.get(a) : 0;
 		int i = 0;
-		int lastOcorrenceIndex = 0;
-		int maxIndexA = a.getChildren().size();
+		int lastOcorrenceIndex = counter;
+		int maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 		
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 		wildcardsMapBefore.putAll(wildcardsMap);
+		
+		Map<Node, Integer> pathOld = new LinkedHashMap<>();
+		pathOld.putAll(path);
+		
+		Map<Node, Integer> limitPathOld = new LinkedHashMap<>();
+		limitPathOld.putAll(limitPath);
 		
 		for(i =0;i<b.getChildren().size();i++) { 
 			
@@ -120,19 +126,20 @@ public class SearchController {
 			searching=true;
 			
 			//Enquanto está buscando e contador é menor que número de filhos de do código fonte
-			while(searching && counter<maxIndexA ) {
+			while(searching && counter<=maxIndexA ) {
 				//Se o índice atual não está na lista de índices das ocorrências
 				if(!a.getChildren().get(counter).getFullVisited()) {
 					//Se é igual é adicionado a lista de ocorrencias auxiliar 
 					
-					subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
+					subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap, path, limitPath);
 					
 					//FIXME Problema do padrão de bloco vazio
 					if(subtreeAux==null) {
 						searching=false;
 						lastOcorrenceIndex = counter;
-						maxIndexA = a.getChildren().size();
-						//counter++;
+						limitPath.clear();
+						limitPath.putAll(limitPathOld);
+						maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 						continue;
 					}
 					
@@ -141,16 +148,20 @@ public class SearchController {
 							currentOcorrences.addAll(subtreeAux);
 							searching=false;
 							lastOcorrenceIndex = counter;
-							maxIndexA = a.getChildren().size();
+							limitPath.clear();
+							limitPath.putAll(limitPathOld);
+							maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 						}else {
 							if(b.getChildren().get(i).getChangeOperator()) {
 								currentOcorrences.addAll(subtreeAux);
 								searching=false;
 								lastOcorrenceIndex = counter;
-								maxIndexA = a.getChildren().size();
+								limitPath.clear();
+								limitPath.putAll(limitPathOld);
+								maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 							}else {
 								//FIXME
-								if(i == b.getChildren().size() - 1) {
+ 								if(i == b.getChildren().size() - 1) {
 									return ocorrences;
 								}
 								searching=false;
@@ -160,6 +171,12 @@ public class SearchController {
 						}
 					}
 				}
+				
+				if(searching==false) {
+					path.remove(a);
+					path.put(a, counter);
+				}
+				
 				if(searching==true) {
 					counter++;
 				}
@@ -179,12 +196,17 @@ public class SearchController {
 					}else {
 						//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
 						if(!wildcardsMap.equals(wildcardsMapBefore)) {
-							counter = 0;
 							i =-1;
 							searching=false;
 							currentOcorrences.clear();
 							wildcardsMap.clear();
 							wildcardsMap.putAll(wildcardsMapBefore);
+							path.clear();
+							path.putAll(pathOld);
+							counter = path.get(a) != null ? path.get(a) : 0;
+							limitPath.clear();
+							limitPath.putAll(limitPathOld);
+							maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 						}
 					}
 					
@@ -197,10 +219,16 @@ public class SearchController {
 		return ocorrences;
 	}
 	
-	public static List<Node> subtreeFirstOcorrence(Node a, Node b, Map<String, String> wildcardsMap){
+	public static List<Node> subtreeFirstOcorrence(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath){
 		
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 		wildcardsMapBefore.putAll(wildcardsMap);
+		
+		Map<Node, Integer> pathOld = new LinkedHashMap<>();
+		pathOld.putAll(path);
+		
+		Map<Node, Integer> limitPathOld = new LinkedHashMap<>();
+		limitPathOld.putAll(limitPath);
 		
 		List<Node> ocorrences = new ArrayList<>();
 			
@@ -219,32 +247,55 @@ public class SearchController {
 		
 		wildcardsMap.clear();
 		wildcardsMap.putAll(wildcardsMapBefore);
+		path.clear();
+		path.putAll(pathOld);
+		limitPath.clear();
+		limitPath.putAll(limitPathOld);
 		
-		ocorrences.addAll(searchChildren(a, b, wildcardsMap));
+		ocorrences.addAll(searchChildren(a, b, wildcardsMap, path, limitPath));
 		
 		if(ocorrences.size() > 0) {
 			return ocorrences;
 		}
 		
-		wildcardsMap.clear();
-		wildcardsMap.putAll(wildcardsMapBefore);
 		
 		//Chama recursivamente para todos os filhos do nó
-		for(Node child : a.getChildren()) {
+		int counter = path.get(a) != null ? path.get(a) : 0;
+		int maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
+		while(counter<=maxIndexA ) {
+			Node child = a.getChildren().get(counter);
 			if(!child.getFullVisited()) {
-				ocorrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap));
-				if(ocorrences.size() > 0) {
-					return ocorrences;
-				}
+				
 				wildcardsMap.clear();
 				wildcardsMap.putAll(wildcardsMapBefore);
+				path.clear();
+				path.putAll(pathOld);
+				limitPath.clear();
+				limitPath.putAll(limitPathOld);
+				
+				ocorrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap, path, limitPath));
+				if(ocorrences.size() > 0) {
+					
+					if(!b.getChangeOperator()) {
+						if(b.getExists()) {
+							path.remove(a);
+							path.put(a, counter);
+						}else {
+							limitPath.remove(a);
+							limitPath.put(a, counter);
+						}
+					}
+						
+					return ocorrences;
+				}
 			}
+			counter++;
 		}
 		
 		return ocorrences;
 	}
 
-	public static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap) {
+	public static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
 		List<Node> ocorrences = new ArrayList<Node>();
 		
@@ -262,13 +313,13 @@ public class SearchController {
 		}
 		
 		if(!b.getUsingExistsOperator() || !b.getChangeOperator() ) {
-			return subtreeFirstOcorrence(a, b, wildcardsMap);
+			return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
 		}else {
-			return searchSubtree(a, b, wildcardsMap);
+			return searchSubtree(a, b, wildcardsMap, path, limitPath);
 		}
 	}
 
-	private static List<Node> searchSubtree(Node a, Node b, Map<String, String> wildcardsMap) {
+	private static List<Node> searchSubtree(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
 		List<Node> ocorrences = new ArrayList<Node>();
 		
@@ -285,7 +336,7 @@ public class SearchController {
 			BlockCodeStruct block = blockWanted.get(0);
 			Node wanted = block.getNode();
 			
-			List<Node> ocorrenceWanted = subtreeFirstOcorrence(a, wanted, wildcardsMap);
+			List<Node> ocorrenceWanted = subtreeFirstOcorrence(a, wanted, wildcardsMap, path, limitPath);
 			
 			if(ocorrenceWanted.size() > 0) {
 				//Cópia do padrão para buscar apenas o trecho com operador de existência diferente
@@ -314,7 +365,7 @@ public class SearchController {
 				//FIXME Pensar melhor o contexto de busca
 				Node context = ocorrenceWanted.get(0).getParent();
 				while (context != null) {
-					ocorrencesAux = searchChildren(context,clone, wildcardsMap);
+					ocorrencesAux = searchChildren(context,clone, wildcardsMap, new LinkedHashMap<>(), new LinkedHashMap<>());
 					if(ocorrencesAux.size() > 0) {
 						return ocorrences;
 					}
