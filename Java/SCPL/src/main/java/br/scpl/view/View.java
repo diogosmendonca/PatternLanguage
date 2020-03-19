@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
@@ -55,7 +56,11 @@ public class View {
 			
 			for(Tree treePattern: listPattern) {
 				
-				retorno.addAll(SearchController.subtree(Utils.getCompilationUnitTree(Utils.buildTree(treeCode)), Utils.removeStub(Utils.buildTree(treePattern))));
+				Node rootCode = Utils.getCompilationUnitTree(Utils.buildTree(treeCode));
+				
+				Node rootPattern = Utils.removeStub(Utils.buildTree(treePattern));
+				
+				retorno.addAll(SearchController.subtree(rootCode, rootPattern));
 			}
 			
 		}

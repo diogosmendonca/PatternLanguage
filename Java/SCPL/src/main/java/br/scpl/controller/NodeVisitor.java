@@ -106,20 +106,58 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		  
 		  for(Node key : nodes.keySet()) {
 			  Boolean exists = null;
-			  Boolean parent = false;
 			  if(key != null) {
-				  /*
-				  if(key.getNode().getKind() == Kind.LABELED_STATEMENT) {
-					  if(((LabeledStatementTree) key.getNode()).getLabel().toString().equalsIgnoreCase("not")) {
+				  
+				  if(key.getNode().getKind() != Kind.BLOCK && key.getParent() != null && key.getParent().getNode().getKind() == Kind.LABELED_STATEMENT) {
+					  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase("not")) {
 						  exists = false;
-						  parent = true;
 					  }
 					  
-					  if(((LabeledStatementTree) key.getNode()).getLabel().toString().equalsIgnoreCase("exist")) {
+					  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase("exists")) {
 						  exists = true;
-						  parent = true;
 					  }
-				  }*/
+					  
+					  if(exists != null) {
+						  
+						  listToRemove.add(key.getParent());
+						  
+						  int nodesIndexAux = 0;
+						  int parenIndexAux = 0;
+						  
+						  boolean booleanIndexAux = true; 
+						  
+					  	  Node parentAux = key.getParent().getParent();
+					  	
+					  	  if(booleanIndexAux) {
+					  		  nodesIndexAux = nodes.get(parentAux).indexOf(key.getParent());
+					  		  nodes.get(parentAux).remove(key.getParent());
+					  	  }
+					  	  nodes.get(parentAux).add(nodesIndexAux,key);
+					  	  nodesIndexAux++;
+					  	
+					  	  if(booleanIndexAux) {
+					  		  parenIndexAux = parentAux.getChildren().indexOf(key.getParent());
+					  		  parentAux.getChildren().remove(key.getParent());
+					  	  }
+						  parentAux.getChildren().add(parenIndexAux,key);
+						  parenIndexAux++;
+						
+						  booleanIndexAux = false;
+						
+						  key.setParent(parentAux);
+						
+						  while(parentAux != null) {
+							  parentAux.setUsingExistsOperator(true);
+							  parentAux = parentAux.getParent();
+						  }
+						
+						  key.setExists(exists);
+						  if(key.getParent().getExists()!=exists) {
+							  key.getParent().setChangeOperator(true);
+						  }
+					  }
+					  
+				  } 
 				  
 				  if(key.getNode().getKind() == Kind.BLOCK && key.getParent().getNode().getKind() == Kind.LABELED_STATEMENT) {
 					  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase("not")) {
@@ -129,55 +167,48 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 					  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase("exists")) {
 						  exists = true;
 					  }
-				  }
-				  
-				  if(exists != null) {
 					  
-					  listToRemove.add(key);
-					  listToRemove.add(key.getParent());
-					  
-					  int nodesIndexAux = 0;
-					  int parenIndexAux = 0;
-					  
-					  boolean booleanIndexAux = true; 
-					  
-					  for(Node node :  nodes.get(key)) {
-						  	Node parentAux;
-						  	
-						  	if(parent) {
-						  		parentAux = node.getParent();
-						  	}else {
-						  		parentAux = node.getParent().getParent().getParent();
-						  	}
-						  	
-						  	if(booleanIndexAux) {
-						  		nodesIndexAux = nodes.get(parentAux).indexOf(key.getParent());
-						  		nodes.get(parentAux).remove(key.getParent());
-						  	}
-						  	nodes.get(parentAux).add(nodesIndexAux,node);
-						  	nodesIndexAux++;
-						  	
-						  	if(booleanIndexAux) {
-						  		parenIndexAux = parentAux.getChildren().indexOf(key.getParent());
-						  		parentAux.getChildren().remove(key.getParent());
-						  	}
-							parentAux.getChildren().add(parenIndexAux,node);
-							parenIndexAux++;
-							
-							booleanIndexAux = false;
-							
-							node.setParent(parentAux);
-							
-							while(parentAux != null) {
-								parentAux.setUsingExistsOperator(true);
-								parentAux = parentAux.getParent();
-							}
-							
-							node.setExists(exists);
-							if(node.getParent().getExists()!=exists) {
-								node.getParent().setChangeOperator(true);
-							}
-							
+					  if(exists != null) {
+						  
+						  listToRemove.add(key);
+						  listToRemove.add(key.getParent());
+						  
+						  int nodesIndexAux = 0;
+						  int parenIndexAux = 0;
+						  
+						  boolean booleanIndexAux = true; 
+						  
+						  for(Node node :  nodes.get(key)) {
+							  	Node parentAux = node.getParent().getParent().getParent();
+							  	
+							  	if(booleanIndexAux) {
+							  		nodesIndexAux = nodes.get(parentAux).indexOf(key.getParent());
+							  		nodes.get(parentAux).remove(key.getParent());
+							  	}
+							  	nodes.get(parentAux).add(nodesIndexAux,node);
+							  	nodesIndexAux++;
+							  	
+							  	if(booleanIndexAux) {
+							  		parenIndexAux = parentAux.getChildren().indexOf(key.getParent());
+							  		parentAux.getChildren().remove(key.getParent());
+							  	}
+								parentAux.getChildren().add(parenIndexAux,node);
+								parenIndexAux++;
+								
+								booleanIndexAux = false;
+								
+								node.setParent(parentAux);
+								
+								while(parentAux != null) {
+									parentAux.setUsingExistsOperator(true);
+									parentAux = parentAux.getParent();
+								}
+								
+								node.setExists(exists);
+								if(node.getParent().getExists()!=exists) {
+									node.getParent().setChangeOperator(true);
+								}
+						  }
 					  }
 				  }
 			  }
