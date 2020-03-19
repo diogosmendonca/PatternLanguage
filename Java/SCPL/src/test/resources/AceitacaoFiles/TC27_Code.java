@@ -1,5 +1,5 @@
 public class SourceCode{
     public static void run() { 
-        String a = "teste";
+        String var = metodo(a,b,c);
     }
 }

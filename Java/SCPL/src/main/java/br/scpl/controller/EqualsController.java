@@ -11,6 +11,7 @@ import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.Tree.Kind;
 
@@ -25,6 +26,7 @@ public class EqualsController {
 	private final static String anyVariable = wildcards.getString("anyVariable");
 	private final static String someVariable = wildcards.getString("someVariable");
 	private final static String anyValue = wildcards.getString("anyValue");
+	private final static String anyParameter = wildcards.getString("anyParameter");
 	
 	/***
 	 * Recebe duas árvores e um mapa com os wildcard já utilizados.
@@ -44,6 +46,16 @@ public class EqualsController {
 		
 		//Verifica se as árvores tem o mesmo número de filhos
 		if(a.getChildren().size()!=b.getChildren().size()) {
+			
+			if(a.getNode().getKind() == Kind.METHOD_INVOCATION) {
+				Tree tree =  b.getChildren().get(b.getChildren().size()-1).getNode();
+				if(tree.getKind() == Kind.IDENTIFIER) {
+					if(((IdentifierTree) tree).getName().toString().equals(anyParameter)){
+						return true;
+					}
+				}
+						
+			}
 			return false;
 		}
 		
