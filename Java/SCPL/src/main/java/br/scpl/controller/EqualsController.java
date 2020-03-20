@@ -1,9 +1,11 @@
 package br.scpl.controller;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.IdentifierTree;
@@ -11,6 +13,7 @@ import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.Tree.Kind;
@@ -27,6 +30,9 @@ public class EqualsController {
 	private final static String someVariable = wildcards.getString("someVariable");
 	private final static String anyValue = wildcards.getString("anyValue");
 	private final static String anyParameter = wildcards.getString("anyParameter");
+	private final static String anyArgument = wildcards.getString("anyArgument");
+	private final static String anyModifier = wildcards.getString("anyModifier");
+	private final static String anyType = wildcards.getString("anyType");
 	
 	/***
 	 * Recebe duas árvores e um mapa com os wildcard já utilizados.
@@ -40,6 +46,10 @@ public class EqualsController {
 	
 	public static boolean isEquals(Node a, Node b, Map<String, String> wildcardsMap) {
 		
+		if(anyModifier(a,b)) {
+			return true;
+		}
+		
 		if(!basicComparation(a, b, wildcardsMap)) {
 			return false;
 		}
@@ -47,20 +57,50 @@ public class EqualsController {
 		//Verifica se as árvores tem o mesmo número de filhos
 		if(a.getChildren().size()!=b.getChildren().size()) {
 			
-			if(a.getNode().getKind() == Kind.METHOD_INVOCATION) {
-				Tree tree =  b.getChildren().get(b.getChildren().size()-1).getNode();
-				if(tree.getKind() == Kind.IDENTIFIER) {
-					if(((IdentifierTree) tree).getName().toString().equals(anyParameter)){
-						return true;
+			boolean flagAny = false;
+			
+			if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
+				
+				MethodInvocationTree invocantion = (MethodInvocationTree)b.getNode();
+				List<? extends ExpressionTree> arguments = invocantion.getArguments();
+				
+				if(arguments.size() == 1) {
+					ExpressionTree argument = arguments.get(0);
+					
+					if(argument.getKind() == Kind.IDENTIFIER) {
+						if(((IdentifierTree) argument).getName().toString().startsWith(anyArgument)){
+							flagAny = true;
+						}
 					}
 				}
 						
 			}
-			return false;
+			
+			
+			
+			if(b.getNode().getKind() == Kind.METHOD) {
+				MethodTree method = (MethodTree)b.getNode();
+				List<? extends VariableTree> parameters = method.getParameters();
+				
+				if(parameters.size() == 1) {
+					VariableTree parameter = parameters.get(0);
+					
+					if(parameter.getName().toString().startsWith(anyParameter)) {
+						flagAny = true;
+					}
+				}
+			}
+			
+			if(!flagAny) {
+				return false;				
+			}
 		}
 		
 		//Para cada filho chama recursivamente o método isEquals
 		for(int i=0; i<a.getChildren().size(); i++) {
+			if(a.getChildren().get(i).getFullVisited().booleanValue()) {
+				return false;
+			}
 			if(!isEquals(a.getChildren().get(i), b.getChildren().get(i), wildcardsMap)) {
 				return false;
 			}
@@ -99,8 +139,9 @@ public class EqualsController {
 						
 			boolean flagAny = false;
 			
-			if(b.getNode().getKind() == Kind.IDENTIFIER &&
-					(((IdentifierTree) b.getNode()).getName().toString()).equals(anyValue)) {
+			if(b.getNode().getKind() == Kind.IDENTIFIER && (
+					(((IdentifierTree) b.getNode()).getName().toString()).startsWith(anyValue) || 
+						(((IdentifierTree) b.getNode()).getName().toString()).startsWith(anyType))) {
 				
 				flagAny = true;
 				
@@ -117,7 +158,7 @@ public class EqualsController {
 				return false;
 			}
 			
-			if(!compareName(a, b, wildcardsMap)) {
+			if(!compareName(a, b, flagAny, wildcardsMap)) {
 				return false;
 			}
 		
@@ -136,7 +177,11 @@ public class EqualsController {
 	 * @return booleano que indica se os nós possuem o mesmo nome
 	 */
 	
-	private static boolean compareName(Node node1, Node node2, Map<String, String> wildcardsMap) {
+	private static boolean compareName(Node node1, Node node2, boolean flagAny, Map<String, String> wildcardsMap) {
+		
+		if(flagAny) {
+			return true;
+		}
 		
 		String name1 = null;
 		String name2 = null;
@@ -148,7 +193,7 @@ public class EqualsController {
 				name1 = ((ClassTree) node1.getNode()).getSimpleName().toString();
 				name2 = ((ClassTree) node2.getNode()).getSimpleName().toString();
 				
-				if(name2.equalsIgnoreCase(anyClass)) {
+				if(name2.startsWith(anyClass)) {
 					return true;
 				}
 				
@@ -159,7 +204,7 @@ public class EqualsController {
 				name1 = ((MethodTree) node1.getNode()).getName().toString();
 				name2 = ((MethodTree) node2.getNode()).getName().toString();
 				
-				if(name2.equalsIgnoreCase(anyMethod)) {
+				if(name2.startsWith(anyMethod)) {
 					return true;
 				}
 				
@@ -216,7 +261,7 @@ public class EqualsController {
 					
 				}
 				
-				if(name2.equalsIgnoreCase(anyMethod)) {
+				if(name2.startsWith(anyMethod)) {
 					return true;
 				}
 				
@@ -251,7 +296,7 @@ public class EqualsController {
 				name1 = ((VariableTree) node1.getNode()).getName().toString();
 				name2 = ((VariableTree) node2.getNode()).getName().toString();
 				
-				if(name2.equalsIgnoreCase(anyVariable)) {
+				if(name2.startsWith(anyVariable)) {
 					return true;
 				}
 				
@@ -286,7 +331,7 @@ public class EqualsController {
 				name1 = ((IdentifierTree) node1.getNode()).getName().toString();
 				name2 = ((IdentifierTree) node2.getNode()).getName().toString();
 				
-				if(name2.equalsIgnoreCase(anyVariable)) {
+				if(name2.startsWith(anyVariable)) {
 					return true;
 				}
 				
@@ -316,10 +361,42 @@ public class EqualsController {
 				
 				return name1.equals(name2);
 				
+			case MODIFIERS:
+				name1 = ((ModifiersTree) node1.getNode()).toString();
+				
+				name2 = ((ModifiersTree) node2.getNode()).toString();
+				
+				return name1.equals(name2);
+				
+			case PRIMITIVE_TYPE:
+				
+				name1 = ((ModifiersTree) node1.getNode()).toString();
+				
+				name2 = ((ModifiersTree) node2.getNode()).toString();
+				
+				return name1.equals(name2);
+				
 			default:
 				return true;
 		}
 		
+	}
+	
+	private static boolean anyModifier(Node a, Node b) {
+		
+		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
+			
+			ModifiersTree modifier = ((ModifiersTree) b.getNode());
+			
+			List<? extends AnnotationTree> annotations = modifier.getAnnotations();
+			
+			for(AnnotationTree annotation: annotations) {
+				if(annotation.toString().startsWith(anyModifier)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	private static boolean compareValue(Node node1, Node node2, boolean flagAny, Map<String, String> wildcardsMap) {

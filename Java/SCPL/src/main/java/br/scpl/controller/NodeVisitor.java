@@ -27,23 +27,23 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private final StringBuilder sb;
 	  private int indentLevel;
 	  private final CompilationUnitTree compilatioUnitTree;
-	  private Node root;
+	  private Tree root;
 	  private Map<Tree,Node> nodesMap;
 
 	  public NodeVisitor(Tree tree) {
 		sb = new StringBuilder();
 	    indentLevel = 0;
 	    compilatioUnitTree = (CompilationUnitTree) tree;
-	    root = new Node();
 	    nodesMap = new LinkedHashMap<Tree, Node>();
 	  }
 
-	  public static String build(Tree tree, Map<Node, List<Node>> nodes) {
+	  public static Node build(Tree tree) {
 	    NodeVisitor nv = new NodeVisitor(tree);
+	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
 	    addInfos(nodes);
 	    System.out.println(nv.sb.toString());
-	    return nv.sb.toString();
+	    return nv.nodesMap.get(nv.root);
 	  }
 
 	  private StringBuilder indent() {
@@ -55,6 +55,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	      if (tree != null && tree.getClass().getInterfaces() != null && tree.getClass().getInterfaces().length > 0) {
 	        String nodeName = tree.getClass().getInterfaces()[0].getSimpleName();
 	        indent().append(nodeName).append("\n");
+	        
+	        if(root == null && tree.getKind()==Kind.COMPILATION_UNIT) {
+	        	root = tree;
+	        }       
 	        
 	        Tree parent = null;
 	        

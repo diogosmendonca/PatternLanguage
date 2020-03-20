@@ -11,6 +11,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.util.SourcePositions;
 
 import br.scpl.controller.FileHandler;
+import br.scpl.controller.NodeVisitor;
 import br.scpl.controller.SearchController;
 import br.scpl.model.CompilationUnitStruct;
 import br.scpl.model.Node;
@@ -56,9 +57,9 @@ public class View {
 			
 			for(Tree treePattern: listPattern) {
 				
-				Node rootCode = Utils.getCompilationUnitTree(Utils.buildTree(treeCode));
+				Node rootCode = NodeVisitor.build(treeCode);
 				
-				Node rootPattern = Utils.removeStub(Utils.buildTree(treePattern));
+				Node rootPattern = NodeVisitor.build(treePattern);
 				
 				retorno.addAll(SearchController.subtree(rootCode, rootPattern));
 			}
