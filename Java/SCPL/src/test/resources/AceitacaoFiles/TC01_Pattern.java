@@ -1,5 +1,7 @@
-public class AnyClass {
-    void anyMethod() {
-        System.out.println("Hello Nico");
+@anyModifier
+class anyClass {
+    @anyModifier
+    any anyMethod(anyType any) throws anyException {
+        System.out.println(any);
     }
 }
