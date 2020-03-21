@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ClassTree;
@@ -57,43 +58,15 @@ public class EqualsController {
 		//Verifica se as árvores tem o mesmo número de filhos
 		if(a.getChildren().size()!=b.getChildren().size()) {
 			
-			boolean flagAny = false;
+			if(b.getNode().getKind() == Kind.METHOD) {
+				return anyParameter(a, b, wildcardsMap);
+			}
 			
 			if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
-				
-				MethodInvocationTree invocantion = (MethodInvocationTree)b.getNode();
-				List<? extends ExpressionTree> arguments = invocantion.getArguments();
-				
-				if(arguments.size() == 1) {
-					ExpressionTree argument = arguments.get(0);
-					
-					if(argument.getKind() == Kind.IDENTIFIER) {
-						if(((IdentifierTree) argument).getName().toString().startsWith(anyArgument)){
-							flagAny = true;
-						}
-					}
-				}
-						
+				return anyArgument(a, b, wildcardsMap);
 			}
 			
-			
-			
-			if(b.getNode().getKind() == Kind.METHOD) {
-				MethodTree method = (MethodTree)b.getNode();
-				List<? extends VariableTree> parameters = method.getParameters();
-				
-				if(parameters.size() == 1) {
-					VariableTree parameter = parameters.get(0);
-					
-					if(parameter.getName().toString().startsWith(anyParameter)) {
-						flagAny = true;
-					}
-				}
-			}
-			
-			if(!flagAny) {
-				return false;				
-			}
+			return false;				
 		}
 		
 		//Para cada filho chama recursivamente o método isEquals
@@ -399,6 +372,87 @@ public class EqualsController {
 		return false;
 	}
 	
+	private static boolean anyParameter(Node a, Node b, Map<String, String> wildcardsMap) {
+		
+		MethodTree methodPattern = (MethodTree)b.getNode();
+		List<? extends VariableTree> parametersPattern = methodPattern.getParameters();
+		
+		if(parametersPattern.size() == 1) {
+			VariableTree parameterPattern = parametersPattern.get(0);
+			
+			if(parameterPattern.getName().toString().startsWith(anyParameter)) {
+				
+				MethodTree methodCode = (MethodTree)a.getNode();
+				List<? extends VariableTree> parametersCode = methodCode.getParameters();
+				
+				List<Node> childrenPattern = b.getChildren();
+				
+				childrenPattern = childrenPattern.stream().filter(x -> !parametersPattern.contains(x.getNode())).collect(Collectors.toList());
+				
+				List<Node> childrenCode = a.getChildren();
+				
+				childrenCode = childrenCode.stream().filter(x -> !parametersCode.contains(x.getNode())).collect(Collectors.toList());
+				
+				if(childrenPattern.size() == childrenCode.size()) {
+					for(int i=0; i<childrenPattern.size(); i++) {
+						if(childrenCode.get(i).getFullVisited().booleanValue()) {
+							return false;
+						}
+						if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {
+							return false;
+						}
+					}
+					
+					return true;
+				}
+				
+			}
+		}
+		
+		return false;
+	}
+	
+	private static boolean anyArgument(Node a, Node b, Map<String, String> wildcardsMap) {
+		
+		MethodInvocationTree invocantionPattern = (MethodInvocationTree)b.getNode();
+		List<? extends ExpressionTree> argumentsPattern = invocantionPattern.getArguments();
+		
+		if(argumentsPattern.size() == 1) {
+			ExpressionTree argument = argumentsPattern.get(0);
+			
+			if(argument.getKind() == Kind.IDENTIFIER) {
+				if(((IdentifierTree) argument).getName().toString().startsWith(anyArgument)){
+					
+					MethodInvocationTree invocantionCode = (MethodInvocationTree)a.getNode();
+					List<? extends ExpressionTree> argumentsCode = invocantionCode.getArguments();
+					
+					List<Node> childrenPattern = b.getChildren();
+					
+					childrenPattern = childrenPattern.stream().filter(x -> !argumentsPattern.contains(x.getNode())).collect(Collectors.toList());
+					
+					List<Node> childrenCode = a.getChildren();
+					
+					childrenCode = childrenCode.stream().filter(x -> !argumentsCode.contains(x.getNode())).collect(Collectors.toList());
+					
+					if(childrenPattern.size() == childrenCode.size()) {
+						for(int i=0; i<childrenPattern.size(); i++) {
+							if(childrenCode.get(i).getFullVisited().booleanValue()) {
+								return false;
+							}
+							if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {
+								return false;
+							}
+						}
+						
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	private static boolean compareValue(Node node1, Node node2, boolean flagAny, Map<String, String> wildcardsMap) {
 		
 		if(flagAny) {
@@ -448,7 +502,6 @@ public class EqualsController {
 				return value1.equals(value2);
 				
 			case NULL_LITERAL:
-				//value1 = ((?)((LiteralTree)node1.getNode()).getValue());
 				break;
 				
 		}

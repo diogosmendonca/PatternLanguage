@@ -153,6 +153,10 @@ public class Node {
 		if(!this.hasBrother(Tree.Kind.BLOCK)) {
 			this.fullVisited = fullVisited;
 		}
+		
+		for(Node child : this.children) {
+			child.setFullVisited(exists);
+		}
 	}
 
 	public Boolean hasBrother(Kind kind) {

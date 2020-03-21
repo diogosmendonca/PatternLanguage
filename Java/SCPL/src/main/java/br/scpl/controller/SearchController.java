@@ -299,6 +299,9 @@ public class SearchController {
 		
 		List<Node> ocorrences = new ArrayList<Node>();
 		
+		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
+		wildcardsMapBefore.putAll(wildcardsMap);
+		
 		//Se os nós são iguais, a sub-árvore é toda a árvore
 		if(EqualsController.isEquals(a, b, wildcardsMap)) {
 			if(!b.getUsingExistsOperator() || !b.getChangeOperator()) {
@@ -311,6 +314,9 @@ public class SearchController {
 				return ocorrences;
 			}
 		}
+		
+		wildcardsMap.clear();
+		wildcardsMap.putAll(wildcardsMapBefore);
 		
 		if(!b.getUsingExistsOperator() || !b.getChangeOperator() ) {
 			return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
