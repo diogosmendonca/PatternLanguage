@@ -15,6 +15,7 @@ import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.ModifiersTree;
+import com.sun.source.tree.PrimitiveTypeTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.Tree.Kind;
@@ -343,9 +344,9 @@ public class EqualsController {
 				
 			case PRIMITIVE_TYPE:
 				
-				name1 = ((ModifiersTree) node1.getNode()).toString();
+				name1 = ((PrimitiveTypeTree) node1.getNode()).toString();
 				
-				name2 = ((ModifiersTree) node2.getNode()).toString();
+				name2 = ((PrimitiveTypeTree) node2.getNode()).toString();
 				
 				return name1.equals(name2);
 				
