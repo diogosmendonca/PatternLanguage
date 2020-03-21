@@ -81,18 +81,29 @@ public class SearchController {
 		
 		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
 		if(a.getChildren().size()<b.getChildren().size()) {
-			int diff = a.getChildren().size()-b.getChildren().size();
 			
-			for(Node child : b.getChildren()) {
-				if(!child.getExists()) {
-					notChilds++;
+			if(b.getNode().getKind()==Kind.METHOD) {
+				
+				if(!EqualsController.anyMethod(a, b, wildcardsMap, true)) {
+					return ocorrences;
 				}
-			}
-			
-			diff = diff + notChilds;
-			
-			if(diff<0) {
-				return ocorrences;
+				
+				
+			}else {
+				
+				int diff = a.getChildren().size()-b.getChildren().size();
+				
+				for(Node child : b.getChildren()) {
+					if(!child.getExists()) {
+						notChilds++;
+					}
+				}
+				
+				diff = diff + notChilds;
+				
+				if(diff<0) {
+					return ocorrences;
+				}
 			}
 		}
 		
@@ -119,7 +130,11 @@ public class SearchController {
 		for(i =0;i<b.getChildren().size();i++) { 
 			
 			//Se o que falta > o que resta ou ainda está buscando (ou seja, não achou o filho anterior do padrão no código-fonte)
-			if(b.getChildren().size()-i-notChilds > a.getChildren().size()-counter || searching) {
+			/*if(b.getChildren().size()-i-notChilds > a.getChildren().size()-counter || searching) {
+				return ocorrences;
+			}*/
+			
+			if(searching) {
 				return ocorrences;
 			}
 			

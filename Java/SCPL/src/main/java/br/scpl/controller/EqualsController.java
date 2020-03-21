@@ -1,5 +1,6 @@
 package br.scpl.controller;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class EqualsController {
 	private final static String anyArgument = wildcards.getString("anyArgument");
 	private final static String anyModifier = wildcards.getString("anyModifier");
 	private final static String anyType = wildcards.getString("anyType");
+	private final static String anyException = wildcards.getString("anyException");
 	
 	/***
 	 * Recebe duas árvores e um mapa com os wildcard já utilizados.
@@ -60,7 +62,7 @@ public class EqualsController {
 		if(a.getChildren().size()!=b.getChildren().size()) {
 			
 			if(b.getNode().getKind() == Kind.METHOD) {
-				return anyParameter(a, b, wildcardsMap);
+				return anyMethod(a, b, wildcardsMap, false);
 			}
 			
 			if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
@@ -373,43 +375,76 @@ public class EqualsController {
 		return false;
 	}
 	
-	private static boolean anyParameter(Node a, Node b, Map<String, String> wildcardsMap) {
+	public static boolean anyMethod(Node a, Node b, Map<String, String> wildcardsMap, boolean ignoreBody) {
+		
+		boolean change = false;
 		
 		MethodTree methodPattern = (MethodTree)b.getNode();
+		MethodTree methodCode = (MethodTree)a.getNode();
+		
 		List<? extends VariableTree> parametersPattern = methodPattern.getParameters();
+		List<? extends ExpressionTree> throwsPattern = methodPattern.getThrows();
+		
+		List<Tree> removePattern = new ArrayList<Tree>();
+		List<Tree> removeCode = new ArrayList<Tree>();
 		
 		if(parametersPattern.size() == 1) {
 			VariableTree parameterPattern = parametersPattern.get(0);
 			
 			if(parameterPattern.getName().toString().startsWith(anyParameter)) {
+				removePattern.addAll(parametersPattern);
 				
-				MethodTree methodCode = (MethodTree)a.getNode();
 				List<? extends VariableTree> parametersCode = methodCode.getParameters();
+				removeCode.addAll(parametersCode);
 				
-				List<Node> childrenPattern = b.getChildren();
+				change = true;
+			}
+			
+		}
+		
+		if(throwsPattern.size() == 1) {
+			ExpressionTree throwPattern = throwsPattern.get(0);
+			
+			if(throwPattern.toString().startsWith(anyException)) {
+				removePattern.addAll(throwsPattern);
 				
-				childrenPattern = childrenPattern.stream().filter(x -> !parametersPattern.contains(x.getNode())).collect(Collectors.toList());
+				List<? extends ExpressionTree> throwsCode = methodCode.getThrows();
+				removeCode.addAll(throwsCode);
 				
-				List<Node> childrenCode = a.getChildren();
-				
-				childrenCode = childrenCode.stream().filter(x -> !parametersCode.contains(x.getNode())).collect(Collectors.toList());
-				
-				if(childrenPattern.size() == childrenCode.size()) {
-					for(int i=0; i<childrenPattern.size(); i++) {
-						if(childrenCode.get(i).getFullVisited().booleanValue()) {
-							return false;
-						}
-						if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {
-							return false;
-						}
-					}
-					
-					return true;
-				}
-				
+				change = true;
 			}
 		}
 		
+		if(ignoreBody) {
+			removePattern.add(methodPattern.getBody());
+			removeCode.add(methodCode.getBody());
+			
+			change = true;
+		}
+		
+		if(change) {
+			List<Node> childrenPattern = b.getChildren();
+			
+			childrenPattern = childrenPattern.stream().filter(x -> !removePattern.contains(x.getNode())).collect(Collectors.toList());
+			
+			List<Node> childrenCode = a.getChildren();
+			
+			childrenCode = childrenCode.stream().filter(x -> !removeCode.contains(x.getNode())).collect(Collectors.toList());
+			
+			if(childrenPattern.size() == childrenCode.size()) {
+				for(int i=0; i<childrenPattern.size(); i++) {
+					if(childrenCode.get(i).getFullVisited().booleanValue()) {
+						return false;
+					}
+					if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {
+						return false;
+					}
+				}
+				
+				return true;
+			}
+		}
+				
 		return false;
 	}
 	
