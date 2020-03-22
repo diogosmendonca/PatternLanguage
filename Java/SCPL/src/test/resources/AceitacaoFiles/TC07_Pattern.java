@@ -1,5 +1,7 @@
-public class AnyClass {
-    void anyMethod() {
+@anyModifier
+class anyClass {
+    @anyModifier
+    any anyMethod() {
         int someVariable = 10;
         System.out.println(someVariable);
     }

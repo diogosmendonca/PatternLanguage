@@ -1,7 +1,7 @@
 @anyModifier
 class anyClass {
     @anyModifier
-    any anyMethod(anyType any) throws anyException {
-        System.out.println(any);
+    any anyMethod(anyType any) {
+        System.out.println("Hello Nico");
     }
 }

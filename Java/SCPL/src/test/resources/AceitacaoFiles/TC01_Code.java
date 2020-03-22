@@ -1,5 +1,5 @@
 public class SourceCode{
-    public static void run() throws Exception {
+    public static void run() {
         System.out.println("Hello Nico");
     }
 }

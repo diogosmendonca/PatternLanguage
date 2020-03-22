@@ -1,5 +1,7 @@
-public class AnyClass {
-    void anyMethod() {
-        String string = inteiro.any();
+@anyModifier
+class anyClass {
+    @anyModifier
+    any anyMethod() {
+        String string = any.any();
     }
 }

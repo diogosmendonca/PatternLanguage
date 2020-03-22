@@ -1,5 +1,7 @@
-public class AnyClass {
-    void anyMethod() {
-        int any = any;
+@anyModifier
+class anyClass {
+    @anyModifier
+    any anyMethod() {
+       int any = any;
     }
 }
