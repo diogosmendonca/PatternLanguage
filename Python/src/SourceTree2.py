@@ -146,6 +146,24 @@ class SourceTree():
                 return True
         return False
 
+    def __value_str(self, node):
+        if isinstance(node, ast.Str):
+            return vars(node).get("s")
+        return ""
+
+    def wildcard_call_is_any_params(self, node1, node2):
+        if isinstance(node1, ast.Expr) and isinstance(node2, ast.Expr):
+            args1 = vars(vars(node1).get("value")).get("args")
+            args2 = vars(vars(node2).get("value")).get("args")
+            if not len(args1) is len(args2):
+                return False
+
+            for arg1, arg2 in zip(args1, args2):
+                if self.__value_str(arg2) != self.WILDCARDS_ANY and not self.brute_equals_two_nodes(arg1, arg2):
+                    return False
+
+        return True
+
 
     def wild_validation_any_items(self, node1, node2):
         if type(node1) is type(node2):
@@ -164,7 +182,12 @@ class SourceTree():
                     print(node1, node2)
                     return True
 
-            #if
+
+
+            # function('any', 'any')
+            if isinstance(node1, ast.Expr) and isinstance(node2, ast.Expr):
+                if self.wildcard_call_is_any_params(node1, node2):
+                    print(node1, node2)
 
 
 

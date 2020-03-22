@@ -3,11 +3,13 @@ from src.SourceTree2 import SourceTree
 
 str_source_pattern = """
 
-
+anyFunction('any')
 
 """
 str_source_code = """ 
 
+anyFunction(a, 2)
+anyFunction(a, 2)
 
 
 """
