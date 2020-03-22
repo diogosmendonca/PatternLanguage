@@ -219,5 +219,11 @@ public class Node {
 		return cloneNodeMap;
 	}
 	
+	public Node getChildrenbyTree(Tree tree) {
+				
+		return this.children.stream().filter(x-> x.getNode().equals(tree))
+				.findFirst().orElse(null);
+	}
+	
 }
 	

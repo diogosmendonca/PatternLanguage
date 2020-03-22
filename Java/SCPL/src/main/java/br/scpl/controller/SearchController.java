@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.sun.source.tree.BlockTree;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.Tree.Kind;
-
 import br.scpl.model.BlockCodeStruct;
 import br.scpl.model.Node;
 import scpl.Utils;
@@ -78,32 +81,50 @@ public class SearchController {
 			return null;
 		}
 		
+		if(b.getNode() instanceof ExpressionTree || b.getNode() instanceof VariableTree) {
+			return ocorrences;
+		}
+		
+		if(b.getNode().getKind()==Kind.METHOD) {
+			
+			if(!EqualsController.anyMethod(a, b, wildcardsMap, true)) {
+				return ocorrences;
+			}
+			
+			BlockTree bodyA = ((MethodTree)a.getNode()).getBody();
+			Node blockA = a.getChildrenbyTree(bodyA);
+			
+			BlockTree bodyB = ((MethodTree)b.getNode()).getBody();
+			Node blockB = b.getChildrenbyTree(bodyB);
+			
+			if(blockA == null || blockB == null) {
+				return ocorrences;
+			}
+			
+			return searchChildren(blockA,blockB,wildcardsMap,path,limitPath);
+		}
+		
+		//FIXME Resolvendo problema de retornar apenas o modifier
+		if(b.getNode().getKind() == Kind.CLASS) {
+			if(EqualsController.anyModifier(b.getChildren().get(0),b.getChildren().get(0))) {
+				return searchChildren(a.getChildren().get(1),b.getChildren().get(1),wildcardsMap,path,limitPath);
+			}
+		}
 		
 		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
 		if(a.getChildren().size()<b.getChildren().size()) {
+			int diff = a.getChildren().size()-b.getChildren().size();
 			
-			if(b.getNode().getKind()==Kind.METHOD) {
-				
-				if(!EqualsController.anyMethod(a, b, wildcardsMap, true)) {
-					return ocorrences;
+			for(Node child : b.getChildren()) {
+				if(!child.getExists()) {
+					notChilds++;
 				}
-				
-				
-			}else {
-				
-				int diff = a.getChildren().size()-b.getChildren().size();
-				
-				for(Node child : b.getChildren()) {
-					if(!child.getExists()) {
-						notChilds++;
-					}
-				}
-				
-				diff = diff + notChilds;
-				
-				if(diff<0) {
-					return ocorrences;
-				}
+			}
+			
+			diff = diff + notChilds;
+			
+			if(diff<0) {
+				return ocorrences;
 			}
 		}
 		
@@ -192,7 +213,7 @@ public class SearchController {
 					path.put(a, counter);
 				}
 				
-				if(searching==true) {
+				if(searching==true || currentOcorrences.contains(a.getChildren().get(counter)) ) {
 					counter++;
 				}
 			}

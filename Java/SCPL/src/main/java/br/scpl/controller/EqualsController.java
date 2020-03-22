@@ -358,7 +358,7 @@ public class EqualsController {
 		
 	}
 	
-	private static boolean anyModifier(Node a, Node b) {
+	public static boolean anyModifier(Node a, Node b) {
 		
 		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
@@ -376,8 +376,6 @@ public class EqualsController {
 	}
 	
 	public static boolean anyMethod(Node a, Node b, Map<String, String> wildcardsMap, boolean ignoreBody) {
-		
-		boolean change = false;
 		
 		MethodTree methodPattern = (MethodTree)b.getNode();
 		MethodTree methodCode = (MethodTree)a.getNode();
@@ -397,7 +395,6 @@ public class EqualsController {
 				List<? extends VariableTree> parametersCode = methodCode.getParameters();
 				removeCode.addAll(parametersCode);
 				
-				change = true;
 			}
 			
 		}
@@ -411,38 +408,35 @@ public class EqualsController {
 				List<? extends ExpressionTree> throwsCode = methodCode.getThrows();
 				removeCode.addAll(throwsCode);
 				
-				change = true;
 			}
 		}
 		
 		if(ignoreBody) {
 			removePattern.add(methodPattern.getBody());
 			removeCode.add(methodCode.getBody());
-			
-			change = true;
 		}
 		
-		if(change) {
-			List<Node> childrenPattern = b.getChildren();
-			
-			childrenPattern = childrenPattern.stream().filter(x -> !removePattern.contains(x.getNode())).collect(Collectors.toList());
-			
-			List<Node> childrenCode = a.getChildren();
-			
-			childrenCode = childrenCode.stream().filter(x -> !removeCode.contains(x.getNode())).collect(Collectors.toList());
-			
-			if(childrenPattern.size() == childrenCode.size()) {
-				for(int i=0; i<childrenPattern.size(); i++) {
-					if(childrenCode.get(i).getFullVisited().booleanValue()) {
-						return false;
-					}
-					if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {
-						return false;
-					}
+		List<Node> childrenPattern = new ArrayList<Node>();
+		childrenPattern.addAll(b.getChildren());
+		
+		childrenPattern = childrenPattern.stream().filter(x -> !removePattern.contains(x.getNode())).collect(Collectors.toList());
+		
+		List<Node> childrenCode = new ArrayList<Node>();
+		childrenCode.addAll(a.getChildren());
+		
+		childrenCode = childrenCode.stream().filter(x -> !removeCode.contains(x.getNode())).collect(Collectors.toList());
+		
+		if(childrenPattern.size() == childrenCode.size()) {
+			for(int i=0; i<childrenPattern.size(); i++) {
+				if(childrenCode.get(i).getFullVisited().booleanValue()) {
+					return false;
 				}
-				
-				return true;
+				if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {
+					return false;
+				}
 			}
+			
+			return true;
 		}
 				
 		return false;
