@@ -3,14 +3,13 @@ from src.SourceTree2 import SourceTree
 
 str_source_pattern = """
 
-mundo = 10
-mundo = 20
-    
+
 
 """
 str_source_code = """ 
-    
-    
+
+
+
 """
 
 source_code = ast.parse(str_source_code)
