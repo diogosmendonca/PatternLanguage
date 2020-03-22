@@ -10,8 +10,12 @@ from src.utils.tree_utils import *
 
 class SourceTree():
     root = ast.AST()
-    ignore_type_for_equals_brute_two_nodes = ('lineno', 'col_offset', 'ctx', 'parent', 'brother', 'childs', 'all_node_tree')
+    ignore_type_for_equals_brute_two_nodes = (
+    'lineno', 'col_offset', 'ctx', 'parent', 'brother', 'childs', 'all_node_tree')
     WILDCARDS_ANY = 'any'
+    WILDCARDS_ANY_FUNCTION = 'anyFunction'
+    WILDCARDS_ANY_VARIABLE = 'anyVariable'
+
     def __init__(self, root_tree):
         self.root = root_tree
         self.__handle_properties()
@@ -87,7 +91,7 @@ class SourceTree():
             for piter in piter_child:
                 if self.brute_equals_two_nodes(node, piter):
                     source_lineno_found = vars(node).get("lineno")
-                    source_coloffset_found =  vars(node).get("col_offset")
+                    source_coloffset_found = vars(node).get("col_offset")
                     last_key_match = (source_lineno_found, source_coloffset_found)
                     set_match[(source_lineno_found, source_coloffset_found)] = piter
                     piter_child.remove(piter)
@@ -97,7 +101,7 @@ class SourceTree():
             if len(piter_child) == 0:
                 piter_child = list(piter_child_default)
 
-        if len(set_match) % 2 == 1 and len(set_match) != 1 :
+        if len(set_match) % 2 == 1 and len(set_match) != 1:
             set_match.pop(last_key_match)
         if len(set_match) >= len_piter:
             return set_match
@@ -118,7 +122,7 @@ class SourceTree():
         pattern_child = ast.iter_child_nodes(pattern)
         return self.brute_equals_nodes_and_iter_child(node_child, pattern_child)
 
-#HANDLE WILDCARDS FUNCTIONS
+    # HANDLE WILDCARDS FUNCTIONS
 
     def wildcard_assign_is_any(self, node):
         if isinstance(node, ast.Assign):
@@ -151,10 +155,29 @@ class SourceTree():
             return vars(node).get("s")
         return ""
 
+    def is_equals_ast_name(self, node1, node2):
+        if isinstance(node1, ast.Name) and isinstance(node2, ast.Name):
+            node1_id = vars(node1).get("id")
+            node2_id = vars(node2).get("id")
+            if node1_id == node2_id:
+                return True
+
+        return False
+
+    def get_id_in_ast_name(self, node):
+        if isinstance(node, ast.Name):
+            node_id = vars(node).get("id")
+            return node_id
+        return ""
+
     def wildcard_call_is_any_params(self, node1, node2):
         if isinstance(node1, ast.Expr) and isinstance(node2, ast.Expr):
             args1 = vars(vars(node1).get("value")).get("args")
             args2 = vars(vars(node2).get("value")).get("args")
+
+            if self.brute_equals_two_nodes(node1, node2):
+                return True
+
             if not len(args1) is len(args2):
                 return False
 
@@ -164,16 +187,14 @@ class SourceTree():
 
         return True
 
-
     def wild_validation_any_items(self, node1, node2):
         if type(node1) is type(node2):
 
-            #value = 'any'
+            # value = 'any'
             if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
                 if self.wildcard_assign_is_any(node2):
                     print(node1, node2)
                     return True
-
 
             # if 'any':
             #  ...
@@ -182,50 +203,75 @@ class SourceTree():
                     print(node1, node2)
                     return True
 
-
-
             # function('any', 'any')
             if isinstance(node1, ast.Expr) and isinstance(node2, ast.Expr):
+
+                func1 = vars(vars(node1).get("value")).get("func")
+                func2 = vars(vars(node2).get("value")).get("func")
+
+                if not self.WILDCARDS_ANY_FUNCTION in self.get_id_in_ast_name(func2):
+                    return False
+
                 if self.wildcard_call_is_any_params(node1, node2):
                     print(node1, node2)
+                    return True
 
+    def wild_validation_declare_itens(self, node1, node2):
+        if type(node1) is type(node2):
 
+            # anyFunction('any', 'any')
+            if isinstance(node1, ast.Expr) and isinstance(node2, ast.Expr):
 
+                func1 = vars(vars(node1).get("value")).get("func")
+                func2 = vars(vars(node2).get("value")).get("func")
 
+                if not self.is_equals_ast_name(func1, func2):
+                    return False
 
+                if self.wildcard_call_is_any_params(node1, node2):
+                    return True
+
+            # any = ...
+            if isinstance(node1, ast.Assign) and isinstance(node2, ast.Assign):
+
+                target1 = vars(node1).get("targets")[0]
+                target2 = vars(node2).get("targets")[0]
+
+                if self.WILDCARDS_ANY_VARIABLE in self.get_id_in_ast_name(target2):
+                    if self.wildcard_assign_is_any(node2):
+                        return True
+                    value1 =  vars(node1).get("value")
+                    value2 =  vars(node2).get("value")
+                    if self.brute_equals_two_nodes(value1, value2):
+                        return True
+
+        return False
 
     def wildcards_equals_two_nodes(self, node1, node2):
 
+        # anyvalidation: in value => DefineValue = 'any'
+
         if isinstance(node1, ast.AST) and isinstance(node2, ast.AST):
+
             if self.wild_validation_any_items(node1, node2):
                 return True
 
+            if self.wild_validation_declare_itens(node1, node2):
+                return True
 
-        #anyvalidation: in value => anyValue = 'any'
+        # anyvalidation: in value => anyValue = 'any'
 
+        # anyvalidation: in value => valor = 'any'
 
-        #anyvalidation: in value => valor = 'any'
+        # anyvalidation: in value => anyValue = 'anyNumber'
 
+        # anyvalidation in value => anyNumber = 'anyLiteralValue'
 
-        #anyvalidation: in value => anyValue = 'anyNumber'
+        # anyvalidation in value => anyNumber = 'anyExpression'
 
+        # anyCompare
 
-
-        #anyvalidation in value => anyNumber = 'anyLiteralValue'
-
-
-
-        #anyvalidation in value => anyNumber = 'anyExpression'
-
-
-
-        #anyCompare
-
-
-        #anyItem
-
-
-
+        # anyItem
 
     def wildcards_subset_nodechild_iterchild(self, node_child, piter_child):
         len_piter = len(piter_child)
@@ -236,7 +282,7 @@ class SourceTree():
             for piter in piter_child:
                 if self.wildcards_equals_two_nodes(node, piter):
                     source_lineno_found = vars(node).get("lineno")
-                    source_coloffset_found =  vars(node).get("col_offset")
+                    source_coloffset_found = vars(node).get("col_offset")
                     last_key_match = (source_lineno_found, source_coloffset_found)
                     set_match[(source_lineno_found, source_coloffset_found)] = piter
                     piter_child.remove(piter)
@@ -251,7 +297,6 @@ class SourceTree():
         if len(set_match) >= len_piter:
             return set_match
         return None
-
 
     def wildcards_equals_nodes_and_iter_child(self, node_child, iter_child):
         iter_child = list(iter_child)
@@ -268,7 +313,6 @@ class SourceTree():
         pattern_child = ast.iter_child_nodes(pattern)
         return self.wildcards_equals_nodes_and_iter_child(node_child, pattern_child)
 
-
     def search_pattern(self, pattern):
         source = self.root
         for node in ast.walk(source):
@@ -280,5 +324,3 @@ class SourceTree():
                 if found_wildcards_equals:
                     print(found_wildcards_equals)
                 pass
-
-
