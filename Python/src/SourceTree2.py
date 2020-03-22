@@ -80,29 +80,50 @@ class SourceTree():
 
     def subset_nodechild_iterchild(self, node_child, piter_child):
         len_piter = len(piter_child)
+        piter_child_default = list(piter_child)
         set_match = {}
+        last_key_match = tuple()
         for node in node_child:
             for piter in piter_child:
                 if self.brute_equals_two_nodes(node, piter):
-                    set_match[piter] = node
+                    source_lineno_found = vars(node).get("lineno")
+                    source_coloffset_found =  vars(node).get("col_offset")
+                    last_key_match = (source_lineno_found, source_coloffset_found)
+                    set_match[(source_lineno_found, source_coloffset_found)] = piter
+                    piter_child.remove(piter)
+                else:
+                    break
 
-        if len(set_match) == len_piter:
+            if len(piter_child) == 0:
+                piter_child = list(piter_child_default)
+
+        if len(set_match) % 2 == 1:
+            set_match.pop(last_key_match)
+        if len(set_match) >= len_piter:
             return set_match
         return None
 
     def brute_equals_nodes_and_iter_child(self, node_child, iter_child):
         iter_child = list(iter_child)
         if len(node_child) is 0 or len(iter_child) is 0:
-            return
+            return None
         if len(node_child) < len(iter_child):
-            return
+            return None
         result = self.subset_nodechild_iterchild(node_child, iter_child)
         if result:
-            print(result, iter_child)
+            return result
+
+    def search_pattern_exact_equals(self, node, pattern):
+        node_child = vars(node).get("childs")
+        pattern_child = ast.iter_child_nodes(pattern)
+        return self.brute_equals_nodes_and_iter_child(node_child, pattern_child)
 
     def search_pattern(self, pattern):
         source = self.root
         for node in ast.walk(source):
-            node_child = vars(node).get("childs")
-            pattern_child = ast.iter_child_nodes(pattern)
-            self.brute_equals_nodes_and_iter_child(node_child, pattern_child)
+            found_exact_equals = self.search_pattern_exact_equals(node, pattern)
+            if found_exact_equals:
+                print(found_exact_equals)
+
+
+

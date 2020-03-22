@@ -9,12 +9,7 @@ mundo = 20
 
 """
 str_source_code = """ 
-try:
-    mundo = 10
-    mundo = 20
-    mundo = 20
-except:
-    mundo = 10
+    
     
 """
 

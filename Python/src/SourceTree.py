@@ -57,6 +57,13 @@ class SourceTree():
         for node in ast.walk(tree):
             for child in ast.iter_child_nodes(node):
                 child.parent = node
+
+        for node in ast.walk(tree):
+            node.brother = []
+            for node2 in ast.walk(tree):
+                if not isinstance(node, ast.Module) and not isinstance(node2, ast.Module):
+                    if node.parent == node2.parent:
+                        node.brother.append(node2)
         return tree
 
     def draw(self, subtree):
@@ -220,7 +227,7 @@ class SourceTree():
             if self.__validate_wildcards(node1, node2):
                 return True
             for tipe, var in vars(node1).items():
-                if tipe not in ('lineno', 'col_offset', 'ctx', 'parent'):
+                if tipe not in ('lineno', 'col_offset', 'ctx', 'parent', 'brother'):
                     var2 = vars(node2).get(tipe)
                     if not self.__equals_tree(var, var2):
                         return False
@@ -243,7 +250,7 @@ class SourceTree():
             if self.__validate_wildcards(node1, node2):
                 return True
             for tipe, var in vars(node1).items():
-                if tipe not in ('lineno', 'col_offset', 'ctx', 'parent'):
+                if tipe not in ('lineno', 'col_offset', 'ctx', 'parent', 'brother'):
                     var2 = vars(node2).get(tipe)
                     if not self.__equals_tree(var, var2):
                         return False
@@ -318,10 +325,18 @@ class SourceTree():
                         break
                     else:
                         operatorNot = self.handle_operator_not(node, node_pattern)
-
+                        if not operatorNot is None:
+                            # print(node, node_pattern)
+                            nodes_equals.append([node, node_pattern])
+                            if not set_encontrados[node_pattern] is None:
+                                continue
+                            set_encontrados[node_pattern] = node
+                            if self.found_a_pattern(set_encontrados):
+                                occurrences.append(list(zip(set_encontrados.values(), set_encontrados.keys())))
+                                set_encontrados = {i: None for i in childPattern}
+                            break
 
             childPattern = list(ast.iter_child_nodes(root_pattern))
-        # print(set_encontrados)
         return occurrences
 
     def handle_operator_not(self, node, node_pattern):
@@ -332,15 +347,15 @@ class SourceTree():
             parentp = vars(nodep).get("parent")
             parentnode = vars(node).get("parent")
             if type(parentp) == type(parentnode):
-                # print(vars(node), vars(nodep))
-
                 for notP in notsPattern.values():
                     for cnotP in ast.iter_child_nodes(notP):
-                        if self.__equals_tree(cnotP, nodep):
-                            print(vars(cnotP), vars(node))
 
+                        if self.__equals_tree(cnotP, nodep) and not self.__equals_tree(node, cnotP):
+                            for tipe, var in vars(node).items():
+                                nodep
+                            # print(vars(cnotP).get("parent"), vars(nodep).get("parent"), vars(node).get("parent"))
 
-
+        return None
 
 
 
