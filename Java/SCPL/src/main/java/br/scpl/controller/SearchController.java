@@ -106,9 +106,10 @@ public class SearchController {
 		
 		//FIXME Resolvendo problema de retornar apenas o modifier
 		if(b.getNode().getKind() == Kind.CLASS) {
-			if(EqualsController.anyModifier(b.getChildren().get(0),b.getChildren().get(0))) {
+			if(EqualsController.equalsModifier(a.getChildren().get(0),b.getChildren().get(0))) {
 				return searchChildren(a.getChildren().get(1),b.getChildren().get(1),wildcardsMap,path,limitPath);
 			}
+			return ocorrences;
 		}
 		
 		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio

@@ -50,7 +50,7 @@ public class EqualsController {
 	
 	public static boolean isEquals(Node a, Node b, Map<String, String> wildcardsMap) {
 		
-		if(anyModifier(a,b)) {
+		if(equalsModifier(a,b)) {
 			return true;
 		}
 		
@@ -140,7 +140,7 @@ public class EqualsController {
 		
 		}
 		
-		return true;
+		return true;		
 	}
 	
 	/**
@@ -358,18 +358,33 @@ public class EqualsController {
 		
 	}
 	
-	public static boolean anyModifier(Node a, Node b) {
+	public static boolean equalsModifier(Node a, Node b) {
 		
 		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
-			ModifiersTree modifier = ((ModifiersTree) b.getNode());
+			ModifiersTree modifierPattern = ((ModifiersTree) b.getNode());
 			
-			List<? extends AnnotationTree> annotations = modifier.getAnnotations();
+			List<? extends AnnotationTree> annotations = modifierPattern.getAnnotations();
+			
+			List<String> notModifier = new ArrayList<String>();
 			
 			for(AnnotationTree annotation: annotations) {
+				if(annotation.toString().startsWith("@not")) {
+					notModifier.add(annotation.toString().split("@not")[1].toLowerCase());
+				}
 				if(annotation.toString().startsWith(anyModifier)) {
 					return true;
 				}
+			}
+			
+			if(notModifier.size()>0) {
+				ModifiersTree modifierCode = ((ModifiersTree) a.getNode());
+				
+				if(notModifier.stream().anyMatch(x-> modifierCode.toString().contains(x))) {
+					return false;
+				}
+				
+				return true;
 			}
 		}
 		return false;
