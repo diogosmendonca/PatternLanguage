@@ -37,6 +37,8 @@ public class EqualsController {
 	private final static String anyModifier = wildcards.getString("anyModifier");
 	private final static String anyType = wildcards.getString("anyType");
 	private final static String anyException = wildcards.getString("anyException");
+	private final static String anyExpression = wildcards.getString("anyExpression");
+	
 	
 	/***
 	 * Recebe duas árvores e um mapa com os wildcard já utilizados.
@@ -67,6 +69,11 @@ public class EqualsController {
 			
 			if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
 				return anyArgument(a, b, wildcardsMap);
+			}
+			
+			//FIXME REPENSAR
+			if(b.getNode().getKind() == Kind.IDENTIFIER) {
+				return isAnyExpression(b);
 			}
 			
 			return false;				
@@ -117,7 +124,8 @@ public class EqualsController {
 			
 			if(b.getNode().getKind() == Kind.IDENTIFIER && (
 					(((IdentifierTree) b.getNode()).getName().toString()).startsWith(anyValue) || 
-						(((IdentifierTree) b.getNode()).getName().toString()).startsWith(anyType))) {
+						(((IdentifierTree) b.getNode()).getName().toString()).startsWith(anyType) ||
+							(((IdentifierTree) b.getNode()).getName().toString()).startsWith(anyExpression))){
 				
 				flagAny = true;
 				
@@ -446,6 +454,17 @@ public class EqualsController {
 		MethodTree methodPattern = (MethodTree)node.getNode();
 		
 		return methodPattern.getThrows().stream().anyMatch(x -> x.toString().startsWith(anyException));
+	}
+	
+	public static boolean isAnyExpression(Node node) {
+		
+		if(node.getParent().getNode().getKind() == Kind.PARENTHESIZED) {
+			IdentifierTree identifier = (IdentifierTree)node.getNode();
+			
+			return identifier.getName().toString().startsWith(anyExpression);
+		}
+		
+		return false;
 	}
 	
 	private static boolean anyArgument(Node a, Node b, Map<String, String> wildcardsMap) {

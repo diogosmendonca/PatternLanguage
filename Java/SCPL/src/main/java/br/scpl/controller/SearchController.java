@@ -32,11 +32,7 @@ public class SearchController {
 		//Se os nós são iguais, a sub-árvore é toda a ávore
 		if(EqualsController.isEquals(a, b, new LinkedHashMap<>())) {
 			if(!b.getUsingExistsOperator()|| !b.getChangeOperator()) {
-				if(b.getFakeNode()) {
-					ocorrences.addAll(a.getChildren());
-				}else {
-					ocorrences.add(a);
-				}
+				ocorrences.add(a);
 				a.setFullVisited(true);
 				return ocorrences;
 			}
@@ -52,12 +48,6 @@ public class SearchController {
 			ocorrences.addAll(childrenNodesAux);
 		}while(childrenNodesAux.size() > 0);
 		
-		//Chama recursivamente para todos os filhos do nó
-		for(Node child : a.getChildren()) {
-			if(!child.getFullVisited()) {
-				ocorrences.addAll(subtree(child, b));
-			}
-		}
 		
 		return ocorrences;
 	}
