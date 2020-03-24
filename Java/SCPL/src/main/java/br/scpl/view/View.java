@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.SourcePositions;
 
 import br.scpl.controller.FileHandler;
@@ -69,6 +71,9 @@ public class View {
 		//TODO editar saida do retorno (Arquivo, linhas e colunas)
 		
 		String arquivoAtual = "";
+		
+		//FIXME Problema de retornar modifiers
+		retorno = retorno.stream().filter(x -> x.getNode().getKind() != Kind.MODIFIERS && x.getNode().getKind() != Kind.PRIMITIVE_TYPE).collect(Collectors.toList());
 		
 		for(Node r : retorno) {
 			r.setStartPosition(posCode.getStartPosition(r.getCompilatioUnitTree(), r.getNode()));

@@ -62,7 +62,7 @@ public class EqualsController {
 		if(a.getChildren().size()!=b.getChildren().size()) {
 			
 			if(b.getNode().getKind() == Kind.METHOD) {
-				return anyMethod(a, b, wildcardsMap, false);
+				return anyMethod(a, b, wildcardsMap);
 			}
 			
 			if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
@@ -390,45 +390,24 @@ public class EqualsController {
 		return false;
 	}
 	
-	public static boolean anyMethod(Node a, Node b, Map<String, String> wildcardsMap, boolean ignoreBody) {
+	public static boolean anyMethod(Node a, Node b, Map<String, String> wildcardsMap) {
 		
 		MethodTree methodPattern = (MethodTree)b.getNode();
 		MethodTree methodCode = (MethodTree)a.getNode();
 		
-		List<? extends VariableTree> parametersPattern = methodPattern.getParameters();
-		List<? extends ExpressionTree> throwsPattern = methodPattern.getThrows();
-		
 		List<Tree> removePattern = new ArrayList<Tree>();
 		List<Tree> removeCode = new ArrayList<Tree>();
 		
-		if(parametersPattern.size() == 1) {
-			VariableTree parameterPattern = parametersPattern.get(0);
-			
-			if(parameterPattern.getName().toString().startsWith(anyParameter)) {
-				removePattern.addAll(parametersPattern);
+		if(isAnyParameter(b)) {
+			removePattern.addAll(methodPattern.getParameters());
 				
-				List<? extends VariableTree> parametersCode = methodCode.getParameters();
-				removeCode.addAll(parametersCode);
-				
-			}
-			
+			removeCode.addAll(methodCode.getParameters());
 		}
 		
-		if(throwsPattern.size() == 1) {
-			ExpressionTree throwPattern = throwsPattern.get(0);
+		if(isAnyThrows(b)) {
+			removePattern.addAll(methodPattern.getThrows());
 			
-			if(throwPattern.toString().startsWith(anyException)) {
-				removePattern.addAll(throwsPattern);
-				
-				List<? extends ExpressionTree> throwsCode = methodCode.getThrows();
-				removeCode.addAll(throwsCode);
-				
-			}
-		}
-		
-		if(ignoreBody) {
-			removePattern.add(methodPattern.getBody());
-			removeCode.add(methodCode.getBody());
+			removeCode.addAll(methodCode.getThrows());
 		}
 		
 		List<Node> childrenPattern = new ArrayList<Node>();
@@ -455,6 +434,18 @@ public class EqualsController {
 		}
 				
 		return false;
+	}
+	
+	public static boolean isAnyParameter(Node node) {
+		MethodTree methodPattern = (MethodTree)node.getNode();
+		
+		return methodPattern.getParameters().stream().anyMatch(x -> x.toString().startsWith(anyParameter));
+	}
+	
+	public static boolean isAnyThrows(Node node) {
+		MethodTree methodPattern = (MethodTree)node.getNode();
+		
+		return methodPattern.getThrows().stream().anyMatch(x -> x.toString().startsWith(anyException));
 	}
 	
 	private static boolean anyArgument(Node a, Node b, Map<String, String> wildcardsMap) {

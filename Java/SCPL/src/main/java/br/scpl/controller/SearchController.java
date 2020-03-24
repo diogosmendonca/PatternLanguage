@@ -74,6 +74,8 @@ public class SearchController {
 			return ocorrences;
 		}
 		
+		List<Integer> anyIndex = new ArrayList<Integer>(); 
+		
 		int notChilds = 0;
 		
 		//FIXME Problema do padrão de bloco vazio
@@ -87,21 +89,19 @@ public class SearchController {
 		
 		if(b.getNode().getKind()==Kind.METHOD) {
 			
-			if(!EqualsController.anyMethod(a, b, wildcardsMap, true)) {
-				return ocorrences;
+			if(EqualsController.isAnyParameter(b)) {
+				List<Integer> aux =  ((MethodTree)b.getNode()).getParameters().stream()
+										.map(x -> b.getChildrenbyTree(x))
+											.map(y -> b.getChildren().indexOf(y)).collect(Collectors.toList());
+				anyIndex.addAll(aux);
 			}
 			
-			BlockTree bodyA = ((MethodTree)a.getNode()).getBody();
-			Node blockA = a.getChildrenbyTree(bodyA);
-			
-			BlockTree bodyB = ((MethodTree)b.getNode()).getBody();
-			Node blockB = b.getChildrenbyTree(bodyB);
-			
-			if(blockA == null || blockB == null) {
-				return ocorrences;
+			if(EqualsController.isAnyThrows(b)) {
+				List<Integer> aux =  ((MethodTree)b.getNode()).getThrows().stream()
+						.map(x -> b.getChildrenbyTree(x))
+							.map(y -> b.getChildren().indexOf(y)).collect(Collectors.toList());
+				anyIndex.addAll(aux);
 			}
-			
-			return searchChildren(blockA,blockB,wildcardsMap,path,limitPath);
 		}
 		
 		//FIXME Resolvendo problema de retornar apenas o modifier
@@ -113,8 +113,8 @@ public class SearchController {
 		}
 		
 		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
-		if(a.getChildren().size()<b.getChildren().size()) {
-			int diff = a.getChildren().size()-b.getChildren().size();
+		if(a.getChildren().size()<b.getChildren().size()-anyIndex.size()) {
+			int diff = a.getChildren().size()-b.getChildren().size()-anyIndex.size();
 			
 			for(Node child : b.getChildren()) {
 				if(!child.getExists()) {
@@ -160,36 +160,30 @@ public class SearchController {
 				return ocorrences;
 			}
 			
+			if(!anyIndex.contains(i)) {
+			
 			searching=true;
 			
 			//Enquanto está buscando e contador é menor que número de filhos de do código fonte
-			while(searching && counter<=maxIndexA ) {
-				//Se o índice atual não está na lista de índices das ocorrências
-				if(!a.getChildren().get(counter).getFullVisited()) {
-					//Se é igual é adicionado a lista de ocorrencias auxiliar 
-					
-					subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap, path, limitPath);
-					
-					//FIXME Problema do padrão de bloco vazio
-					if(subtreeAux==null) {
-						searching=false;
-						lastOcorrenceIndex = counter;
-						limitPath.clear();
-						limitPath.putAll(limitPathOld);
-						maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
-						continue;
-					}
-					
-					if(subtreeAux.size() > 0) {
-						if(b.getChildren().get(i).getExists()) {
-							currentOcorrences.addAll(subtreeAux);
+				while(searching && counter<=maxIndexA ) {
+					//Se o índice atual não está na lista de índices das ocorrências
+					if(!a.getChildren().get(counter).getFullVisited()) {
+						//Se é igual é adicionado a lista de ocorrencias auxiliar 
+						
+						subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap, path, limitPath);
+						
+						//FIXME Problema do padrão de bloco vazio
+						if(subtreeAux==null) {
 							searching=false;
 							lastOcorrenceIndex = counter;
 							limitPath.clear();
 							limitPath.putAll(limitPathOld);
 							maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
-						}else {
-							if(b.getChildren().get(i).getChangeOperator()) {
+							continue;
+						}
+						
+						if(subtreeAux.size() > 0) {
+							if(b.getChildren().get(i).getExists()) {
 								currentOcorrences.addAll(subtreeAux);
 								searching=false;
 								lastOcorrenceIndex = counter;
@@ -197,28 +191,36 @@ public class SearchController {
 								limitPath.putAll(limitPathOld);
 								maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 							}else {
-								//FIXME
- 								if(i == b.getChildren().size() - 1) {
-									return ocorrences;
+								if(b.getChildren().get(i).getChangeOperator()) {
+									currentOcorrences.addAll(subtreeAux);
+									searching=false;
+									lastOcorrenceIndex = counter;
+									limitPath.clear();
+									limitPath.putAll(limitPathOld);
+									maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
+								}else {
+									//FIXME
+	 								if(i == b.getChildren().size() - 1) {
+										return ocorrences;
+									}
+									searching=false;
+									maxIndexA = counter;
+									counter = lastOcorrenceIndex;							
 								}
-								searching=false;
-								maxIndexA = counter;
-								counter = lastOcorrenceIndex;							
 							}
 						}
 					}
-				}
-				
-				if(searching==false) {
-					path.remove(a);
-					path.put(a, counter);
-				}
-				
-				if(searching==true || currentOcorrences.contains(a.getChildren().get(counter)) ) {
-					counter++;
+					
+					if(searching==false) {
+						path.remove(a);
+						path.put(a, counter);
+					}
+					
+					if(searching==true || currentOcorrences.contains(a.getChildren().get(counter)) ) {
+						counter++;
+					}
 				}
 			}
-			
 			if(searching && !(i == b.getChildren().size() - 1)) {
 				if(!b.getChildren().get(i).getExists()) {
 					counter = lastOcorrenceIndex++;
