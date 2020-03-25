@@ -1,5 +1,9 @@
-public class SourceCode{
-    public static int run() {
-        String a = "teste";
+@anyModifier
+class anyClass {
+    @anyModifier
+    any anyMethod(anyType any) {
+        if(any){
+            any any = any;
+        }
     }
 }

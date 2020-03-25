@@ -403,7 +403,7 @@ public class AceitacaoTest {
 		assertEquals(1, retorno.size());
 		assertEquals(1, retorno.get(0).getStartLine());
 		assertEquals(1, retorno.get(0).getStartColumn());
-		assertEquals(5, retorno.get(0).getEndLine());
+		assertEquals(7, retorno.get(0).getEndLine());
 		assertEquals(2, retorno.get(0).getEndColumn());
 	}
 	

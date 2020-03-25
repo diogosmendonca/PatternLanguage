@@ -1,5 +1,7 @@
 public class SourceCode{
     public static void run() {
-        String a = "teste";
+        if(b.size()>0&&true){
+            String a = "teste";
+        }
     }
 }

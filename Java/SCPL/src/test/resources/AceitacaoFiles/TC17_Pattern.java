@@ -1,8 +1,10 @@
-public class AnyClass {
-    void anyMethod() {
+@anyModifier
+class anyClass {
+    @anyModifier
+    any anyMethod(anyType any) {
         int someVariable;
-		not:{
-            someVariable = "anyLiteralValue";
+        not:{
+            someVariable = any;
         }
     }
 }
