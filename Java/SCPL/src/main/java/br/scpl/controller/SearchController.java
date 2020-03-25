@@ -31,9 +31,11 @@ public class SearchController {
 		
 		//Se os nós são iguais, a sub-árvore é toda a ávore
 		if(EqualsController.isEquals(a, b, new LinkedHashMap<>())) {
-			if(!b.getUsingExistsOperator()|| !b.getChangeOperator()) {
+			if(!b.getChangeOperator()) {
 				ocorrences.add(a);
 				a.setFullVisited(true);
+				return ocorrences;
+			}else {
 				return ocorrences;
 			}
 		}
@@ -248,7 +250,7 @@ public class SearchController {
 		return ocorrences;
 	}
 	
-	public static List<Node> subtreeFirstOcorrence(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath){
+	private static List<Node> subtreeFirstOcorrence(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath){
 		
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 		wildcardsMapBefore.putAll(wildcardsMap);
@@ -263,13 +265,15 @@ public class SearchController {
 			
 		//Se os nós são iguais, a sub-árvore é toda a ávore
 		if(EqualsController.isEquals(a, b, wildcardsMap)) {
-			if(!b.getUsingExistsOperator()|| !b.getChangeOperator()) {
+			if(!b.getChangeOperator()) {
 				if(b.getFakeNode()) {
 					ocorrences.addAll(a.getChildren());
 				}else {
 					ocorrences.add(a);
 				}
 				a.setFullVisited(true);
+				return ocorrences;
+			}else {
 				return ocorrences;
 			}
 		}
@@ -305,6 +309,7 @@ public class SearchController {
 				ocorrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap, path, limitPath));
 				if(ocorrences.size() > 0) {
 					
+					//FIXME pode dar problema no NOT
 					if(!b.getChangeOperator()) {
 						if(b.getExists()) {
 							path.remove(a);
@@ -333,7 +338,7 @@ public class SearchController {
 		
 		//Se os nós são iguais, a sub-árvore é toda a árvore
 		if(EqualsController.isEquals(a, b, wildcardsMap)) {
-			if(!b.getUsingExistsOperator() || !b.getChangeOperator()) {
+			if(!b.getChangeOperator()) {
 				if(b.getFakeNode()) {
 					ocorrences.addAll(a.getChildren());
 				}else {
@@ -341,81 +346,84 @@ public class SearchController {
 				}
 				a.setFullVisited(true);
 				return ocorrences;
+			}else {
+				wildcardsMap.clear();
+				wildcardsMap.putAll(wildcardsMapBefore);
+				return ocorrences;
 			}
 		}
 		
 		wildcardsMap.clear();
 		wildcardsMap.putAll(wildcardsMapBefore);
 		
-		if(!b.getUsingExistsOperator() || !b.getChangeOperator() ) {
+		if(b.getExists()||!b.getChangeOperator()) {
 			return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
 		}else {
-			return searchSubtree(a, b, wildcardsMap, path, limitPath);
+			return searchNotSubtree(a, b, wildcardsMap, path, limitPath);
 		}
 	}
+	
+	private static boolean childrenChange(Node node) {
+		
+		return node.getChildren().stream().anyMatch(child -> child.getChangeOperator());
+	}
 
-	private static List<Node> searchSubtree(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
+	private static List<Node> searchNotSubtree(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
 		List<Node> ocorrences = new ArrayList<Node>();
 		
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 		wildcardsMapBefore.putAll(wildcardsMap);
 		
-		if(b.getExists()) {
-			
-		}else {
-			List<BlockCodeStruct> blockWanted = new ArrayList<BlockCodeStruct>();
-			Utils.getDiferentOperatorBlock(b, new ArrayList<Node>(),blockWanted);
-			
-			//FIXME Sempre será apenas um bloco de código ?
-			BlockCodeStruct block = blockWanted.get(0);
-			Node wanted = block.getNode();
-			
-			List<Node> ocorrenceWanted = subtreeFirstOcorrence(a, wanted, wildcardsMap, path, limitPath);
-			
-			if(ocorrenceWanted.size() > 0) {
-				//Cópia do padrão para buscar apenas o trecho com operador de existência diferente
-				Node clone = new Node(b);
-				
-				//Lista dos nós com operador de existência diferente para serem removidos
-				List<Node> listToRemove = new ArrayList<Node>();
-				
-				//Se é um nó fake adiciona seus filhos, se não, adiciona o nó
-				if(block.getNode().getFakeNode()) {
-					listToRemove.addAll(block.getNode().getChildren()); 
-				}else {
-					listToRemove.add(block.getNode());
-				}
-				
-				//Busca no mapeamento qual é o seu nó clone, dado o nó
-				listToRemove = listToRemove.stream()
-						.map(m -> Node.getCloneNodeMap().get(m))
-						.collect(Collectors.toList());
-				
-				//Remove
-				Node.getCloneNodeMap().get(block.getContext()).getChildren().removeAll(listToRemove);
-				
-				List<Node> ocorrencesAux;
-				
-				//FIXME Pensar melhor o contexto de busca
-				Node context = ocorrenceWanted.get(0).getParent();
-				while (context != null) {
-					ocorrencesAux = searchChildren(context,clone, wildcardsMap, new LinkedHashMap<>(), new LinkedHashMap<>());
-					if(ocorrencesAux.size() > 0) {
-						return ocorrences;
-					}
-					context = context.getParent(); 
-				}
-				
-				ocorrences.addAll(ocorrenceWanted);
-				return ocorrences;
-			}else {
-				wildcardsMap.putAll(wildcardsMapBefore);
-			}
-		}
+		List<BlockCodeStruct> blockWanted = new ArrayList<BlockCodeStruct>();
+		Utils.getDiferentOperatorBlock(b, new ArrayList<Node>(),blockWanted);
 		
-		// TODO Auto-generated method stub
-		return null;
+		//FIXME Sempre será apenas um bloco de código ?
+		BlockCodeStruct block = blockWanted.get(0);
+		Node wanted = block.getNode();
+		
+		List<Node> ocorrenceWanted = subtreeFirstOcorrence(a, wanted, wildcardsMap, path, limitPath);
+		
+		if(ocorrenceWanted.size() > 0) {
+			//Cópia do padrão para buscar apenas o trecho com operador de existência diferente
+			Node clone = new Node(b);
+			
+			//Lista dos nós com operador de existência diferente para serem removidos
+			List<Node> listToRemove = new ArrayList<Node>();
+			
+			//Se é um nó fake adiciona seus filhos, se não, adiciona o nó
+			if(block.getNode().getFakeNode()) {
+				listToRemove.addAll(block.getNode().getChildren()); 
+			}else {
+				listToRemove.add(block.getNode());
+			}
+			
+			//Busca no mapeamento qual é o seu nó clone, dado o nó
+			listToRemove = listToRemove.stream()
+					.map(m -> Node.getCloneNodeMap().get(m))
+					.collect(Collectors.toList());
+			
+			//Remove
+			Node.getCloneNodeMap().get(block.getContext()).getChildren().removeAll(listToRemove);
+			
+			List<Node> ocorrencesAux;
+			
+			//FIXME Pensar melhor o contexto de busca
+			Node context = ocorrenceWanted.get(0).getParent();
+			while (context != null) {
+				ocorrencesAux = searchChildren(context,clone, wildcardsMap, new LinkedHashMap<>(), new LinkedHashMap<>());
+				if(ocorrencesAux.size() > 0) {
+					return ocorrences;
+				}
+				context = context.getParent(); 
+			}
+			
+			ocorrences.addAll(ocorrenceWanted);
+			return ocorrences;
+		}else {
+			wildcardsMap.putAll(wildcardsMapBefore);
+			return ocorrences;
+		}
 	}
 
 }

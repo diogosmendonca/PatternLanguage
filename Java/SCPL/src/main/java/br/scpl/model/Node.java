@@ -28,6 +28,7 @@ public class Node {
 	private Boolean exists;
 	private Boolean usingExistsOperator;
 	private Boolean changeOperator;
+	private Boolean changePoint;
 	private static final Map<Node,Node> cloneNodeMap = new LinkedHashMap<>();
 	
 	public Node() {
@@ -37,6 +38,7 @@ public class Node {
 		this.exists = true;
 		this.usingExistsOperator = false;
 		this.changeOperator = false;
+		this.changePoint = false;
 	}
 	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
@@ -48,6 +50,7 @@ public class Node {
 		this.exists = true;
 		this.usingExistsOperator = false;
 		this.changeOperator = false;
+		this.changePoint = false;
 	}
 	
 	public Node(Node node) {
@@ -67,6 +70,7 @@ public class Node {
 		this.exists = true;
 		this.usingExistsOperator = false;
 		this.changeOperator = false;
+		this.changePoint = false;
 		cloneNodeMap.put(node, this);
 	}
 	
@@ -209,6 +213,14 @@ public class Node {
 			this.parent.setChangeOperator(changeOperator);
 		}
 		
+	}
+	
+	public Boolean getChangePoint() {
+		return changePoint;
+	}
+
+	public void setChangePoint(Boolean changePoint) {
+		this.changePoint = changePoint;
 	}
 
 	public String toString() {
