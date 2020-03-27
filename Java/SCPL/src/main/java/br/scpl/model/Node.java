@@ -29,7 +29,9 @@ public class Node {
 	private Boolean usingExistsOperator;
 	private Boolean changeOperator;
 	private Boolean changePoint;
+	private Node nodeOfDifferentOperator;
 	private static final Map<Node,Node> cloneNodeMap = new LinkedHashMap<>();
+	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<Tree, Node>();
 	
 	public Node() {
 		this.children = new ArrayList<Node>();
@@ -231,11 +233,36 @@ public class Node {
 		return cloneNodeMap;
 	}
 	
+	public Node getNodeOfDifferentOperator() {
+		return nodeOfDifferentOperator;
+	}
+	
+	public void setNodeOfDifferentOperator(Node nodeOfDifferentOperator) {
+		this.nodeOfDifferentOperator = nodeOfDifferentOperator;
+	}
+	
+	public void setNodeOfDifferentOperator(List<Node> nodeList) {
+		if(nodeList.size() == 1) {
+			this.nodeOfDifferentOperator = nodeList.get(0);
+		}else {
+			Node fakeNode = new Node();
+			fakeNode.getChildren().addAll(nodeList);
+			fakeNode.setUsingExistsOperator(true);
+			this.nodeOfDifferentOperator = fakeNode;
+		}
+	}
+
 	public Node getChildrenbyTree(Tree tree) {
 				
 		return this.children.stream().filter(x-> x.getNode().equals(tree))
 				.findFirst().orElse(null);
 	}
+
+	public static Map<Tree, Node> getNodesMap() {
+		return nodesMap;
+	}
+	
+	
 	
 }
 	

@@ -367,6 +367,40 @@ public class SearchController {
 		
 		return node.getChildren().stream().anyMatch(child -> child.getChangeOperator());
 	}
+	
+	private static List<Node> searchNotSubtree2(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
+		
+		List<Node> ocorrences = new ArrayList<Node>();
+		
+		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
+		wildcardsMapBefore.putAll(wildcardsMap);
+		
+		Map<Node, Integer> pathBefore = new LinkedHashMap<>();
+		pathBefore.putAll(path);
+		
+		Map<Node, Integer> limitPathBefore = new LinkedHashMap<>();
+		limitPathBefore.putAll(limitPath);
+		
+		Node nodeWanted = Utils.getDiferentOperatatorNode(b);
+		
+		List<Node> ocorrencesWanted = search(a,b,wildcardsMap,path,limitPath);
+		
+		if(ocorrencesWanted.size() > 0) {
+			
+			
+			
+		}else {
+			wildcardsMap.clear();
+			wildcardsMap.putAll(wildcardsMapBefore);
+			path.clear();
+			path.putAll(pathBefore);
+			limitPath.clear();
+			limitPath.putAll(limitPathBefore);
+		}
+		
+		
+		return ocorrences;
+	}
 
 	private static List<Node> searchNotSubtree(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
@@ -374,6 +408,12 @@ public class SearchController {
 		
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 		wildcardsMapBefore.putAll(wildcardsMap);
+		
+		Map<Node, Integer> pathBefore = new LinkedHashMap<>();
+		pathBefore.putAll(path);
+		
+		Map<Node, Integer> limitPathBefore = new LinkedHashMap<>();
+		limitPathBefore.putAll(limitPath);
 		
 		List<BlockCodeStruct> blockWanted = new ArrayList<BlockCodeStruct>();
 		Utils.getDiferentOperatorBlock(b, new ArrayList<Node>(),blockWanted);
@@ -419,11 +459,15 @@ public class SearchController {
 			}
 			
 			ocorrences.addAll(ocorrenceWanted);
-			return ocorrences;
 		}else {
+			wildcardsMap.clear();
 			wildcardsMap.putAll(wildcardsMapBefore);
-			return ocorrences;
+			path.clear();
+			path.putAll(pathBefore);
+			limitPath.clear();
+			limitPath.putAll(limitPathBefore);
 		}
+		return ocorrences;
 	}
 
 }

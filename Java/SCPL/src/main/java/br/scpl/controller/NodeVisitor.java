@@ -28,13 +28,12 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private int indentLevel;
 	  private final CompilationUnitTree compilatioUnitTree;
 	  private Tree root;
-	  private Map<Tree,Node> nodesMap;
+	  
 
 	  public NodeVisitor(Tree tree) {
 		sb = new StringBuilder();
 	    indentLevel = 0;
 	    compilatioUnitTree = (CompilationUnitTree) tree;
-	    nodesMap = new LinkedHashMap<Tree, Node>();
 	  }
 
 	  public static Node build(Tree tree) {
@@ -43,7 +42,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	    nv.scan(tree, nodes);
 	    addInfos(nodes);
 	    System.out.println(nv.sb.toString());
-	    return nv.nodesMap.get(nv.root);
+	    return Node.getNodesMap().get(nv.root);
 	  }
 
 	  private StringBuilder indent() {
@@ -66,14 +65,14 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	        	parent = getCurrentPath().getLeaf();
 	        }
 	        
-	        Node nodeParent = nodesMap.get(parent);
+	        Node nodeParent = Node.getNodesMap().get(parent);
 	        Node node;
 	        
-	        if(nodesMap.get(tree) == null) {
+	        if(Node.getNodesMap().get(tree) == null) {
 	        	node = new Node(tree,compilatioUnitTree);
-	        	nodesMap.put(tree,node);
+	        	Node.getNodesMap().put(tree,node);
 	        }else {
-	        	node = nodesMap.get(tree);
+	        	node = Node.getNodesMap().get(tree);
 	        }
 	        
 	        if (nodes.get(nodeParent) == null) {
@@ -121,6 +120,8 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 						  exists = true;
 					  }
 					  
+					  Node parentAux = null;
+					  
 					  if(exists != null) {
 						  
 						  listToRemove.add(key.getParent());
@@ -130,7 +131,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 						  
 						  boolean booleanIndexAux = true; 
 						  
-					  	  Node parentAux = key.getParent().getParent();
+					  	  parentAux = key.getParent().getParent();
 					  	
 					  	  if(booleanIndexAux) {
 					  		  nodesIndexAux = nodes.get(parentAux).indexOf(key.getParent());
@@ -157,6 +158,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 							  key.getParent().setChangeOperator(true);
 							  key.getParent().setChangePoint(true);
 						  }
+						  
+						  if(parentAux != null) {
+							  parentAux.setNodeOfDifferentOperator(key);
+						  }
 					  }
 					  
 				  } 
@@ -180,8 +185,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 						  
 						  boolean booleanIndexAux = true; 
 						  
+						  Node parentAux = null;
+						  
 						  for(Node node :  nodes.get(key)) {
-							  	Node parentAux = node.getParent().getParent().getParent();
+							  	parentAux = node.getParent().getParent().getParent();
 							  	
 							  	if(booleanIndexAux) {
 							  		nodesIndexAux = nodes.get(parentAux).indexOf(key.getParent());
@@ -208,6 +215,9 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 									node.getParent().setChangeOperator(true);
 									node.getParent().setChangePoint(true);
 								}
+						  }
+						  if(parentAux != null) {
+							  parentAux.setNodeOfDifferentOperator(nodes.get(key));
 						  }
 					  }
 				  }
