@@ -30,6 +30,7 @@ public class Node {
 	private Boolean changeOperator;
 	private Boolean changePoint;
 	private Node nodeOfDifferentOperator;
+	private Node notParent;
 	private static final Map<Node,Node> cloneNodeMap = new LinkedHashMap<>();
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<Tree, Node>();
 	
@@ -62,7 +63,9 @@ public class Node {
 		List<Node> children = new ArrayList<Node>();
 		
 		for(Node child: node.getChildren()) {
-			children.add(new Node(child));
+			Node childClone = new Node(child);
+			childClone.setParent(this);
+			children.add(childClone);
 		}
 		
 		this.children = children;		
@@ -74,6 +77,31 @@ public class Node {
 		this.changeOperator = false;
 		this.changePoint = false;
 		cloneNodeMap.put(node, this);
+	}
+	
+	public Node(Node node, List<Node> ignore) {
+				
+		this.parent = null;
+		this.node = node.getNode();
+		
+		List<Node> children = new ArrayList<Node>();
+		
+		for(Node child: node.getChildren()) {
+			if(!ignore.contains(child)) {
+				Node childClone = new Node(child,ignore);
+				childClone.setParent(this);
+				children.add(childClone);
+			}
+		}
+		
+		this.children = children;		
+		this.compilatioUnitTree = node.getCompilatioUnitTree();
+		this.fakeNode = false;
+		this.fullVisited = false;
+		this.exists = true;
+		this.usingExistsOperator = false;
+		this.changeOperator = false;
+		this.changePoint = false;
 	}
 	
 	public Node getParent() {
@@ -248,8 +276,17 @@ public class Node {
 			Node fakeNode = new Node();
 			fakeNode.getChildren().addAll(nodeList);
 			fakeNode.setUsingExistsOperator(true);
+			fakeNode.setFakeNode(true);
 			this.nodeOfDifferentOperator = fakeNode;
 		}
+	}
+	
+	public Node getNotParent() {
+		return notParent;
+	}
+
+	public void setNotParent(Node notParent) {
+		this.notParent = notParent;
 	}
 
 	public Node getChildrenbyTree(Tree tree) {

@@ -80,4 +80,44 @@ public class Utils {
 		path.remove(node);
 	}
 	
+	public static Node getDiferentOperatatorNode(Node node) {
+		
+		Node retorno = null;
+		
+		if(node.getNodeOfDifferentOperator() != null) {
+			return node.getNodeOfDifferentOperator();
+		}else {
+			for(Node child: node.getChildren()) {
+				retorno = child.getNodeOfDifferentOperator();
+				
+				if(retorno != null) {
+					return retorno;
+				}
+			}
+			
+		}
+		
+		return retorno;
+	}
+	
+	public static boolean verifyNotParent(Node a, Node b, Map<String, String> wildcardsMap) {
+		
+		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
+		wildcardsMapBefore.putAll(wildcardsMap);
+		
+		if(b.getNotParent() != null) {
+			Node parentAux = a.getParent();
+			
+			while(parentAux!=null) {
+				Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
+				wildcardsMapAux.putAll(wildcardsMapBefore);
+				if(EqualsController.partialEquals(parentAux,b.getNotParent(), wildcardsMapAux)) {
+					return false;
+				}
+				parentAux = parentAux.getParent();
+			}
+		}
+		
+		return true;
+	}
 }

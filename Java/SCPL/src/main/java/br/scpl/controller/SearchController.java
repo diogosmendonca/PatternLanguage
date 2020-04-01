@@ -121,6 +121,10 @@ public class SearchController {
 			}
 		}
 		
+		if(!Utils.verifyNotParent(a, b, wildcardsMap)) {
+			return ocorrences;
+		}
+		
 		//Lista auxiliar que guarda as ocorrências da busca atual
 		List<Node> currentOcorrences = new ArrayList<>();
 		
@@ -267,15 +271,30 @@ public class SearchController {
 		if(EqualsController.isEquals(a, b, wildcardsMap)) {
 			if(!b.getChangeOperator()) {
 				if(b.getFakeNode()) {
-					ocorrences.addAll(a.getChildren());
+					
+					if(!b.getChildren().stream()
+							.anyMatch(child -> !Utils.verifyNotParent(a, child, wildcardsMap))) {
+						ocorrences.addAll(a.getChildren());
+						a.setFullVisited(true);
+					}else {
+						wildcardsMap.clear();
+						wildcardsMap.putAll(wildcardsMapBefore);
+					}
+					
 				}else {
-					ocorrences.add(a);
+					if(Utils.verifyNotParent(a, b, wildcardsMap)){
+						ocorrences.add(a);
+						a.setFullVisited(true);
+					}else {
+						wildcardsMap.clear();
+						wildcardsMap.putAll(wildcardsMapBefore);
+					}
 				}
-				a.setFullVisited(true);
-				return ocorrences;
 			}else {
-				return ocorrences;
+				wildcardsMap.clear();
+				wildcardsMap.putAll(wildcardsMapBefore);
 			}
+			return ocorrences;
 		}
 		
 		wildcardsMap.clear();
@@ -340,17 +359,30 @@ public class SearchController {
 		if(EqualsController.isEquals(a, b, wildcardsMap)) {
 			if(!b.getChangeOperator()) {
 				if(b.getFakeNode()) {
-					ocorrences.addAll(a.getChildren());
+					
+					if(!b.getChildren().stream()
+							.anyMatch(child -> !Utils.verifyNotParent(a, child, wildcardsMap))) {
+						ocorrences.addAll(a.getChildren());
+						a.setFullVisited(true);
+					}else {
+						wildcardsMap.clear();
+						wildcardsMap.putAll(wildcardsMapBefore);
+					}
+					
 				}else {
-					ocorrences.add(a);
+					if(Utils.verifyNotParent(a, b, wildcardsMap)){
+						ocorrences.add(a);
+						a.setFullVisited(true);
+					}else {
+						wildcardsMap.clear();
+						wildcardsMap.putAll(wildcardsMapBefore);
+					}
 				}
-				a.setFullVisited(true);
-				return ocorrences;
 			}else {
 				wildcardsMap.clear();
 				wildcardsMap.putAll(wildcardsMapBefore);
-				return ocorrences;
 			}
+			return ocorrences;
 		}
 		
 		wildcardsMap.clear();
@@ -359,7 +391,7 @@ public class SearchController {
 		if(b.getExists()||!b.getChangeOperator()) {
 			return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
 		}else {
-			return searchNotSubtree(a, b, wildcardsMap, path, limitPath);
+			return searchNot(a, b, wildcardsMap, path, limitPath);
 		}
 	}
 	
@@ -368,7 +400,7 @@ public class SearchController {
 		return node.getChildren().stream().anyMatch(child -> child.getChangeOperator());
 	}
 	
-	private static List<Node> searchNotSubtree2(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
+	private static List<Node> searchNot(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
 		List<Node> ocorrences = new ArrayList<Node>();
 		
@@ -381,14 +413,31 @@ public class SearchController {
 		Map<Node, Integer> limitPathBefore = new LinkedHashMap<>();
 		limitPathBefore.putAll(limitPath);
 		
+		//Extraindo nó que existe
 		Node nodeWanted = Utils.getDiferentOperatatorNode(b);
 		
-		List<Node> ocorrencesWanted = search(a,b,wildcardsMap,path,limitPath);
+		//Extraindo nó que não existe
+		List<Node> ignoreList = new ArrayList<Node>();
+		
+		if(nodeWanted.getFakeNode()) {
+			ignoreList.addAll(nodeWanted.getChildren());
+		}else {
+			ignoreList.add(nodeWanted);
+		}
+		
+		//Cópia do padrão para buscar apenas o trecho com operador de existência diferente
+		Node clone = new Node(b,ignoreList);
+		
+		if(nodeWanted.getFakeNode()) {
+			nodeWanted.getChildren().forEach(x -> x.setNotParent(clone));
+		}else {
+			nodeWanted.setNotParent(clone);
+		}
+		
+		List<Node> ocorrencesWanted = search(a,nodeWanted,wildcardsMap,path,limitPath);
 		
 		if(ocorrencesWanted.size() > 0) {
-			
-			
-			
+			ocorrences.addAll(ocorrencesWanted);
 		}else {
 			wildcardsMap.clear();
 			wildcardsMap.putAll(wildcardsMapBefore);
@@ -397,7 +446,6 @@ public class SearchController {
 			limitPath.clear();
 			limitPath.putAll(limitPathBefore);
 		}
-		
 		
 		return ocorrences;
 	}
@@ -453,6 +501,12 @@ public class SearchController {
 			while (context != null) {
 				ocorrencesAux = searchChildren(context,clone, wildcardsMap, new LinkedHashMap<>(), new LinkedHashMap<>());
 				if(ocorrencesAux.size() > 0) {
+					wildcardsMap.clear();
+					wildcardsMap.putAll(wildcardsMapBefore);
+					path.clear();
+					path.putAll(pathBefore);
+					limitPath.clear();
+					limitPath.putAll(limitPathBefore);
 					return ocorrences;
 				}
 				context = context.getParent(); 

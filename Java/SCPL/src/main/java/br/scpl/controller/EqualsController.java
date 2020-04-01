@@ -563,4 +563,65 @@ public class EqualsController {
 		
 		return true;
 	}
+	
+	public static boolean partialEquals(Node a, Node b, Map<String, String> wildcardsMap) {
+			
+		if(equalsModifier(a,b)) {
+			return true;
+		}
+		
+		if(!basicComparation(a, b, wildcardsMap)) {
+			return false;
+		}
+		
+		//Verifica se as árvores tem o mesmo número de filhos
+		if(a.getChildren().size()!=b.getChildren().size()) {
+			
+			if(b.getNode().getKind() == Kind.METHOD) {
+				return anyMethod(a, b, wildcardsMap);
+			}
+			
+			if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
+				return anyArgument(a, b, wildcardsMap);
+			}
+			
+			//FIXME REPENSAR
+			if(b.getNode().getKind() == Kind.IDENTIFIER) {
+				return isAnyExpression(b);
+			}
+			
+			if(b.getNode().getKind() == Kind.BLOCK && b.getChildren().size() == 0) {
+				return true;
+			}
+			
+		}
+		
+		if(a.getChildren().size()<b.getChildren().size()) {
+			return false;
+		}
+		
+		boolean searching = false;
+		int i,counter = 0;
+		
+		for(i =0;i<b.getChildren().size();i++) {
+			
+			if(searching || b.getChildren().size()-i > a.getChildren().size()-counter) {
+				return false;
+			}
+			
+			searching = true;
+			
+			while(searching && counter<a.getChildren().size()) {
+				searching = !partialEquals(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap);
+				counter++;
+			}
+			
+			if(i == b.getChildren().size() - 1 && !searching) {
+				return true;
+			}
+		} 
+		
+		
+		return false;
+	}
 }
