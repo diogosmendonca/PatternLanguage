@@ -1,7 +1,12 @@
 public class SourceCode{
     public static void run() {
-        if(true){
-            String a = "teste";
+        String a;
+        a = teste();
+        
+        try{
+            a.hashCode();         
+        }catch(Exception e){
+            System.out.println(e);
         }
     }
 }

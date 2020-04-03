@@ -1,5 +1,6 @@
 public class SourceCode{
     public static void run() {
-        System.out.println("Hello Nico");
+        int a;
+        System.out.println(a.toString());
     }
 }
