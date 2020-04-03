@@ -226,7 +226,7 @@ public class SearchController {
 			
 			if(i == b.getChildren().size() - 1) {
 				if(searching){
-					if(!b.getChildren().get(i).getExists()) {
+					if(!b.getChildren().get(i).getExists() && !b.getChildren().get(i).getChangeOperator()) {
 						ocorrences.addAll(currentOcorrences);
 					}else {
 						//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
