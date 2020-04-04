@@ -106,18 +106,7 @@ public class EqualsController {
 	 * @return booleano que indica se passou em todas as comparações básicas
 	 */
 	
-	public static boolean basicComparation(Node a, Node b, Map<String, String> wildcardsMap) {
-		if(a==null) {
-			return false;
-		}
-		
-		if(b==null) {
-			return false;
-		}
-		
-		//System.out.println("A -> " +a.getNode());
-		//System.out.println("B -> " +b.getNode());
-		
+	public static boolean basicComparation(Node a, Node b, Map<String, String> wildcardsMap) {		
 		//Se é um nó fake não realiza as verificações
 		if(!b.getFakeNode()) {
 						
@@ -303,24 +292,12 @@ public class EqualsController {
 				name1 = ((IdentifierTree) node1.getNode()).getName().toString();
 				name2 = ((IdentifierTree) node2.getNode()).getName().toString();
 				
+				//TODO rever a necessidade
 				if(name2.startsWith(anyVariable)) {
 					return true;
 				}
 				
 				if(name2.startsWith(someVariable)) {
-					
-					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
-					wildcardsMapAux.putAll(wildcardsMap);
-					
-					if(node1.getChildren().size()==node2.getChildren().size()) {
-						for(int i = 0;i<node1.getChildren().size();i++) {
-							if(!isEquals(node1.getChildren().get(i), node2.getChildren().get(i), wildcardsMapAux)) {
-								return false;
-							}
-						}
-					}else {
-						return false;
-					}
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -446,13 +423,9 @@ public class EqualsController {
 	
 	public static boolean isAnyExpression(Node node) {
 		
-		if(node.getParent().getNode().getKind() == Kind.PARENTHESIZED || node.getParent().getNode().getKind() == Kind.METHOD_INVOCATION ) {
-			IdentifierTree identifier = (IdentifierTree)node.getNode();
+		IdentifierTree identifier = (IdentifierTree)node.getNode();
 			
-			return identifier.getName().toString().startsWith(anyExpression);
-		}
-		
-		return false;
+		return identifier.getName().toString().startsWith(anyExpression);
 	}
 	
 	private static boolean anyArgument(Node a, Node b, Map<String, String> wildcardsMap) {
@@ -502,9 +475,8 @@ public class EqualsController {
 			return true;
 		}
 		
-		
-		
-		List<Kind> typesList = Arrays.asList(Kind.INT_LITERAL,Kind.LONG_LITERAL,Kind.FLOAT_LITERAL,Kind.DOUBLE_LITERAL,Kind.BOOLEAN_LITERAL,Kind.CHAR_LITERAL,Kind.STRING_LITERAL);
+		List<Kind> typesList = Arrays.asList(Kind.INT_LITERAL,Kind.LONG_LITERAL,Kind.FLOAT_LITERAL,Kind.DOUBLE_LITERAL,
+				Kind.BOOLEAN_LITERAL,Kind.CHAR_LITERAL,Kind.STRING_LITERAL);
 		
 		if(typesList.contains(node1.getNode().getKind())) {
 			Object value1 = ((LiteralTree)node1.getNode()).getValue();
