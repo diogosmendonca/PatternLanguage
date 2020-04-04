@@ -395,11 +395,6 @@ public class SearchController {
 		}
 	}
 	
-	private static boolean childrenChange(Node node) {
-		
-		return node.getChildren().stream().anyMatch(child -> child.getChangeOperator());
-	}
-	
 	private static List<Node> searchNot(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
 		List<Node> ocorrences = new ArrayList<Node>();
@@ -447,80 +442,6 @@ public class SearchController {
 			limitPath.putAll(limitPathBefore);
 		}
 		
-		return ocorrences;
-	}
-
-	private static List<Node> searchNotSubtree(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
-		
-		List<Node> ocorrences = new ArrayList<Node>();
-		
-		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
-		wildcardsMapBefore.putAll(wildcardsMap);
-		
-		Map<Node, Integer> pathBefore = new LinkedHashMap<>();
-		pathBefore.putAll(path);
-		
-		Map<Node, Integer> limitPathBefore = new LinkedHashMap<>();
-		limitPathBefore.putAll(limitPath);
-		
-		List<BlockCodeStruct> blockWanted = new ArrayList<BlockCodeStruct>();
-		Utils.getDiferentOperatorBlock(b, new ArrayList<Node>(),blockWanted);
-		
-		//FIXME Sempre será apenas um bloco de código ?
-		BlockCodeStruct block = blockWanted.get(0);
-		Node wanted = block.getNode();
-		
-		List<Node> ocorrenceWanted = subtreeFirstOcorrence(a, wanted, wildcardsMap, path, limitPath);
-		
-		if(ocorrenceWanted.size() > 0) {
-			//Cópia do padrão para buscar apenas o trecho com operador de existência diferente
-			Node clone = new Node(b);
-			
-			//Lista dos nós com operador de existência diferente para serem removidos
-			List<Node> listToRemove = new ArrayList<Node>();
-			
-			//Se é um nó fake adiciona seus filhos, se não, adiciona o nó
-			if(block.getNode().getFakeNode()) {
-				listToRemove.addAll(block.getNode().getChildren()); 
-			}else {
-				listToRemove.add(block.getNode());
-			}
-			
-			//Busca no mapeamento qual é o seu nó clone, dado o nó
-			listToRemove = listToRemove.stream()
-					.map(m -> Node.getCloneNodeMap().get(m))
-					.collect(Collectors.toList());
-			
-			//Remove
-			Node.getCloneNodeMap().get(block.getContext()).getChildren().removeAll(listToRemove);
-			
-			List<Node> ocorrencesAux;
-			
-			//FIXME Pensar melhor o contexto de busca
-			Node context = ocorrenceWanted.get(0).getParent();
-			while (context != null) {
-				ocorrencesAux = searchChildren(context,clone, wildcardsMap, new LinkedHashMap<>(), new LinkedHashMap<>());
-				if(ocorrencesAux.size() > 0) {
-					wildcardsMap.clear();
-					wildcardsMap.putAll(wildcardsMapBefore);
-					path.clear();
-					path.putAll(pathBefore);
-					limitPath.clear();
-					limitPath.putAll(limitPathBefore);
-					return ocorrences;
-				}
-				context = context.getParent(); 
-			}
-			
-			ocorrences.addAll(ocorrenceWanted);
-		}else {
-			wildcardsMap.clear();
-			wildcardsMap.putAll(wildcardsMapBefore);
-			path.clear();
-			path.putAll(pathBefore);
-			limitPath.clear();
-			limitPath.putAll(limitPathBefore);
-		}
 		return ocorrences;
 	}
 
