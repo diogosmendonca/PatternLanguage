@@ -7,6 +7,7 @@ class anyClass {
             if(true){
                 exists:{
                     String someVariable = any;
+                    someVariable.anyMethod();
                 }
             }
         }

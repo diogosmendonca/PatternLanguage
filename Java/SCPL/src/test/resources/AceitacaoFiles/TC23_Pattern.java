@@ -6,14 +6,13 @@ class anyClass {
 
         someVariable = anyMethod();
 
-		not:{
-            try{
-                exists:{
-                    someVariable.anyMethod();
-                }
-            }catch(Exception e){
-                
+		not:
+        try{
+            exists:{
+                someVariable.anyMethod();
             }
+        }catch(Exception e){
+                
         }
     }
 }

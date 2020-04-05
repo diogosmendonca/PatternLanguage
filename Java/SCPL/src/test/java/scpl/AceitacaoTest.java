@@ -278,11 +278,15 @@ public class AceitacaoTest {
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC21_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC21_Pattern.java");
 		
-		assertEquals(1, retorno.size());
+		assertEquals(2, retorno.size());
 		assertEquals(3, retorno.get(0).getStartLine());
 		assertEquals(9, retorno.get(0).getStartColumn());
 		assertEquals(3, retorno.get(0).getEndLine());
 		assertEquals(28, retorno.get(0).getEndColumn());
+		assertEquals(4, retorno.get(1).getStartLine());
+		assertEquals(9, retorno.get(1).getStartColumn());
+		assertEquals(4, retorno.get(1).getEndLine());
+		assertEquals(22, retorno.get(1).getEndColumn());
 	}
 	
 	@Test
@@ -464,6 +468,46 @@ public class AceitacaoTest {
 		
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC35_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC35_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc36() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC36_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC36_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(12, retorno.get(0).getEndLine());
+		assertEquals(2, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc37() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC37_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC37_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc38() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC38_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC38_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc39() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC39_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC39_Pattern.java");
 		
 		assertEquals(0, retorno.size());
 	}

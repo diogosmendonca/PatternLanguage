@@ -3,6 +3,6 @@ public class SourceCode{
         String a;
         a = teste();
         a.hashCode();
-        
+        System.out.println("Teste");
     }
 }
