@@ -518,10 +518,6 @@ public class EqualsController {
 				return true;
 			}
 			
-		}else {
-			if(a.getChildren().size()==0) {
-				return true;
-			}
 		}
 		
 		if(a.getChildren().size()<b.getChildren().size()) {
@@ -544,12 +540,12 @@ public class EqualsController {
 				counter++;
 			}
 			
-			if(i == b.getChildren().size() - 1 && !searching) {
-				return true;
+			if(i == b.getChildren().size() - 1) {
+				return !searching;
 			}
 		} 
 		
 		
-		return false;
+		return true;
 	}
 }
