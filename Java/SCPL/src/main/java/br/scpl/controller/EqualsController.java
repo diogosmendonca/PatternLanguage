@@ -63,20 +63,20 @@ public class EqualsController {
 		
 		//Verifica se as árvores tem o mesmo número de filhos
 		if(a.getChildren().size()!=b.getChildren().size()) {
-			
-			if(b.getNode().getKind() == Kind.METHOD) {
-				return anyMethod(a, b, wildcardsMap);
+			if(!b.getFakeNode()) {
+				if(b.getNode().getKind() == Kind.METHOD) {
+					return anyMethod(a, b, wildcardsMap);
+				}
+				
+				if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
+					return anyArgument(a, b, wildcardsMap);
+				}
+				
+				//FIXME REPENSAR
+				if(b.getNode().getKind() == Kind.IDENTIFIER) {
+					return isAnyExpression(b);
+				}
 			}
-			
-			if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
-				return anyArgument(a, b, wildcardsMap);
-			}
-			
-			//FIXME REPENSAR
-			if(b.getNode().getKind() == Kind.IDENTIFIER) {
-				return isAnyExpression(b);
-			}
-			
 			return false;				
 		}
 		
@@ -333,7 +333,7 @@ public class EqualsController {
 	
 	public static boolean equalsModifier(Node a, Node b) {
 		
-		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
+		if(!b.getFakeNode() && a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
 			ModifiersTree modifierPattern = ((ModifiersTree) b.getNode());
 			

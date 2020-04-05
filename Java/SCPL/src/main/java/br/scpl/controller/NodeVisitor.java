@@ -18,6 +18,7 @@ import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 
 import br.scpl.model.Node;
+import scpl.Utils;
 
 public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	
@@ -68,12 +69,8 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	        Node nodeParent = Node.getNodesMap().get(parent);
 	        Node node;
 	        
-	        if(Node.getNodesMap().get(tree) == null) {
-	        	node = new Node(tree,compilatioUnitTree);
-	        	Node.getNodesMap().put(tree,node);
-	        }else {
-	        	node = Node.getNodesMap().get(tree);
-	        }
+        	node = new Node(tree,compilatioUnitTree);
+        	Node.getNodesMap().put(tree,node);
 	        
 	        if (nodes.get(nodeParent) == null) {
 				List<Node> l = new ArrayList<>();
@@ -94,6 +91,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  
 	  private static void addInfos(Map<Node, List<Node>> nodes) {
 		  List<Node> listToRemove = new ArrayList<Node>();
+		  List<Node> listChangePoints = new ArrayList<Node>();
 		  for(Node key : nodes.keySet()) {
 				for(Node node :  nodes.get(key)) {
 					Collection<Node> children = nodes.get(node);
@@ -218,6 +216,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 						  }
 						  if(parentAux != null) {
 							  parentAux.setNodeOfDifferentOperator(nodes.get(key));
+							  listChangePoints.addAll(nodes.get(key));
 						  }
 					  }
 				  }
@@ -227,6 +226,46 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		for(Node n : listToRemove) {
 			nodes.remove(n);
 		}
+		
+		for(Node node : listChangePoints) {
+			if(!node.getExists()&&node.getChangeOperator()) {
+				notInfos(node);
+			}
+		}
+		
+		
+	 }
+	  
+	 public static  void notInfos(Node node) {
+		 int index = node.getParent().getChildren().indexOf(node);
+		 Node nodeWanted = Utils.getDiferentOperatatorNode(node);
+			
+		//Extraindo nó que não existe
+		List<Node> ignoreList = new ArrayList<Node>();
+		
+		if(nodeWanted.getFakeNode()) {
+			ignoreList.addAll(nodeWanted.getChildren());
+		}else {
+			ignoreList.add(nodeWanted);
+		}
+		
+		//Cópia do padrão para buscar apenas o trecho com operador de existência diferente
+		Node clone = new Node(node,ignoreList);
+		
+		if(nodeWanted.getFakeNode()) {
+			nodeWanted.getChildren().forEach(x -> x.setNotParent(clone));
+		}else {
+			nodeWanted.setNotParent(clone);
+		}
+		
+		if(nodeWanted.getFakeNode()) {
+			node.getParent().getChildren().addAll(index, nodeWanted.getChildren());
+		}else {
+			node.getParent().getChildren().add(index, nodeWanted);
+		}
+		
+		node.getParent().getChildren().remove(node);
+		
 	 }
 	  
 }

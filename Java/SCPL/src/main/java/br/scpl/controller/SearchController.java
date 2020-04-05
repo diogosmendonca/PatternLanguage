@@ -35,8 +35,6 @@ public class SearchController {
 				ocorrences.add(a);
 				a.setFullVisited(true);
 				return ocorrences;
-			}else {
-				return ocorrences;
 			}
 		}
 		
@@ -79,29 +77,31 @@ public class SearchController {
 			return ocorrences;
 		}
 		
-		if(b.getNode().getKind()==Kind.METHOD) {
-			
-			if(EqualsController.isAnyParameter(b)) {
-				List<Integer> aux =  ((MethodTree)b.getNode()).getParameters().stream()
-										.map(x -> b.getChildrenbyTree(x))
-											.map(y -> b.getChildren().indexOf(y)).collect(Collectors.toList());
-				anyIndex.addAll(aux);
+		if(!b.getFakeNode()) {
+			if(b.getNode().getKind()==Kind.METHOD) {
+				
+				if(EqualsController.isAnyParameter(b)) {
+					List<Integer> aux =  ((MethodTree)b.getNode()).getParameters().stream()
+											.map(x -> b.getChildrenbyTree(x))
+												.map(y -> b.getChildren().indexOf(y)).collect(Collectors.toList());
+					anyIndex.addAll(aux);
+				}
+				
+				if(EqualsController.isAnyThrows(b)) {
+					List<Integer> aux =  ((MethodTree)b.getNode()).getThrows().stream()
+							.map(x -> b.getChildrenbyTree(x))
+								.map(y -> b.getChildren().indexOf(y)).collect(Collectors.toList());
+					anyIndex.addAll(aux);
+				}
 			}
 			
-			if(EqualsController.isAnyThrows(b)) {
-				List<Integer> aux =  ((MethodTree)b.getNode()).getThrows().stream()
-						.map(x -> b.getChildrenbyTree(x))
-							.map(y -> b.getChildren().indexOf(y)).collect(Collectors.toList());
-				anyIndex.addAll(aux);
+			//FIXME Resolvendo problema de retornar apenas o modifier
+			if(b.getNode().getKind() == Kind.CLASS) {
+				if(EqualsController.equalsModifier(a.getChildren().get(0),b.getChildren().get(0))) {
+					return searchChildren(a.getChildren().get(1),b.getChildren().get(1),wildcardsMap,path,limitPath);
+				}
+				return ocorrences;
 			}
-		}
-		
-		//FIXME Resolvendo problema de retornar apenas o modifier
-		if(b.getNode().getKind() == Kind.CLASS) {
-			if(EqualsController.equalsModifier(a.getChildren().get(0),b.getChildren().get(0))) {
-				return searchChildren(a.getChildren().get(1),b.getChildren().get(1),wildcardsMap,path,limitPath);
-			}
-			return ocorrences;
 		}
 		
 		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
@@ -290,11 +290,8 @@ public class SearchController {
 						wildcardsMap.putAll(wildcardsMapBefore);
 					}
 				}
-			}else {
-				wildcardsMap.clear();
-				wildcardsMap.putAll(wildcardsMapBefore);
+				return ocorrences;
 			}
-			return ocorrences;
 		}
 		
 		wildcardsMap.clear();
@@ -378,11 +375,8 @@ public class SearchController {
 						wildcardsMap.putAll(wildcardsMapBefore);
 					}
 				}
-			}else {
-				wildcardsMap.clear();
-				wildcardsMap.putAll(wildcardsMapBefore);
+				return ocorrences;
 			}
-			return ocorrences;
 		}
 		
 		wildcardsMap.clear();
