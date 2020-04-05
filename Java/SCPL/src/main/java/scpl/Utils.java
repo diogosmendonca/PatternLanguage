@@ -36,7 +36,6 @@ import com.sun.source.util.Trees;
 import br.scpl.controller.EqualsController;
 import br.scpl.controller.FileHandler;
 import br.scpl.controller.NodeVisitor;
-import br.scpl.model.BlockCodeStruct;
 import br.scpl.model.CompilationUnitStruct;
 import br.scpl.model.Node;
 
