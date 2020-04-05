@@ -11,7 +11,6 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.Tree.Kind;
-import br.scpl.model.BlockCodeStruct;
 import br.scpl.model.Node;
 import scpl.Utils;
 
@@ -347,61 +346,6 @@ public class SearchController {
 		wildcardsMap.clear();
 		wildcardsMap.putAll(wildcardsMapBefore);
 		
-		if(b.getExists()||!b.getChangeOperator()) {
-			return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
-		}else {
-			return searchNot(a, b, wildcardsMap, path, limitPath);
-		}
+		return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
 	}
-	
-	private static List<Node> searchNot(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
-		
-		List<Node> ocorrences = new ArrayList<Node>();
-		
-		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
-		wildcardsMapBefore.putAll(wildcardsMap);
-		
-		Map<Node, Integer> pathBefore = new LinkedHashMap<>();
-		pathBefore.putAll(path);
-		
-		Map<Node, Integer> limitPathBefore = new LinkedHashMap<>();
-		limitPathBefore.putAll(limitPath);
-		
-		//Extraindo nó que existe
-		Node nodeWanted = Utils.getDiferentOperatatorNode(b);
-		
-		//Extraindo nó que não existe
-		List<Node> ignoreList = new ArrayList<Node>();
-		
-		if(nodeWanted.getFakeNode()) {
-			ignoreList.addAll(nodeWanted.getChildren());
-		}else {
-			ignoreList.add(nodeWanted);
-		}
-		
-		//Cópia do padrão para buscar apenas o trecho com operador de existência diferente
-		Node clone = new Node(b,ignoreList);
-		
-		if(nodeWanted.getFakeNode()) {
-			nodeWanted.getChildren().forEach(x -> x.setNotParent(clone));
-		}else {
-			nodeWanted.setNotParent(clone);
-		}
-		
-		List<Node> ocorrencesWanted = search(a,nodeWanted,wildcardsMap,path,limitPath);
-		
-		if(ocorrencesWanted.size() > 0) {
-			ocorrences.addAll(ocorrencesWanted);
-		}else {
-			wildcardsMap.clear();
-			wildcardsMap.putAll(wildcardsMapBefore);
-			path.clear();
-			path.putAll(pathBefore);
-			limitPath.clear();
-			limitPath.putAll(limitPathBefore);
-		}
-		
-		return ocorrences;
-	}
-
 }
