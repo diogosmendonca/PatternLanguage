@@ -54,32 +54,6 @@ import com.sun.source.tree.ModifiersTree;
 
 public class Utils {
 	
-	public static void getDiferentOperatorBlock(Node node, List<Node> path , List<BlockCodeStruct> retorno) {
-		Boolean exists = node.getExists(); 
-		path.add(node);
-		List<Node> nodeList = new ArrayList<Node>();
-		for(Node child: node.getChildren()) {
-			if(child.getExists()!=exists) {
-				nodeList.add(child);
-				continue;
-			}
-			
-			if(nodeList.size() > 0) {
-				retorno.add(new BlockCodeStruct(path, nodeList, node));
-				nodeList.clear();
-			}
-			
-			if(child.getChangeOperator()) {
-				getDiferentOperatorBlock(child, path, retorno);				
-			}
-		}
-		if(nodeList.size() > 0) {
-			retorno.add(new BlockCodeStruct(path, nodeList, node));
-			nodeList.clear();
-		}
-		path.remove(node);
-	}
-	
 	public static Node getDiferentOperatatorNode(Node node) {
 		
 		Node retorno = null;
