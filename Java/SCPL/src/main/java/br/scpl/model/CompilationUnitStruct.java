@@ -19,16 +19,8 @@ public class CompilationUnitStruct {
 		return compilationUnitTree;
 	}
 
-	public void setCompilationUnitTree(Iterator<? extends CompilationUnitTree> compilationUnitTree) {
-		this.compilationUnitTree = compilationUnitTree;
-	}
-
 	public SourcePositions getPos() {
 		return pos;
 	}
 
-	public void setPos(SourcePositions pos) {
-		this.pos = pos;
-	}
-	 
 }

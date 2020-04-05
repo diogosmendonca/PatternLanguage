@@ -159,6 +159,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 						  
 						  if(parentAux != null) {
 							  parentAux.setNodeOfDifferentOperator(key);
+							  listChangePoints.add(key);
 						  }
 					  }
 					  

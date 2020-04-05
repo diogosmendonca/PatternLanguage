@@ -113,34 +113,16 @@ public class Node {
 	public Tree getNode() {
 		return node;
 	}
-	public void setNode(Tree node) {
-		this.node = node;
-	}
 	public List<Node> getChildren() {
 		return children;
 	}
-	public void setChildren(List<Node> children) {
-		this.children = children;
-	}
-
+	
 	public CompilationUnitTree getCompilatioUnitTree() {
 		return compilatioUnitTree;
 	}
 
-	public void setCompilatioUnitTree(CompilationUnitTree compilatioUnitTree) {
-		this.compilatioUnitTree = compilatioUnitTree;
-	}
-	
-	public Long getStartPosition() {
-		return startPosition;
-	}
-
 	public void setStartPosition(Long startPosition) {
 		this.startPosition = startPosition;
-	}
-
-	public Long getEndPosition() {
-		return endPosition;
 	}
 
 	public void setEndPosition(Long endPosition) {
@@ -297,9 +279,7 @@ public class Node {
 
 	public static Map<Tree, Node> getNodesMap() {
 		return nodesMap;
-	}
-	
-	
+	}	
 	
 }
 	
