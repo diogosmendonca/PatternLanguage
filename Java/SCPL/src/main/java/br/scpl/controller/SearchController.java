@@ -187,22 +187,13 @@ public class SearchController {
 								limitPath.putAll(limitPathOld);
 								maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 							}else {
-								if(b.getChildren().get(i).getChangeOperator()) {
-									currentOcorrences.addAll(subtreeAux);
-									searching=false;
-									lastOcorrenceIndex = counter;
-									limitPath.clear();
-									limitPath.putAll(limitPathOld);
-									maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
-								}else {
-									//FIXME
-	 								if(i == b.getChildren().size() - 1) {
-										return ocorrences;
-									}
-									searching=false;
-									maxIndexA = counter;
-									counter = lastOcorrenceIndex;							
+								//FIXME
+ 								if(i == b.getChildren().size() - 1) {
+									return ocorrences;
 								}
+								searching=false;
+								maxIndexA = counter;
+								counter = lastOcorrenceIndex;							
 							}
 						}
 					}
@@ -270,25 +261,12 @@ public class SearchController {
 		//Se os nós são iguais, a sub-árvore é toda a ávore
 		if(EqualsController.isEquals(a, b, wildcardsMap)) {
 			if(!b.getChangeOperator()) {
-				if(b.getFakeNode()) {
-					
-					if(!b.getChildren().stream()
-							.anyMatch(child -> !Utils.verifyNotParent(a, child, wildcardsMap))) {
-						ocorrences.addAll(a.getChildren());
-						a.setFullVisited(true);
-					}else {
-						wildcardsMap.clear();
-						wildcardsMap.putAll(wildcardsMapBefore);
-					}
-					
+				if(Utils.verifyNotParent(a, b, wildcardsMap)){
+					ocorrences.add(a);
+					a.setFullVisited(true);
 				}else {
-					if(Utils.verifyNotParent(a, b, wildcardsMap)){
-						ocorrences.add(a);
-						a.setFullVisited(true);
-					}else {
-						wildcardsMap.clear();
-						wildcardsMap.putAll(wildcardsMapBefore);
-					}
+					wildcardsMap.clear();
+					wildcardsMap.putAll(wildcardsMapBefore);
 				}
 				return ocorrences;
 			}
@@ -355,25 +333,12 @@ public class SearchController {
 		//Se os nós são iguais, a sub-árvore é toda a árvore
 		if(EqualsController.isEquals(a, b, wildcardsMap)) {
 			if(!b.getChangeOperator()) {
-				if(b.getFakeNode()) {
-					
-					if(!b.getChildren().stream()
-							.anyMatch(child -> !Utils.verifyNotParent(a, child, wildcardsMap))) {
-						ocorrences.addAll(a.getChildren());
-						a.setFullVisited(true);
-					}else {
-						wildcardsMap.clear();
-						wildcardsMap.putAll(wildcardsMapBefore);
-					}
-					
+				if(Utils.verifyNotParent(a, b, wildcardsMap)){
+					ocorrences.add(a);
+					a.setFullVisited(true);
 				}else {
-					if(Utils.verifyNotParent(a, b, wildcardsMap)){
-						ocorrences.add(a);
-						a.setFullVisited(true);
-					}else {
-						wildcardsMap.clear();
-						wildcardsMap.putAll(wildcardsMapBefore);
-					}
+					wildcardsMap.clear();
+					wildcardsMap.putAll(wildcardsMapBefore);
 				}
 				return ocorrences;
 			}
