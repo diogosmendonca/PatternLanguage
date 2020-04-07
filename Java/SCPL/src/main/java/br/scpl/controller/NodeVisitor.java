@@ -2,18 +2,19 @@ package br.scpl.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.sun.source.doctree.DocCommentTree;
+import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.tree.LineMap;
 import com.sun.source.tree.LabeledStatementTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
+import com.sun.source.util.DocTrees;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 
@@ -29,16 +30,18 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private int indentLevel;
 	  private final CompilationUnitTree compilatioUnitTree;
 	  private Tree root;
+	  private DocTrees doctrees;
 	  
 
-	  public NodeVisitor(Tree tree) {
+	  public NodeVisitor(Tree tree, DocTrees docTrees) {
 		sb = new StringBuilder();
 	    indentLevel = 0;
 	    compilatioUnitTree = (CompilationUnitTree) tree;
+	    doctrees = docTrees;
 	  }
 
-	  public static Node build(Tree tree) {
-	    NodeVisitor nv = new NodeVisitor(tree);
+	  public static Node build(Tree tree, DocTrees docTrees) {
+	    NodeVisitor nv = new NodeVisitor(tree, docTrees);
 	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
 	    addInfos(nodes);
@@ -60,13 +63,28 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	        	root = tree;
 	        }       
 	        
-	        Tree parent = null;
+	        TreePath path = getCurrentPath();
 	        
-	        if(getCurrentPath()!= null) {
-	        	parent = getCurrentPath().getLeaf();
-	        }
+	        Tree parent = path == null? null: path.getLeaf();
+	        DocCommentTree dc = null;
+	        
+	        
+	        boolean isToReturn = false;
 	        
 	        Node nodeParent = Node.getNodesMap().get(parent);
+	        
+	        if(path != null) {
+	        	dc = doctrees.getDocCommentTree(path);
+	        	if (dc != null && nodeParent.getReturnMessage() == null) {
+	        		String returnMessage = extractAlertMessage(dc);
+	        		
+	        		if(returnMessage!=null) {
+	        			nodeParent.setIsToReturn(true);
+	        			nodeParent.setReturnMessage(returnMessage);
+	        		}
+	        	}
+	        }
+	        
 	        Node node;
 	        
         	node = new Node(tree,compilatioUnitTree);
@@ -267,6 +285,20 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		
 		node.getParent().getChildren().remove(node);
 		
+	 }
+	 
+	 public static String extractAlertMessage(DocCommentTree dc) {
+		 
+		 List<? extends DocTree> tags = dc.getBlockTags();
+		 
+		 for(DocTree docTree: tags) {
+			 if(docTree.toString().startsWith("@alert")) {
+				 System.out.println(docTree);
+				 return docTree.toString().trim();
+			 }
+		 }
+		 
+		 return null;
 	 }
 	  
 }

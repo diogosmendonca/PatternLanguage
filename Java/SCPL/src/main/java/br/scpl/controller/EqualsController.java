@@ -53,45 +53,61 @@ public class EqualsController {
 	
 	public static boolean isEquals(Node a, Node b, Map<String, String> wildcardsMap) {
 		
-		if(equalsModifier(a,b)) {
-			return true;
-		}
+		boolean retorno = false;
 		
-		if(!basicComparation(a, b, wildcardsMap)) {
-			return false;
-		}
-		
-		//Verifica se as árvores tem o mesmo número de filhos
-		if(a.getChildren().size()!=b.getChildren().size()) {
-			if(!b.getFakeNode()) {
-				if(b.getNode().getKind() == Kind.METHOD) {
-					return anyMethod(a, b, wildcardsMap);
+		try {
+			if(equalsModifier(a,b)) {
+				retorno = true;
+				return retorno;
+			}
+			
+			if(!basicComparation(a, b, wildcardsMap)) {
+				return retorno;
+			}
+			
+			//Verifica se as árvores tem o mesmo número de filhos
+			if(a.getChildren().size()!=b.getChildren().size()) {
+				if(!b.getFakeNode()) {
+					if(b.getNode().getKind() == Kind.METHOD) {
+						retorno = anyMethod(a, b, wildcardsMap);
+						return retorno;
+					}
+					
+					if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
+						retorno = anyArgument(a, b, wildcardsMap);
+						return retorno;
+					}
+					
+					//FIXME REPENSAR
+					if(b.getNode().getKind() == Kind.IDENTIFIER) {
+						retorno = isAnyExpression(b);
+						return retorno;
+					}
 				}
-				
-				if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
-					return anyArgument(a, b, wildcardsMap);
+				return retorno;				
+			}
+			
+			//Para cada filho chama recursivamente o método isEquals
+			for(int i=0; i<a.getChildren().size(); i++) {
+				if(a.getChildren().get(i).getFullVisited().booleanValue()) {
+					return retorno;
 				}
-				
-				//FIXME REPENSAR
-				if(b.getNode().getKind() == Kind.IDENTIFIER) {
-					return isAnyExpression(b);
+				if(!isEquals(a.getChildren().get(i), b.getChildren().get(i), wildcardsMap)) {
+					return retorno;
 				}
 			}
-			return false;				
+			
+			retorno = true;
+			return retorno;
 		}
-		
-		//Para cada filho chama recursivamente o método isEquals
-		for(int i=0; i<a.getChildren().size(); i++) {
-			if(a.getChildren().get(i).getFullVisited().booleanValue()) {
-				return false;
+		finally {
+			if(retorno) {
+				if(b.getIsToReturn()) {
+					a.setIsToReturn(true);
+					a.setReturnMessage(b.getReturnMessage());
+				}
 			}
-			if(!isEquals(a.getChildren().get(i), b.getChildren().get(i), wildcardsMap)) {
-				return false;
-			}
-		}
-		
-		return true;
-		
+	    }
 	}
 	
 	

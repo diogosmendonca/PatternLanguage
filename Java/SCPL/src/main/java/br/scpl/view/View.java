@@ -10,8 +10,10 @@ import java.util.stream.Collectors;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
+import com.sun.source.util.DocTrees;
 import com.sun.source.util.SourcePositions;
 
+import br.scpl.controller.CommentVisitor;
 import br.scpl.controller.FileHandler;
 import br.scpl.controller.NodeVisitor;
 import br.scpl.controller.SearchController;
@@ -40,6 +42,8 @@ public class View {
 		
 		Iterator<? extends CompilationUnitTree> compilationUnitsPattern = compilationUnitStructPattern.getCompilationUnitTree();
 		
+		DocTrees doctreesPattern = compilationUnitStructPattern.getDoctrees();
+		
         List<Tree> listPattern = new ArrayList<>(); 
   
         // Add each element of iterator to the List 
@@ -53,15 +57,22 @@ public class View {
 		
 		SourcePositions posCode = compilationUnitStructCode.getPos();
 		
+		DocTrees doctreesCode = compilationUnitStructCode.getDoctrees();
+		
 		while(compilationUnitsCode.hasNext()) {
 			
 			Tree treeCode = compilationUnitsCode.next();
 			
 			for(Tree treePattern: listPattern) {
 				
-				Node rootCode = NodeVisitor.build(treeCode);
+				Node rootCode = NodeVisitor.build(treeCode, doctreesCode);
 				
-				Node rootPattern = NodeVisitor.build(treePattern);
+				Node rootPattern = NodeVisitor.build(treePattern, doctreesPattern);
+				
+				CompilationUnitTree cu = (CompilationUnitTree)treePattern;
+				
+				
+				CommentVisitor.addInfos(treePattern);
 				
 				retorno.addAll(SearchController.subtree(rootCode, rootPattern));
 			}
@@ -72,8 +83,11 @@ public class View {
 		
 		String arquivoAtual = "";
 		
+		
 		//FIXME Problema de retornar modifiers
 		retorno = retorno.stream().filter(x -> x.getNode().getKind() != Kind.MODIFIERS && x.getNode().getKind() != Kind.PRIMITIVE_TYPE).collect(Collectors.toList());
+		
+		//retorno = Utils.filterReturnNodes(retorno);
 		
 		for(Node r : retorno) {
 			r.setStartPosition(posCode.getStartPosition(r.getCompilatioUnitTree(), r.getNode()));

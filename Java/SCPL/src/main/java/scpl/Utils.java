@@ -93,4 +93,20 @@ public class Utils {
 		
 		return true;
 	}
+	
+	public static List<Node> filterReturnNodes(List<Node> nodes) {
+		
+		List<Node> retorno = new ArrayList<>();
+		
+		nodes.forEach( node -> {			
+			if(node.getIsToReturn()) {
+				retorno.add(node);
+			}else {
+				retorno.addAll(filterReturnNodes(node.getChildren()));
+			}
+		});
+		
+		
+		return retorno;
+	}
 }

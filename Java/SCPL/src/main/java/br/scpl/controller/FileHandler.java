@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -15,6 +14,7 @@ import javax.tools.ToolProvider;
 import org.apache.log4j.Logger;
 
 import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.util.DocTrees;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
@@ -82,6 +82,8 @@ public class FileHandler {
 		Iterable<? extends CompilationUnitTree> compilationUnitTrees;
 		Iterator<? extends CompilationUnitTree> iter = null;
 		
+		DocTrees docTrees = DocTrees.instance(javacTask);
+				
 		try {
 			compilationUnitTrees = javacTask.parse();
 			iter = compilationUnitTrees.iterator();
@@ -90,7 +92,7 @@ public class FileHandler {
 			e.printStackTrace();
 		}
 		
-		return new CompilationUnitStruct(iter,pos);
+		return new CompilationUnitStruct(iter,pos,docTrees);
 
 	}
 

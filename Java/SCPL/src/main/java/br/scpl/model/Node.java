@@ -31,6 +31,8 @@ public class Node {
 	private Boolean changePoint;
 	private Node nodeOfDifferentOperator;
 	private Node notParent;
+	private Boolean isToReturn;
+	private String returnMessage;
 	private static final Map<Node,Node> cloneNodeMap = new LinkedHashMap<>();
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<Tree, Node>();
 	
@@ -42,6 +44,7 @@ public class Node {
 		this.usingExistsOperator = false;
 		this.changeOperator = false;
 		this.changePoint = false;
+		this.isToReturn = false;
 	}
 	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
@@ -54,6 +57,7 @@ public class Node {
 		this.usingExistsOperator = false;
 		this.changeOperator = false;
 		this.changePoint = false;
+		this.isToReturn = false;
 	}
 	
 	public Node(Node node) {
@@ -76,6 +80,7 @@ public class Node {
 		this.usingExistsOperator = false;
 		this.changeOperator = false;
 		this.changePoint = false;
+		this.isToReturn = false;
 		cloneNodeMap.put(node, this);
 	}
 	
@@ -102,6 +107,7 @@ public class Node {
 		this.usingExistsOperator = false;
 		this.changeOperator = false;
 		this.changePoint = false;
+		this.isToReturn = false;
 	}
 	
 	public Node getParent() {
@@ -275,6 +281,22 @@ public class Node {
 				
 		return this.children.stream().filter(x-> x.getNode().equals(tree))
 				.findFirst().orElse(null);
+	}
+	
+	public Boolean getIsToReturn() {
+		return isToReturn;
+	}
+
+	public void setIsToReturn(Boolean isToReturn) {
+		this.isToReturn = isToReturn;
+	}
+	
+	public String getReturnMessage() {
+		return returnMessage;
+	}
+
+	public void setReturnMessage(String returnMessage) {
+		this.returnMessage = returnMessage;
 	}
 
 	public static Map<Tree, Node> getNodesMap() {
