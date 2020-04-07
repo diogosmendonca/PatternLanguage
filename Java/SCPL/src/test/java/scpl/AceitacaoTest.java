@@ -176,14 +176,17 @@ public class AceitacaoTest {
 		assertEquals(20, retorno.get(0).getEndColumn());
 	}
 	
-	@Ignore
 	@Test
 	public void tc13() throws IOException {
 		
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC13_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC13_Pattern.java");
 		
-		assertEquals(0, retorno.size());
+		assertEquals(1, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(22, retorno.get(0).getEndColumn());
 	}
 	
 	@Ignore
@@ -196,7 +199,6 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
-	@Ignore
 	@Test
 	public void tc15() throws IOException {
 		
@@ -207,15 +209,15 @@ public class AceitacaoTest {
 	}
 	
 	@Ignore
-	@Test
+	@Test 
 	public void tc16() throws IOException {
-		
+  
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC16_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC16_Pattern.java");
-		
-		assertEquals(0, retorno.size());
+  
+		assertEquals(0, retorno.size()); 
 	}
-	
+ 
 	@Test
 	public void tc17() throws IOException {
 		
@@ -508,6 +510,27 @@ public class AceitacaoTest {
 		
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC39_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC39_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	
+	@Ignore
+    @Test 
+    public void tc40() throws IOException {
+  
+    List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC40_Code.java"
+    			,"./src/test/resources/AceitacaoFiles/TC40_Pattern.java");
+  
+  		assertEquals(0, retorno.size()); 
+  	}
+	 
+	
+	@Test
+	public void tc41() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC41_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC41_Pattern.java");
 		
 		assertEquals(0, retorno.size());
 	}
