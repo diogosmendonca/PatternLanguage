@@ -1,5 +1,6 @@
 package br.scpl.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -15,11 +16,13 @@ import com.sun.source.tree.LabeledStatementTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.DocTrees;
+import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 
 import br.scpl.model.Node;
 import scpl.Utils;
+import scpl.util.StringUtil;
 
 public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	
@@ -30,18 +33,31 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private int indentLevel;
 	  private final CompilationUnitTree compilatioUnitTree;
 	  private Tree root;
-	  private DocTrees doctrees;
-	  
+	  private DocTrees docTrees;
+	  private SourcePositions sourcePos;
+	  private final Map<Integer,String> alertMessagesMap;
 
-	  public NodeVisitor(Tree tree, DocTrees docTrees) {
-		sb = new StringBuilder();
-	    indentLevel = 0;
-	    compilatioUnitTree = (CompilationUnitTree) tree;
-	    doctrees = docTrees;
+	  public NodeVisitor(Tree tree, DocTrees docTrees, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap) {
+		  this.sb = new StringBuilder();
+		this.indentLevel = 0;
+	    this.compilatioUnitTree = (CompilationUnitTree) tree;
+	    this.docTrees = docTrees;
+	    this.sourcePos = sourcePos;
+	    if(alertMessagesMap != null && !alertMessagesMap.isEmpty()) {
+	    	this.alertMessagesMap = alertMessagesMap;
+		}else {
+			this.alertMessagesMap = null;
+		}
 	  }
 
-	  public static Node build(Tree tree, DocTrees docTrees) {
-	    NodeVisitor nv = new NodeVisitor(tree, docTrees);
+	  public static Node build(Tree tree, DocTrees docTrees, SourcePositions sourcePos) throws IOException {
+		Map<Integer,String> alertMessagesMap = null;  
+		  
+		if(sourcePos != null) {
+			alertMessagesMap = StringUtil.extractAlertMessages(tree);
+		}
+		  
+	    NodeVisitor nv = new NodeVisitor(tree, docTrees, sourcePos, alertMessagesMap);
 	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
 	    addInfos(nodes);
@@ -73,18 +89,6 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	        
 	        Node nodeParent = Node.getNodesMap().get(parent);
 	        
-	        if(path != null) {
-	        	dc = doctrees.getDocCommentTree(path);
-	        	if (dc != null && nodeParent.getReturnMessage() == null) {
-	        		String returnMessage = extractAlertMessage(dc);
-	        		
-	        		if(returnMessage!=null) {
-	        			nodeParent.setIsToReturn(true);
-	        			nodeParent.setReturnMessage(returnMessage);
-	        		}
-	        	}
-	        }
-	        
 	        Node node;
 	        
         	node = new Node(tree,compilatioUnitTree);
@@ -99,6 +103,22 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			}else {
 				nodes.get(nodeParent).add(node);
 			}
+	        
+	        if(usingAlertMessage()) {
+	        	node.setStartPosition(sourcePos.getStartPosition(node.getCompilatioUnitTree(), node.getNode()));
+				node.setEndPosition(sourcePos.getEndPosition(node.getCompilatioUnitTree(), node.getNode()));
+				
+				int line = (int) node.getStartLine();
+				
+				String msg = alertMessagesMap.remove(line);
+				
+				if(msg != null) {
+					node.setIsToReturn(true);
+					node.setReturnMessage(msg);
+					//System.out.println(node);
+					//System.out.println(msg);
+				}
+	        }
 	        
      	  }
 	      indentLevel++;
@@ -286,19 +306,13 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		node.getParent().getChildren().remove(node);
 		
 	 }
+	
 	 
-	 public static String extractAlertMessage(DocCommentTree dc) {
-		 
-		 List<? extends DocTree> tags = dc.getBlockTags();
-		 
-		 for(DocTree docTree: tags) {
-			 if(docTree.toString().startsWith("@alert")) {
-				 System.out.println(docTree);
-				 return docTree.toString().trim();
-			 }
+	 private boolean usingAlertMessage() {
+		 if(alertMessagesMap != null) {
+			 return true;
 		 }
-		 
-		 return null;
+		 return false;
 	 }
 	  
 }

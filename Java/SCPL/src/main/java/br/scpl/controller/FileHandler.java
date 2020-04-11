@@ -2,6 +2,8 @@ package br.scpl.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -70,7 +72,7 @@ public class FileHandler {
 	 * que contém um iterator de CompilationUnitTree e um onjsto SourcePositions(guarda as posições do nós)
 	 */
 	
-	public static CompilationUnitStruct parserFileToCompilationUnit(File... files) {
+	public static CompilationUnitStruct parserFileToCompilationUnit(File... files) throws IOException{
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
@@ -79,21 +81,16 @@ public class FileHandler {
 		JavacTask javacTask = (JavacTask) compiler.getTask(null, fileManager, null, null, null, compilationUnits);
 		SourcePositions pos = Trees.instance(javacTask).getSourcePositions();
 		
-		Iterable<? extends CompilationUnitTree> compilationUnitTrees;
-		Iterator<? extends CompilationUnitTree> iter = null;
-		
 		DocTrees docTrees = DocTrees.instance(javacTask);
 				
-		try {
-			compilationUnitTrees = javacTask.parse();
-			iter = compilationUnitTrees.iterator();
+		Iterable<? extends CompilationUnitTree> compilationUnitTrees = javacTask.parse();
+		Iterator<? extends CompilationUnitTree> iter = compilationUnitTrees.iterator();
 			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 		return new CompilationUnitStruct(iter,pos,docTrees);
-
 	}
-
+	
+	public static String getStringContent(JavaFileObject sourceFile) throws IOException {
+		return new String(Files.readAllBytes(Paths.get(sourceFile.getName())));
+	}
+	
 }

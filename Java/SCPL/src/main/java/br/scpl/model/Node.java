@@ -60,30 +60,6 @@ public class Node {
 		this.isToReturn = false;
 	}
 	
-	public Node(Node node) {
-		this.parent = null;
-		this.node = node.getNode();
-		
-		List<Node> children = new ArrayList<Node>();
-		
-		for(Node child: node.getChildren()) {
-			Node childClone = new Node(child);
-			childClone.setParent(this);
-			children.add(childClone);
-		}
-		
-		this.children = children;		
-		this.compilatioUnitTree = node.getCompilatioUnitTree();
-		this.fakeNode = false;
-		this.fullVisited = false;
-		this.exists = true;
-		this.usingExistsOperator = false;
-		this.changeOperator = false;
-		this.changePoint = false;
-		this.isToReturn = false;
-		cloneNodeMap.put(node, this);
-	}
-	
 	public Node(Node node, List<Node> ignore) {
 				
 		this.parent = null;
@@ -232,10 +208,6 @@ public class Node {
 		}
 		
 	}
-	
-	public Boolean getChangePoint() {
-		return changePoint;
-	}
 
 	public void setChangePoint(Boolean changePoint) {
 		this.changePoint = changePoint;
@@ -243,10 +215,6 @@ public class Node {
 
 	public String toString() {
 		return this.node.toString();
-	}
-
-	public static Map<Node, Node> getCloneNodeMap() {
-		return cloneNodeMap;
 	}
 	
 	public Node getNodeOfDifferentOperator() {
