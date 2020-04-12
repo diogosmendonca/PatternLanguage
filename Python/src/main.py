@@ -1,12 +1,16 @@
 import ast
+import io
 from src.SourceTree import SourceTree
 
 str_source_pattern = """
-
+b = 20
+#start-not
+a = 10
+#end-not
 """
-str_source_code = """ 
-def olaMundo():    
-   
+str_source_code = """
+b = 20 
+a = 10
 """
 
 source_code = ast.parse(str_source_code)
@@ -18,7 +22,7 @@ tree1 = SourceTree(source_code)
 # print("É Subarvore ? - ", tree1.is_subtree(source_pattern))
 
 print("Contem o padrao no Codigo ?", tree1.search_pattern(source_pattern))
-print("Contem o padrao no Codigo ?", tree1.get_positions_pattern(source_pattern))
+print("Contem o padrao no Codigo ?", tree1.get_positions_pattern(str_source_pattern))
 
 
 # print(tree1.amount_of_patterns_found(source_pattern))
