@@ -2,14 +2,17 @@ import ast
 import tokenize
 import io
 from collections import defaultdict
-from src.gui.gui import *
-from src.utils.tree_utils import *
+import gui
+import utils
 
 
 class SourceTree():
     """ Classe utilizada para a representação do código fonte """
     root = None
     names = {}
+    ignore_type_for_equals_brute_two_nodes = (
+        'lineno', 'col_offset', 'ctx', 'parent', 'brother', 'childs', 'all_node_tree')
+    nots_operator = {}
     __some_names = {}
     __occurrences = []
     __variable_dict_wildcards = {}
@@ -193,6 +196,7 @@ class SourceTree():
         Returns:
             Boolean -- Respostas se arvores sao iguais
         """
+
         if isinstance(node1, ast.AST) and isinstance(node2, ast.Str):
             if self.__wildcards_validate_str(node1, node2):
                 return True
@@ -200,9 +204,16 @@ class SourceTree():
         return self.__equals_tree(node1, node2)
 
     def __equals_tree(self, node1, node2):
+
+
         if type(node1) != type(node2):
             return False
         if isinstance(node1, ast.AST):
+            if self.nots_operator:
+                notpoerator = list(ast.iter_child_nodes(self.nots_operator.get(1)))[0]
+                if self.brute_equals_two_nodes(notpoerator, node1):
+                    return True
+
             if self.__validate_wildcards(node1, node2):
                 return True
             for tipe, var in vars(node1).items():
@@ -271,7 +282,6 @@ class SourceTree():
                 for node_pattern in childPattern:
                     result = self.__equals_tree(node, node_pattern)
                     if result:
-                        print(vars(node)['lineno'], vars(node_pattern)['lineno'], node, node_pattern)
                         nodes_equals.append([node, node_pattern])
                         if not set_encontrados[node_pattern] is None:
                             continue
@@ -283,7 +293,6 @@ class SourceTree():
 
 
             childPattern = list(ast.iter_child_nodes(root_pattern))
-        print(set_encontrados)
         return occurrences
 
     def found_a_pattern(self, dict):
@@ -292,7 +301,8 @@ class SourceTree():
                 return False
         return True
 
-    def get_not(self, string):
+    def get_not(self, strRow):
+        string = io.StringIO(strRow)
         map_code = {}
         for token in tokenize.generate_tokens(string.readline):
             map_code[token.start[0]] = token.line
@@ -333,6 +343,26 @@ class SourceTree():
                     cont += 1
         return cont
 
+    def brute_equals_two_nodes(self, node1, node2):
+        if type(node1) != type(node2):
+            return False
+        if isinstance(node1, ast.AST):
+            for tipe, var in vars(node1).items():
+                if tipe not in self.ignore_type_for_equals_brute_two_nodes:
+                    var2 = vars(node2).get(tipe)
+                    if not self.brute_equals_two_nodes(var, var2):
+                        return False
+            return True
+        elif isinstance(node1, list):
+            if len(node1) != len(node2):
+                return False
+            for i in range(len(node1)):
+                if not self.brute_equals_two_nodes(node1[i], node2[i]):
+                    return False
+            return True
+        else:
+            return node1 == node2
+
     def __handle_occurrences(self, all_ocurrences, root_pattern):
         """Filtrar ocorrencias não tratadas retornando os nodes
 
@@ -368,12 +398,7 @@ class SourceTree():
                     result_p.append(p)
                     result_s.append(s)
 
-        print(pattern)
-        print(result_s)
-        print(result_p)
-        # print(source_occ)
-        # print(pattern_occ)
-        # print(pattern)
+
 
     def equals_occurrences(self, occurrences, pattern):
         setPattern = set(pattern)
@@ -381,7 +406,6 @@ class SourceTree():
             return False
         result = True
         for occ, patt, in zip(occurrences, pattern):
-            print(occ, patt, self.__equals_tree(occ, patt))
             if not self.__equals_tree(occ, patt):
                 result = False
                 break
@@ -389,16 +413,11 @@ class SourceTree():
         return result
 
     def wildcards_some_validate(self, source, pattern):
-        print(source, pattern)
 
         source_names_some = []
         pattern_names_some = []
         for source_occ, pattern_occ in zip(source, pattern):
             for intern_source, intern_pattern in zip(ast.walk(source_occ), ast.walk(pattern_occ)):
-                # if isinstance(node_intern, ast.Name):
-                #     id_node_intern = vars(node_intern)['id']
-                #     print(id_node_intern)
-
                 if isinstance(intern_source, ast.Name) and isinstance(intern_pattern, ast.Name):
                     id_source = vars(intern_source)['id']
                     id_pattern = vars(intern_pattern)['id']
@@ -406,7 +425,6 @@ class SourceTree():
                         source_names_some.append(id_source)
                         pattern_names_some.append(id_pattern)
 
-        print(source_names_some, pattern_names_some)
         if len(source_names_some) != 0 or len(pattern_names_some) != 0:
             return self.__all_variable_is_equals(source_names_some, pattern_names_some)
         return True
@@ -419,7 +437,6 @@ class SourceTree():
         if (len(setPattern) != len(setSource)):
             return False
 
-        print(source, pattern)
 
         for index, (s, p) in enumerate(variables):
             if not variablesDict[s] == pattern[index]:
@@ -487,6 +504,12 @@ class SourceTree():
         Return:
             position {Array} -- [lineno, col_offset] linha e coluna do padrao.
         """
+        if isinstance(root_pattern, ast.AST):
+            root_pattern= root_pattern
+        else:
+            self.nots_operator = self.get_not(root_pattern)
+
+            root_pattern = ast.parse(root_pattern)
         occurrences = self.__get_array_all_occurrences(root_pattern)
         all_position = []
 
@@ -495,6 +518,7 @@ class SourceTree():
             for parte_ocorrencia in ocorrencia:
                 padrao_position.append(self.get_position_node(parte_ocorrencia))
             all_position.append(padrao_position)
+
         return all_position
 
     def get_simple_position_pattern(self, root_pattern):
