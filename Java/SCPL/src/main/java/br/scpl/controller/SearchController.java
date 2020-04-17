@@ -41,9 +41,9 @@ public class SearchController {
 		
 		do {
 			childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
-			if(childrenNodesAux.size() > 0 && ocorrences.containsAll(childrenNodesAux)) {
+			/*if(childrenNodesAux.size() > 0 && ocorrences.containsAll(childrenNodesAux)) {
 				break;
-			}
+			}*/
 			ocorrences.addAll(childrenNodesAux);
 		}while(childrenNodesAux.size() > 0);
 		
@@ -68,9 +68,9 @@ public class SearchController {
 		int notChilds = 0;
 		
 		//FIXME Problema do padrão de bloco vazio
-		if(b.getChildren().size() == 0 && b.getNode().getKind() == Kind.BLOCK) {
+		/*if(b.getChildren().size() == 0 && b.getNode().getKind() == Kind.BLOCK) {
 			return null;
-		}
+		}*/
 		
 		if(b.getNode() instanceof ExpressionTree || b.getNode() instanceof VariableTree) {
 			return ocorrences;
@@ -168,14 +168,14 @@ public class SearchController {
 						subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap, path, limitPath);
 						
 						//FIXME Problema do padrão de bloco vazio
-						if(subtreeAux==null) {
+						/*if(subtreeAux==null) {
 							searching=false;
 							lastOcorrenceIndex = counter;
 							limitPath.clear();
 							limitPath.putAll(limitPathOld);
 							maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 							continue;
-						}
+						}*/
 						
 						if(subtreeAux.size() > 0) {
 							if(b.getChildren().get(i).getExists()) {

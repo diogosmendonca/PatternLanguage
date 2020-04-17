@@ -22,18 +22,31 @@ public class AceitacaoTest {
 	
 	final String toolsJarFileName = "tools.jar";
 	final String javaHome = System.getProperty("java.home");
+	
+	@Test
+	public void pdm() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/ParseIntCheck.java", 
+				"./src/test/resources/AceitacaoFiles/ParseInt_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+ 		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(42, retorno.get(0).getEndColumn());
+	}
 
 	@Test
 	public void tc01() throws IOException {
 		
-		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC01_Code.java"
-				,"./src/test/resources/AceitacaoFiles/TC01_Pattern.java");
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC01_Code.java", 
+				"./src/test/resources/AceitacaoFiles/TC01_Pattern.java");
 		
 		assertEquals(1, retorno.size());
-		assertEquals(1, retorno.get(0).getStartLine());
- 		assertEquals(1, retorno.get(0).getStartColumn());
-		assertEquals(5, retorno.get(0).getEndLine());
-		assertEquals(2, retorno.get(0).getEndColumn());
+		assertEquals(3, retorno.get(0).getStartLine());
+ 		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(42, retorno.get(0).getEndColumn());
 	}
 	
 	@Test
@@ -534,5 +547,20 @@ public class AceitacaoTest {
 		
 		assertEquals(0, retorno.size());
 	}
+	
+	@Test
+	public void tc42() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles"
+				,"./src/test/resources/AceitacaoFiles/TC42_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(6, retorno.get(0).getStartLine());
+		assertEquals(17, retorno.get(0).getStartColumn());
+		assertEquals(6, retorno.get(0).getEndLine());
+		assertEquals(44, retorno.get(0).getEndColumn());
+	}
+	
+	
 	
 }
