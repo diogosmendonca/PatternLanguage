@@ -7,7 +7,7 @@ class anyClass {
             exists:{
                 Integer.parseInt(any);
             }
-        }catch(Exception e){
+        }catch(Exception any){
                 
         }
     }

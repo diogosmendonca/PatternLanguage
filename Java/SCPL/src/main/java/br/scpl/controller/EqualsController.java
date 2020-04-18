@@ -367,6 +367,10 @@ public class EqualsController {
 		
 		if(!b.getFakeNode() && a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
+			if(isAnyModifier(b)) {
+				return true;
+			}
+			
 			ModifiersTree modifierPattern = ((ModifiersTree) b.getNode());
 			
 			List<? extends AnnotationTree> annotations = modifierPattern.getAnnotations();
@@ -376,9 +380,6 @@ public class EqualsController {
 			for(AnnotationTree annotation: annotations) {
 				if(annotation.toString().startsWith("@not")) {
 					notModifier.add(annotation.toString().split("@not")[1].toLowerCase());
-				}
-				if(annotation.toString().startsWith(anyModifier)) {
-					return true;
 				}
 			}
 			
@@ -458,6 +459,29 @@ public class EqualsController {
 		IdentifierTree identifier = (IdentifierTree)node.getNode();
 			
 		return identifier.getName().toString().startsWith(anyExpression);
+	}
+	
+	public static boolean isAnyModifier(Node node) {
+		
+		switch(node.getNode().getKind()) {
+			
+			case CLASS:
+				ClassTree classTree = (ClassTree) node.getNode();
+				return isAnyModifier(Node.getNodesMap().get(classTree.getModifiers()));
+			
+			case METHOD:
+				MethodTree mehtodTree = (MethodTree) node.getNode();
+				return isAnyModifier(Node.getNodesMap().get(mehtodTree.getModifiers()));
+			
+			case MODIFIERS:
+				ModifiersTree modifierTree = (ModifiersTree) node.getNode();
+				List<? extends AnnotationTree> annotations = modifierTree.getAnnotations();
+				
+				return annotations.stream().anyMatch(a -> a.toString().startsWith(anyModifier));
+				
+		}
+		
+		return false;
 	}
 	
 	private static boolean anyArgument(Node a, Node b, Map<String, String> wildcardsMap) {
