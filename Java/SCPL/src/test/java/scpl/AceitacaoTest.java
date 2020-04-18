@@ -30,10 +30,10 @@ public class AceitacaoTest {
 				"./src/test/resources/AceitacaoFiles/ParseInt_Pattern.java");
 		
 		assertEquals(1, retorno.size());
-		assertEquals(3, retorno.get(0).getStartLine());
- 		assertEquals(9, retorno.get(0).getStartColumn());
-		assertEquals(3, retorno.get(0).getEndLine());
-		assertEquals(42, retorno.get(0).getEndColumn());
+		assertEquals(6, retorno.get(0).getStartLine());
+ 		assertEquals(28, retorno.get(0).getStartColumn());
+		assertEquals(6, retorno.get(0).getEndLine());
+		assertEquals(54, retorno.get(0).getEndColumn());
 	}
 
 	@Test

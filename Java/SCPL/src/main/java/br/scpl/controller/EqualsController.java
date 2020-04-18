@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.LiteralTree;
@@ -55,6 +56,9 @@ public class EqualsController {
 		
 		boolean retorno = false;
 		
+		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
+		wildcardsMapBefore.putAll(wildcardsMap);
+		
 		try {
 			if(equalsModifier(a,b)) {
 				retorno = true;
@@ -62,6 +66,18 @@ public class EqualsController {
 			}
 			
 			if(!basicComparation(a, b, wildcardsMap)) {
+				//Ignora Expression_Statement na comparação
+				if(a.getNode() instanceof ExpressionTree && b.getNode().getKind() == Kind.EXPRESSION_STATEMENT) {
+					ExpressionTree treeAux = ((ExpressionStatementTree)b.getNode()).getExpression();
+					
+					Node nodeAux = Node.getNodesMap().get(treeAux);
+					
+					wildcardsMap.clear();
+					wildcardsMap.putAll(wildcardsMapBefore);
+					
+					return isEquals(a, nodeAux, wildcardsMap);
+				}
+				
 				return retorno;
 			}
 			
