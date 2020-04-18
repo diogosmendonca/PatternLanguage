@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.Tree.Kind;
 import br.scpl.model.Node;
@@ -92,14 +94,20 @@ public class SearchController {
 								.map(y -> b.getChildren().indexOf(y)).collect(Collectors.toList());
 					anyIndex.addAll(aux);
 				}
+				
+				if(EqualsController.isAnyModifier(b)) {
+					ModifiersTree modifierAux = ((MethodTree)b.getNode()).getModifiers();
+					
+					anyIndex.add(b.getChildren().indexOf(b.getChildrenbyTree(modifierAux)));
+				}
 			}
 			
-			//FIXME Resolvendo problema de retornar apenas o modifier
 			if(b.getNode().getKind() == Kind.CLASS) {
-				if(EqualsController.equalsModifier(a.getChildren().get(0),b.getChildren().get(0))) {
-					return searchChildren(a.getChildren().get(1),b.getChildren().get(1),wildcardsMap,path,limitPath);
+				if(EqualsController.isAnyModifier(b)) {
+					ModifiersTree modifierAux = ((ClassTree)b.getNode()).getModifiers();
+					
+					anyIndex.add(b.getChildren().indexOf(b.getChildrenbyTree(modifierAux)));
 				}
-				return ocorrences;
 			}
 		}
 		
@@ -145,11 +153,6 @@ public class SearchController {
 		limitPathOld.putAll(limitPath);
 		
 		for(i =0;i<b.getChildren().size();i++) { 
-			
-			//Se o que falta > o que resta ou ainda está buscando (ou seja, não achou o filho anterior do padrão no código-fonte)
-			/*if(b.getChildren().size()-i-notChilds > a.getChildren().size()-counter || searching) {
-				return ocorrences;
-			}*/
 			
 			if(searching) {
 				return ocorrences;
