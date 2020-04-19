@@ -1,6 +1,7 @@
 package br.scpl.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -52,10 +53,14 @@ public class FileHandler {
 		}
 	}
 
-	public static File[] getFiles(String rootPath) {
+	public static File[] getFiles(String rootPath) throws FileNotFoundException {
 		List<File> files = new ArrayList<>();
 		log.info(separator);
 		log.info("Buscando arquivos e pastas");
+		if(!(new File(rootPath)).exists()){
+			log.error("Falha ao encontrar o arquivo:" +rootPath);
+			throw new FileNotFoundException(rootPath);
+		}
 		browseFiles(new File(rootPath),files);
 		log.info(separator);
 		log.info("Total de arquivos: " +files.size());

@@ -21,8 +21,8 @@ import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 
 import br.scpl.model.Node;
-import scpl.Utils;
-import scpl.util.StringUtil;
+import br.scpl.util.StringUtil;
+import br.scpl.util.Utils;
 
 public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	

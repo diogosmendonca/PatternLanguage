@@ -6,5 +6,5 @@ import br.scpl.model.Node;
 
 public interface Command<T> {
 	
-	T execute(String[] args);
+	T execute();
 }

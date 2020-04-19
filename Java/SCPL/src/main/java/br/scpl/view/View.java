@@ -1,12 +1,15 @@
 package br.scpl.view;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.apache.log4j.Logger;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
@@ -19,10 +22,14 @@ import br.scpl.controller.NodeVisitor;
 import br.scpl.controller.SearchController;
 import br.scpl.model.CompilationUnitStruct;
 import br.scpl.model.Node;
-import scpl.Utils;
-import scpl.util.StringUtil;
+import br.scpl.util.StringUtil;
+import br.scpl.util.Utils;
 
 public class View {
+	
+	private static String separator = "###---###---###---###---###---###---###";
+
+	private static Logger log = Logger.getLogger(View.class);
 	
 	/**
 	 * Recebe o path da pasta do código-fonte alvo e a pasta com os padrões buscados.
@@ -107,10 +114,13 @@ public class View {
 			System.out.println(retorno.size());
 			
 			return retorno;
-		}catch(IOException e) {
+		}catch(FileNotFoundException e) {
+			System.out.println(e.getMessage());
+		}
+		catch(IOException e) {
 			
 		}
 		
-		return null;
+		return new ArrayList<>();
 	}
 }
