@@ -11,7 +11,7 @@ public class CommandConverter implements IStringConverter<Command> {
 	
 	static {
 		commands.put("search", new Search());
-		commands.put("exit", new Exiter());
+		commands.put("busca", new Search());
 	}	
 	
 	  @Override

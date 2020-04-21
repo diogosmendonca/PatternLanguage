@@ -24,6 +24,19 @@ public class AceitacaoTest {
 	final String javaHome = System.getProperty("java.home");
 	
 	@Test
+	public void sisgee() throws IOException {
+		//C:\\opt\\Projects\\sisgee\\Documents\\NetBeansProjects\\sisgee\\sisgee\\src\\main\\java\\br\\cefetrj\\sisgee\\view\\termoaditivo\\VerTermoAditivoServlet.java
+		List<Node> retorno = View.searchOcorrences("C:\\opt\\Projects\\sisgee\\Documents\\NetBeansProjects\\sisgee\\sisgee\\src\\main\\java\\br\\cefetrj\\sisgee\\view\\termoaditivo\\VerTermoAditivoServlet.java", 
+				"./src/test/resources/AceitacaoFiles/ParseInt_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(6, retorno.get(0).getStartLine());
+ 		assertEquals(28, retorno.get(0).getStartColumn());
+		assertEquals(6, retorno.get(0).getEndLine());
+		assertEquals(54, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
 	public void pdm() throws IOException {
 		
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/ParseIntCheck.java", 

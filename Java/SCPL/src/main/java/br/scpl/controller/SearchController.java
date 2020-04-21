@@ -14,7 +14,7 @@ import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.Tree.Kind;
 import br.scpl.model.Node;
-import scpl.Utils;
+import br.scpl.util.Utils;
 
 public class SearchController {
 	
@@ -34,7 +34,9 @@ public class SearchController {
 		if(EqualsController.isEquals(a, b, new LinkedHashMap<>())) {
 			if(!b.getChangeOperator()) {
 				ocorrences.add(a);
-				a.setFullVisited(true);
+				if(b.getExists()) {
+					a.setFullVisited(true);
+				}
 				return ocorrences;
 			}
 		}
@@ -143,6 +145,8 @@ public class SearchController {
 		int lastOcorrenceIndex = counter;
 		int maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 		
+		Map<String, String> wildcardsMapLastFail = new LinkedHashMap<>();
+		
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 		wildcardsMapBefore.putAll(wildcardsMap);
 		
@@ -223,10 +227,12 @@ public class SearchController {
 						ocorrences.addAll(currentOcorrences);
 					}else {
 						//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
-						if(!wildcardsMap.equals(wildcardsMapBefore)) {
+						if(!wildcardsMap.equals(wildcardsMapBefore) && (wildcardsMapLastFail.isEmpty() || !wildcardsMap.equals(wildcardsMapLastFail))) {
 							i =-1;
 							searching=false;
 							currentOcorrences.clear();
+							wildcardsMapLastFail.clear();
+							wildcardsMapLastFail.putAll(wildcardsMap);
 							wildcardsMap.clear();
 							wildcardsMap.putAll(wildcardsMapBefore);
 							path.clear();
@@ -265,7 +271,9 @@ public class SearchController {
 			if(!b.getChangeOperator()) {
 				if(Utils.verifyNotParent(a, b, wildcardsMap)){
 					ocorrences.add(a);
-					a.setFullVisited(true);
+					if(b.getExists()) {
+						a.setFullVisited(true);
+					}
 				}else {
 					wildcardsMap.clear();
 					wildcardsMap.putAll(wildcardsMapBefore);
@@ -302,6 +310,10 @@ public class SearchController {
 				limitPath.clear();
 				limitPath.putAll(limitPathOld);
 				
+				if(child.getNode().getKind() == Kind.IF && b.getNode().getKind() == Kind.BLOCK && limitPath.isEmpty() && path.size() ==1) {
+					System.out.println("Entrou");
+				}
+				
 				ocorrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap, path, limitPath));
 				if(ocorrences.size() > 0) {
 					
@@ -326,7 +338,7 @@ public class SearchController {
 	}
 
 	public static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
-		
+		/*
 		List<Node> ocorrences = new ArrayList<Node>();
 		
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
@@ -347,7 +359,7 @@ public class SearchController {
 		}
 		
 		wildcardsMap.clear();
-		wildcardsMap.putAll(wildcardsMapBefore);
+		wildcardsMap.putAll(wildcardsMapBefore);*/
 		
 		return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
 	}
