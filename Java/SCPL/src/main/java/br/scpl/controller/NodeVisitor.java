@@ -36,28 +36,29 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private DocTrees docTrees;
 	  private SourcePositions sourcePos;
 	  private final Map<Integer,String> alertMessagesMap;
+	  private final Map<Integer,Boolean> existsModifierMap;
 
-	  public NodeVisitor(Tree tree, DocTrees docTrees, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap) {
+	  public NodeVisitor(Tree tree, DocTrees docTrees, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap) {
 		  this.sb = new StringBuilder();
 		this.indentLevel = 0;
 	    this.compilatioUnitTree = (CompilationUnitTree) tree;
 	    this.docTrees = docTrees;
 	    this.sourcePos = sourcePos;
-	    if(alertMessagesMap != null && !alertMessagesMap.isEmpty()) {
-	    	this.alertMessagesMap = alertMessagesMap;
-		}else {
-			this.alertMessagesMap = null;
-		}
+	    this.alertMessagesMap = alertMessagesMap;
+	    this.existsModifierMap = existsModifierMap;
+	    
 	  }
 
 	  public static Node build(Tree tree, DocTrees docTrees, SourcePositions sourcePos) throws IOException {
-		Map<Integer,String> alertMessagesMap = null;  
-		  
+		Map<Integer,String> alertMessagesMap = new LinkedHashMap<>();
+		Map<Integer,Boolean> existsModifierMap = new LinkedHashMap<>();
+		
 		if(sourcePos != null) {
 			alertMessagesMap = StringUtil.extractAlertMessages(tree);
+			existsModifierMap = StringUtil.extractExistsOperator(tree);
 		}
 		  
-	    NodeVisitor nv = new NodeVisitor(tree, docTrees, sourcePos, alertMessagesMap);
+	    NodeVisitor nv = new NodeVisitor(tree, docTrees, sourcePos, alertMessagesMap, existsModifierMap);
 	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
 	    addInfos(nodes);
@@ -104,21 +105,30 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 				nodes.get(nodeParent).add(node);
 			}
 	        
-	        if(usingAlertMessage()) {
+	        if(!alertMessagesMap.isEmpty() || !existsModifierMap.isEmpty()) {
 	        	node.setStartPosition(sourcePos.getStartPosition(node.getCompilatioUnitTree(), node.getNode()));
 				node.setEndPosition(sourcePos.getEndPosition(node.getCompilatioUnitTree(), node.getNode()));
 				
 				int line = (int) node.getStartLine();
 				
-				String msg = alertMessagesMap.remove(line);
+				if(!alertMessagesMap.isEmpty()) {
+					String msg = alertMessagesMap.remove(line);
+					
+					if(msg != null) {
+						node.setIsToReturn(true);
+						node.setReturnMessage(msg);
+					}
+				}
 				
-				if(msg != null) {
-					node.setIsToReturn(true);
-					node.setReturnMessage(msg);
-					//System.out.println(node);
-					//System.out.println(msg);
+				if(!existsModifierMap.isEmpty()) {
+					Boolean exists = existsModifierMap.remove(line);
+					
+					if(exists!=null) {
+						node.setExists(exists);						
+					}
 				}
 	        }
+	        
 	        
      	  }
 	      indentLevel++;
@@ -306,14 +316,6 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		node.getParent().getChildren().remove(node);
 		
 	 }
-	
-	 
-	 private boolean usingAlertMessage() {
-		 if(alertMessagesMap != null) {
-			 return true;
-		 }
-		 return false;
-	 }
-	  
+		 	 	  
 }
 

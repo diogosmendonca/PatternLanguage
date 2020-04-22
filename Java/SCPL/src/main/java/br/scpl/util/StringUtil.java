@@ -74,5 +74,39 @@ public class StringUtil {
 	    }
 	    return msg;
 	}
+	
+	public static Map<Integer,Boolean> extractExistsOperator(Tree tree) throws IOException{
+		Map<Integer,Boolean> retorno = new LinkedHashMap<>();
+		
+		CompilationUnitTree cu = (CompilationUnitTree)tree;
+		
+		JavaFileObject sourceFile = cu.getSourceFile();
+		
+		String content = FileHandler.getStringContent(sourceFile);
+			
+		Pattern pattern = Pattern.compile("(?s)(/\\*(not-exists|exists)\\*/|//(not-exists|exists)(\\n|\\r))",
+				Pattern.CASE_INSENSITIVE);
+		
+	    Matcher matcher = pattern.matcher(content);
+	    while (matcher.find()) {
+	    	String existsText = matcher.group();
+	    	
+	    	Boolean exists = null;
+	    	
+	    	if(existsText.contains("not")) {
+	    		exists = false;
+	    	}else {
+	    		exists = true;
+	    	}
+	    	
+	    	Integer line = getLineComment(content, matcher.end());
+	    	
+	    	retorno.put(line+1, exists);
+	    	
+	    }
+	    System.out.println(retorno);
+	    
+	    return retorno;
+	}
 
 }
