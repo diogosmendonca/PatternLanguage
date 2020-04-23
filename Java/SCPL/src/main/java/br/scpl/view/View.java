@@ -77,9 +77,9 @@ public class View {
 				
 				for(Tree treePattern: listPattern) {
 					
-					Node rootCode = NodeVisitor.build(treeCode, doctreesCode , null);
+					Node rootCode = NodeVisitor.build(treeCode, doctreesCode , null, false);
 					
-					Node rootPattern = NodeVisitor.build(treePattern, doctreesPattern, posPattern);
+					Node rootPattern = NodeVisitor.build(treePattern, doctreesPattern, posPattern, true);
 					
 					retorno.addAll(SearchController.subtree(rootCode, rootPattern));
 				}

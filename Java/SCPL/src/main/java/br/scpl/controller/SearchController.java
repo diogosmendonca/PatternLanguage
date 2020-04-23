@@ -18,6 +18,9 @@ import br.scpl.util.Utils;
 
 public class SearchController {
 	
+	private static final Map<Integer,Map<Node,Node>> returnedNode = new LinkedHashMap<>();
+	private static Integer round = 0;
+	
 	/**
 	 * Verifica se uma árvore é sub árvore de outra e retorna todas as ocorrências
 	 * 
@@ -36,6 +39,13 @@ public class SearchController {
 				ocorrences.add(a);
 				if(b.getExists()) {
 					a.setFullVisited(true);
+					if(returnedNode.get(round) == null) {
+						Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
+						aux.put(b, a);
+						returnedNode.put(round, aux);
+					}else {
+						returnedNode.get(round).put(b, a);
+					}
 				}
 				return ocorrences;
 			}
@@ -49,6 +59,7 @@ public class SearchController {
 				break;
 			}*/
 			ocorrences.addAll(childrenNodesAux);
+			round++;
 		}while(childrenNodesAux.size() > 0);
 		
 		
@@ -114,7 +125,7 @@ public class SearchController {
 		}
 		
 		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
-		if(a.getChildren().size()<b.getChildren().size()-anyIndex.size()) {
+		/*if(a.getChildren().size()<b.getChildren().size()-anyIndex.size()) {
 			int diff = a.getChildren().size()-b.getChildren().size()-anyIndex.size();
 			
 			for(Node child : b.getChildren()) {
@@ -128,10 +139,18 @@ public class SearchController {
 			if(diff<0) {
 				return ocorrences;
 			}
-		}
+		}*/
 		
 		if(!Utils.verifyNotParent(a, b, wildcardsMap)) {
 			return ocorrences;
+		}
+		
+		if(returnedNode.get(round) == null) {
+			Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
+			aux.put(b, a);
+			returnedNode.put(round, aux);
+		}else {
+			returnedNode.get(round).put(b, a);
 		}
 		
 		//Lista auxiliar que guarda as ocorrências da busca atual
@@ -205,7 +224,6 @@ public class SearchController {
 					}
 					
 					if(searching==false) {
-						path.remove(a);
 						path.put(a, counter);
 					}
 					
@@ -273,6 +291,13 @@ public class SearchController {
 					ocorrences.add(a);
 					if(b.getExists()) {
 						a.setFullVisited(true);
+						if(returnedNode.get(round) == null) {
+							Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
+							aux.put(b, a);
+							returnedNode.put(round, aux);
+						}else {
+							returnedNode.get(round).put(b, a);
+						}
 					}
 				}else {
 					wildcardsMap.clear();
@@ -310,7 +335,7 @@ public class SearchController {
 				limitPath.clear();
 				limitPath.putAll(limitPathOld);
 				
-				if(child.getNode().getKind() == Kind.IF && b.getNode().getKind() == Kind.BLOCK && limitPath.isEmpty() && path.size() ==1) {
+				if(child.getNode().getKind() == Kind.IF && b.getNode().getKind() == Kind.BLOCK) {
 					System.out.println("Entrou");
 				}
 				
@@ -320,10 +345,8 @@ public class SearchController {
 					//FIXME pode dar problema no NOT
 					if(!b.getChangeOperator()) {
 						if(b.getExists()) {
-							path.remove(a);
 							path.put(a, counter);
 						}else {
-							limitPath.remove(a);
 							limitPath.put(a, counter);
 						}
 					}

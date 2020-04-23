@@ -33,6 +33,7 @@ public class Node {
 	private Node notParent;
 	private Boolean isToReturn;
 	private String returnMessage;
+	private Map<Node, Integer> path = new LinkedHashMap<>();
 	private static final Map<Node,Node> cloneNodeMap = new LinkedHashMap<>();
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<Tree, Node>();
 	
@@ -269,6 +270,15 @@ public class Node {
 
 	public static Map<Tree, Node> getNodesMap() {
 		return nodesMap;
+	}
+
+	public Map<Node, Integer> getPath() {
+		return path;
+	}
+
+	public void setPath(Map<Node, Integer> path) {
+		this.path.clear();
+		this.path.putAll(path);
 	}	
 	
 }
