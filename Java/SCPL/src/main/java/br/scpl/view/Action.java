@@ -11,23 +11,36 @@ import com.beust.jcommander.Parameter;
 
 import br.scpl.exception.UnknownCommandException;
 
-public class Action implements Command<Object> {
+public class Action {
 	
-	@Parameter(names = {"-a","-action","-acao"}, description = "Ação que será executada", required = true, converter = CommandConverter.class)
-	private Command command;
+	public static Map<String, Command> commands = new HashMap<>();
+	
+	static {
+		commands.put("search", new Search());
+		commands.put("busca", new Search());
+	}
+	
+	@Parameter(names = {"-a","-action","-acao"}, description = "Ação que será executada", required = true)
+	private String command;
 	
 	@Parameter(required = true)
 	private List<String> parameters = new ArrayList<String>();
 
-	@Override
-	public Object execute() {
+	public Object execute() throws UnknownCommandException {
+		
+		Command c = commands.get(command);
+		
+		if(c==null) {
+			throw new UnknownCommandException(command);
+		}
+		
 		String[] argv = parameters.toArray(new String[0]);
 			
 		JCommander.newBuilder()
-		  .addObject(command)
+		  .addObject(c)
 		  .build()
 		  .parse(argv);
 			
-		return command.execute();
+		return c.execute();
 	}
 }
