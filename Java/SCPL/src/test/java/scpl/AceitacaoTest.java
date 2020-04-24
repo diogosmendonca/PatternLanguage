@@ -215,7 +215,7 @@ public class AceitacaoTest {
 		assertEquals(22, retorno.get(0).getEndColumn());
 	}
 	
-	@Ignore
+	
 	@Test
 	public void tc14() throws IOException {
 		
@@ -574,6 +574,18 @@ public class AceitacaoTest {
 		assertEquals(44, retorno.get(0).getEndColumn());
 	}
 	
+	@Test
+	public void tc43() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC43_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC43_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(4, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(4, retorno.get(0).getEndLine());
+		assertEquals(28, retorno.get(0).getEndColumn());
+	}
 	
 	
 }
