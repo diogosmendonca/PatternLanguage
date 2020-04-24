@@ -55,9 +55,6 @@ public class SearchController {
 		
 		do {
 			childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
-			/*if(childrenNodesAux.size() > 0 && ocorrences.containsAll(childrenNodesAux)) {
-				break;
-			}*/
 			ocorrences.addAll(childrenNodesAux);
 			round++;
 		}while(childrenNodesAux.size() > 0);
@@ -81,11 +78,6 @@ public class SearchController {
 		List<Integer> anyIndex = new ArrayList<Integer>(); 
 		
 		int notChilds = 0;
-		
-		//FIXME Problema do padrão de bloco vazio
-		/*if(b.getChildren().size() == 0 && b.getNode().getKind() == Kind.BLOCK) {
-			return null;
-		}*/
 		
 		if(b.getNode() instanceof ExpressionTree || b.getNode() instanceof VariableTree) {
 			return ocorrences;
@@ -122,24 +114,14 @@ public class SearchController {
 					anyIndex.add(b.getChildren().indexOf(b.getChildrenbyTree(modifierAux)));
 				}
 			}
-		}
-		
-		//Se o código-fonte alvo possui menos nós que o padrão, não tem como o padrão ser sub-árvore. Logo retorna vazio
-		/*if(a.getChildren().size()<b.getChildren().size()-anyIndex.size()) {
-			int diff = a.getChildren().size()-b.getChildren().size()-anyIndex.size();
 			
-			for(Node child : b.getChildren()) {
-				if(!child.getExists()) {
-					notChilds++;
+			if(b.getNode().getKind() == Kind.BLOCK) {
+				if(!a.getParent().equals(returnedNode.get(round).get(b.getParent()))){
+					return ocorrences;
 				}
 			}
-			
-			diff = diff + notChilds;
-			
-			if(diff<0) {
-				return ocorrences;
-			}
-		}*/
+		}
+		
 		
 		if(!Utils.verifyNotParent(a, b, wildcardsMap)) {
 			return ocorrences;
@@ -193,15 +175,6 @@ public class SearchController {
 						
 						subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap, path, limitPath);
 						
-						//FIXME Problema do padrão de bloco vazio
-						/*if(subtreeAux==null) {
-							searching=false;
-							lastOcorrenceIndex = counter;
-							limitPath.clear();
-							limitPath.putAll(limitPathOld);
-							maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
-							continue;
-						}*/
 						
 						if(subtreeAux.size() > 0) {
 							if(b.getChildren().get(i).getExists()) {
@@ -361,28 +334,6 @@ public class SearchController {
 	}
 
 	public static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
-		/*
-		List<Node> ocorrences = new ArrayList<Node>();
-		
-		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
-		wildcardsMapBefore.putAll(wildcardsMap);
-		
-		//Se os nós são iguais, a sub-árvore é toda a árvore
-		if(EqualsController.isEquals(a, b, wildcardsMap)) {
-			if(!b.getChangeOperator()) {
-				if(Utils.verifyNotParent(a, b, wildcardsMap)){
-					ocorrences.add(a);
-					a.setFullVisited(true);
-				}else {
-					wildcardsMap.clear();
-					wildcardsMap.putAll(wildcardsMapBefore);
-				}
-				return ocorrences;
-			}
-		}
-		
-		wildcardsMap.clear();
-		wildcardsMap.putAll(wildcardsMapBefore);*/
 		
 		return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
 	}
