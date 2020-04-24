@@ -1,30 +1,47 @@
 import os
-import sys
 import ast
 import SourceTree
-from pprint import pprint
+import argparse
 
-parameterlist = sys.argv
-path = sys.argv[(parameterlist.index("-p") + 1)]
-dirlist = os.listdir(path)
+parser = argparse.ArgumentParser(description='Search Pattern in directory ')
+parser.add_argument('pattern_dir', metavar='Pattern Diretory', type=str, help='pattern dir for analise')
+parser.add_argument('source_dir', metavar='Source Diretory', type=str, help='source dir for analise')
+
+args = parser.parse_args()
 
 
-str_pattern = """
-someVariable = 'any'
-print(someVariable)
-"""
+def get_pyfile_in_diretory(base_path):
+    all_path_source_file = list()
+    for path, dirs, files in os.walk(base_path):
+        for filename in files:
+            if filename.endswith(".py"):
+                fullpath = os.path.join(path, filename)
+                all_path_source_file.append(fullpath)
+    return all_path_source_file
 
-source_pattern = ast.parse(str_pattern)
-cont = 0
-for path, dirs, files in os.walk(path):
-    for filename in files:
-        if filename.endswith(".py"):
-            fullpath = os.path.join(path, filename)
-            with open(fullpath, 'r') as f:
-                source_code = ast.parse(f.read())
+
+def search_pattern_in_source(pattern_files, source_files):
+    for s_path_file in source_files:
+        with open(s_path_file, 'r') as s_file:
+            try:
+                source_code = ast.parse(s_file.read())
                 tree = SourceTree.SourceTree(source_code)
-                print( path + filename, tree.get_positions_pattern(source_pattern))
-                cont +=1
+            except:
+                print("Erro na leitura do arquivo:", s_path_file)
+                continue;
+            for p_path_file in pattern_files:
+                with open(p_path_file, 'r') as p_file:
+                    source_pattern = ast.parse(p_file.read())
+                    print("File:", s_path_file, "| Pattern:", p_path_file, "Resultado/Ocorrencias: ",
+                          len(tree.get_positions_pattern(source_pattern)))
 
 
-print("Foram analisados ", cont , "arquivos")
+pattern_files = get_pyfile_in_diretory(args.pattern_dir)
+source_files = get_pyfile_in_diretory(args.source_dir)
+
+print(args)
+print(pattern_files)
+print("------------")
+print(source_files)
+
+search_pattern_in_source(pattern_files, source_files)
