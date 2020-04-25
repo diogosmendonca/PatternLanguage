@@ -587,5 +587,195 @@ public class AceitacaoTest {
 		assertEquals(28, retorno.get(0).getEndColumn());
 	}
 	
+	@Test
+	public void tc44() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC44_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC44_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc45() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC45_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC45_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(5, retorno.get(0).getStartColumn());
+		assertEquals(5, retorno.get(0).getEndLine());
+		assertEquals(6, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc46() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC46_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC46_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(4, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(8, retorno.get(0).getEndLine());
+		assertEquals(10, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc47() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC47_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC47_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(2, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc48() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC48_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC48_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc49() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC49_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC49_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(5, retorno.get(0).getEndLine());
+		assertEquals(2, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc50() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC50_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC50_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc51() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC51_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC51_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(2, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc52() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC52_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC52_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc53() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC53_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC53_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(2, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc54() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC54_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC54_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc55() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC55_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC55_Pattern.java");
+		
+		assertEquals(4, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(18, retorno.get(0).getEndColumn());
+		assertEquals(4, retorno.get(1).getStartLine());
+		assertEquals(9, retorno.get(1).getStartColumn());
+		assertEquals(4, retorno.get(1).getEndLine());
+		assertEquals(22, retorno.get(1).getEndColumn());
+		assertEquals(6, retorno.get(2).getStartLine());
+		assertEquals(9, retorno.get(2).getStartColumn());
+		assertEquals(6, retorno.get(2).getEndLine());
+		assertEquals(18, retorno.get(2).getEndColumn());
+		assertEquals(7, retorno.get(3).getStartLine());
+		assertEquals(9, retorno.get(3).getStartColumn());
+		assertEquals(7, retorno.get(3).getEndLine());
+		assertEquals(22, retorno.get(3).getEndColumn());
+	}
+	
+	@Test
+	public void tc56() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC56_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC56_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc57() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC57_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC57_Pattern.java");
+		
+		assertEquals(2, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(18, retorno.get(0).getEndColumn());
+		assertEquals(4, retorno.get(1).getStartLine());
+		assertEquals(9, retorno.get(1).getStartColumn());
+		assertEquals(4, retorno.get(1).getEndLine());
+		assertEquals(22, retorno.get(1).getEndColumn());
+	}
+	
+	@Test
+	public void tc58() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC58_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC58_Pattern.java");
+		
+		assertEquals(2, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(18, retorno.get(0).getEndColumn());
+		assertEquals(4, retorno.get(1).getStartLine());
+		assertEquals(9, retorno.get(1).getStartColumn());
+		assertEquals(4, retorno.get(1).getEndLine());
+		assertEquals(22, retorno.get(1).getEndColumn());
+	}
 	
 }
