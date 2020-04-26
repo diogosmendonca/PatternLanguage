@@ -322,7 +322,6 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			 blockChildren = block.getChildren();
 			 ignoreList.addAll(blockChildren);
 			 
-			 //FIXME Testar
 			 blockChildren.forEach(i -> {
 				 if(!i.getExists() && i.getChangeOperator() && !listChangePoints.contains(i)) {
 					 toCallRecursive.add(i);
@@ -332,7 +331,8 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			 Node clone = new Node(node,ignoreList);
 			 
 			 blockChildren.forEach(x -> {
-				 	x.setNotParent(clone);
+				 	x.getNotParents().addAll(node.getNotParents());
+				 	x.getNotParents().add(clone);
 				 	x.setParent(node.getParent());
 			 });
 			 			 
@@ -353,9 +353,13 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			 Node clone = new Node(node,ignoreList);
 			 
 			 if(nodeWanted.getFakeNode()) {
-				 nodeWanted.getChildren().forEach(x -> x.setNotParent(clone));
+				 nodeWanted.getChildren().forEach(x -> {
+					 x.getNotParents().addAll(node.getNotParents());
+					 x.getNotParents().add(clone);					 
+				 });
 			 }else {
-				 nodeWanted.setNotParent(clone);
+				 nodeWanted.getNotParents().addAll(node.getNotParents());
+				 nodeWanted.getNotParents().add(clone);
 			 }
 			 
 			 if(nodeWanted.getFakeNode()) {

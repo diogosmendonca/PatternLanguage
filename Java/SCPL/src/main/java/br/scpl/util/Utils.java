@@ -78,13 +78,14 @@ public class Utils {
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 		wildcardsMapBefore.putAll(wildcardsMap);
 		
-		if(b.getNotParent() != null) {
+		for(Node notParent: b.getNotParents()) {
+			
 			Node parentAux = a.getParent();
 			
 			while(parentAux!=null) {
 				Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
 				wildcardsMapAux.putAll(wildcardsMapBefore);
-				if(EqualsController.partialEquals(parentAux,b.getNotParent(), wildcardsMapAux)) {
+				if(EqualsController.partialEquals(parentAux,notParent, wildcardsMapAux)) {
 					return false;
 				}
 				parentAux = parentAux.getParent();

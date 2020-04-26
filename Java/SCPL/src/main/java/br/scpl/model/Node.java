@@ -33,7 +33,7 @@ public class Node {
 	private Boolean changeOperator;
 	private Boolean changePoint;
 	private Node nodeOfDifferentOperator;
-	private Node notParent;
+	private List<Node> notParents;
 	private Boolean isToReturn;
 	private String returnMessage;
 	private Map<Node, Integer> path = new LinkedHashMap<>();
@@ -49,6 +49,7 @@ public class Node {
 		this.changeOperator = false;
 		this.changePoint = false;
 		this.isToReturn = false;
+		this.notParents = new ArrayList<Node>();
 	}
 	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
@@ -62,6 +63,7 @@ public class Node {
 		this.changeOperator = false;
 		this.changePoint = false;
 		this.isToReturn = false;
+		this.notParents = new ArrayList<Node>();
 	}
 	
 	public Node(Node node, List<Node> ignore) {
@@ -88,6 +90,7 @@ public class Node {
 		this.changeOperator = false;
 		this.changePoint = false;
 		this.isToReturn = false;
+		this.notParents = new ArrayList<Node>();
 	}
 	
 	public Node getParent() {
@@ -278,12 +281,12 @@ public class Node {
 		}
 	}
 	
-	public Node getNotParent() {
-		return notParent;
+	public List<Node> getNotParents() {
+		return notParents;
 	}
 
-	public void setNotParent(Node notParent) {
-		this.notParent = notParent;
+	public void setNotParent(List<Node> notParents) {
+		this.notParents = notParents;
 	}
 
 	public Node getChildrenbyTree(Tree tree) {
