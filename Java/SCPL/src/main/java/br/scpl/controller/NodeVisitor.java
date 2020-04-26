@@ -309,6 +309,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	 public static  void notInfos(Node node, List<Node> listChangePoints) {
 		 
 		 int index = node.getParent().getChildren().indexOf(node);
+		 List<Node> toCallRecursive = new ArrayList<>();
 		 
 		 Node block = node.getBlockChild();
 		 
@@ -323,14 +324,17 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			 
 			 //FIXME Testar
 			 blockChildren.forEach(i -> {
-				 if(!i.getExists() && i.getChangeOperator()) {
-					 listChangePoints.add(i);
+				 if(!i.getExists() && i.getChangeOperator() && !listChangePoints.contains(i)) {
+					 toCallRecursive.add(i);
 				 }
 			 });
 			 
 			 Node clone = new Node(node,ignoreList);
 			 
-			 blockChildren.forEach(x -> x.setNotParent(clone));
+			 blockChildren.forEach(x -> {
+				 	x.setNotParent(clone);
+				 	x.setParent(node.getParent());
+			 });
 			 			 
 			 node.getParent().getChildren().addAll(index, blockChildren);
 			 
@@ -362,6 +366,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			 
 			 node.getParent().getChildren().remove(node);
 		 }
+		 
+		 toCallRecursive.forEach(i -> {
+			 notInfos(i, listChangePoints);
+		 });
 		 
 	 }
 		 	 	  
