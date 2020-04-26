@@ -3,6 +3,8 @@ package br.scpl.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private Boolean isPattern;
 	  private final Map<Integer,String> alertMessagesMap;
 	  private final Map<Integer,Boolean> existsModifierMap;
+	  private final Map<Node, Boolean> commentExistsMap;
 
 	  public NodeVisitor(Tree tree, DocTrees docTrees, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap, Boolean isPattern) {
 		  this.sb = new StringBuilder();
@@ -48,7 +51,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	    this.alertMessagesMap = alertMessagesMap;
 	    this.existsModifierMap = existsModifierMap;
 	    this.isPattern = isPattern;
-	    
+	    this.commentExistsMap = new LinkedHashMap<>();
 	  }
 
 	  public static Node build(Tree tree, DocTrees docTrees, SourcePositions sourcePos, Boolean isPattern) throws IOException {
@@ -63,7 +66,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	    NodeVisitor nv = new NodeVisitor(tree, docTrees, sourcePos, alertMessagesMap, existsModifierMap, isPattern);
 	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
-    	addInfos(nodes, isPattern);	    	
+    	addInfos(nodes, isPattern, nv.commentExistsMap);	    	
 	    System.out.println(nv.sb.toString());
 	    return Node.getNodesMap().get(nv.root);
 	  }
@@ -95,6 +98,11 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	        Node node;
 	        
         	node = new Node(tree,compilatioUnitTree);
+        	
+        	node.setParent(nodeParent);
+        	if(nodeParent != null) {
+        		nodeParent.getChildren().add(node);
+        	}
         	Node.getNodesMap().put(tree,node);
 	        
 	        if (nodes.get(nodeParent) == null) {
@@ -128,11 +136,8 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 						Boolean exists = existsModifierMap.remove(line);
 						
 						if(exists!=null) {
-							node.setExists(exists);
-							if(nodeParent.getExists()!=exists) {
-								nodeParent.setChangeOperator(true);
-								nodeParent.setChangePoint(true);
-							}
+							//extraido para depois do processamento dos labels
+							commentExistsMap.put(node, exists);
 						}
 					}
 		        }
@@ -145,16 +150,16 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		 return null;
 	  }
 	  
-	  private static void addInfos(Map<Node, List<Node>> nodes, Boolean isPattern) {
+	  private static void addInfos(Map<Node, List<Node>> nodes, Boolean isPattern, Map<Node, Boolean> commentExistsMap) {
 		  List<Node> listToRemove = new ArrayList<Node>();
 		  List<Node> listChangePoints = new ArrayList<Node>();
 		  for(Node key : nodes.keySet()) {
 				for(Node node :  nodes.get(key)) {
 					Collection<Node> children = nodes.get(node);
 					if(children != null) {
-						node.getChildren().addAll(children);
+						//node.getChildren().addAll(children);
 						for(Node child: children) {
-							child.setParent(node);
+							//child.setParent(node);
 						}
 						
 					}
@@ -187,25 +192,19 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 							  int nodesIndexAux = 0;
 							  int parenIndexAux = 0;
 							  
-							  boolean booleanIndexAux = true; 
-							  
 						  	  parentAux = key.getParent().getParent();
 						  	
-						  	  if(booleanIndexAux) {
-						  		  nodesIndexAux = nodes.get(parentAux).indexOf(key.getParent());
-						  		  nodes.get(parentAux).remove(key.getParent());
-						  	  }
+					  		  nodesIndexAux = nodes.get(parentAux).indexOf(key.getParent());
+					  		  nodes.get(parentAux).remove(key.getParent());
+					  		  
 						  	  nodes.get(parentAux).add(nodesIndexAux,key);
 						  	  nodesIndexAux++;
 						  	
-						  	  if(booleanIndexAux) {
-						  		  parenIndexAux = parentAux.getChildren().indexOf(key.getParent());
-						  		  parentAux.getChildren().remove(key.getParent());
-						  	  }
-							  parentAux.getChildren().add(parenIndexAux,key);
+					  		  parenIndexAux = parentAux.getChildren().indexOf(key.getParent());
+					  		  parentAux.getChildren().remove(key.getParent());
+
+					  		  parentAux.getChildren().add(parenIndexAux,key);
 							  parenIndexAux++;
-							
-							  booleanIndexAux = false;
 							
 							  key.setParent(parentAux);
 							
@@ -283,6 +282,16 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 					  }
 				  }
 			  }
+			  
+			for(Node node: commentExistsMap.keySet()) {
+			  Boolean exists = commentExistsMap.get(node);
+			  Node nodeParent = node.getParent();
+			  node.setExists(exists);
+				if(nodeParent.getExists()!=exists) {
+					nodeParent.setChangeOperator(true);
+					nodeParent.setChangePoint(true);
+				}  
+			}
 			  
 			for(Node n : listToRemove) {
 				nodes.remove(n);

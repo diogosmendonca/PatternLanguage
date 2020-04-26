@@ -7,9 +7,11 @@ class anyClass {
             if(true){
             	exists:{
 	            	String someVariable;
-	            	not:{
-	                    int someVariable2;
-	                }
+                	
+                    not:{
+                        int someVariable2;
+                    }
+	                
 	            	someVariable.any();	        	
                 }
             }

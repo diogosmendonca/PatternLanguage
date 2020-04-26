@@ -2,11 +2,14 @@ package br.scpl.model;
 
 import java.lang.management.CompilationMXBean;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.LabeledStatementTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
@@ -227,14 +230,51 @@ public class Node {
 	}
 	
 	public void setNodeOfDifferentOperator(List<Node> nodeList) {
-		if(nodeList.size() == 1) {
-			this.nodeOfDifferentOperator = nodeList.get(0);
-		}else {
-			Node fakeNode = new Node();
-			fakeNode.getChildren().addAll(nodeList);
-			fakeNode.setUsingExistsOperator(true);
-			fakeNode.setFakeNode(true);
-			this.nodeOfDifferentOperator = fakeNode;
+		
+		if(this.nodeOfDifferentOperator == null) {
+			
+			Map<Integer,List<Node>> auxMap = new LinkedHashMap<>();
+			
+			for(int i=0 ; i<nodeList.size() ; i++) {
+				
+				Node n = nodeList.get(i);
+				
+				if(n.getNode().getKind() == Kind.LABELED_STATEMENT) {
+					
+					String label = ((LabeledStatementTree) n.getNode()).getLabel().toString();
+					
+					if(label.equalsIgnoreCase("not") || label.equalsIgnoreCase("exists")) {
+						
+						Node child = n.getChildren().get(0); 
+						
+						if(child.getNode().getKind() == Kind.BLOCK) {
+							auxMap.put(i, child.getChildren());
+						}else {
+							auxMap.put(i,n.getChildren());
+						}
+					}
+				}
+			}
+			
+			List<Integer> sortedKeys = new ArrayList(auxMap.keySet());
+			  
+		  	Collections.sort(sortedKeys,Collections.reverseOrder());
+			
+		  	for(Integer i : sortedKeys) {
+		  		nodeList.remove(i.intValue());
+		  		nodeList.addAll(i, auxMap.get(i));
+		  	}
+		  	
+			
+			if(nodeList.size() == 1) {
+				this.nodeOfDifferentOperator = nodeList.get(0);
+			}else {
+				Node fakeNode = new Node();
+				fakeNode.getChildren().addAll(nodeList);
+				fakeNode.setUsingExistsOperator(true);
+				fakeNode.setFakeNode(true);
+				this.nodeOfDifferentOperator = fakeNode;
+			}
 		}
 	}
 	

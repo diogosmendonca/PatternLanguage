@@ -581,10 +581,10 @@ public class AceitacaoTest {
 				,"./src/test/resources/AceitacaoFiles/TC43_Pattern.java");
 		
 		assertEquals(1, retorno.size());
-		assertEquals(4, retorno.get(0).getStartLine());
+		assertEquals(6, retorno.get(0).getStartLine());
 		assertEquals(9, retorno.get(0).getStartColumn());
-		assertEquals(4, retorno.get(0).getEndLine());
-		assertEquals(28, retorno.get(0).getEndColumn());
+		assertEquals(6, retorno.get(0).getEndLine());
+		assertEquals(22, retorno.get(0).getEndColumn());
 	}
 	
 	@Test

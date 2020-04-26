@@ -1,6 +1,7 @@
 public class SourceCode{
     public static void run() {
-		String a;
+    	String a;
     	a.hashCode();
+    	
     }
 }
