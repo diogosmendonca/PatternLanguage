@@ -319,7 +319,11 @@ public class Node {
 	public void setPath(Map<Node, Integer> path) {
 		this.path.clear();
 		this.path.putAll(path);
-	}	
+	}
+	
+	public Node getBlockChild() {
+		return this.children.stream().filter(n -> n.getNode().getKind() == Kind.BLOCK).findFirst().get();
+	}
 	
 }
 	

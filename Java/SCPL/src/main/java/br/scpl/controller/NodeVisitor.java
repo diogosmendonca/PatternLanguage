@@ -299,43 +299,70 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			
 			for(Node node : listChangePoints) {
 				if(!node.getExists()&&node.getChangeOperator()) {
-					notInfos(node);
+					notInfos(node, listChangePoints);
 				}
 			}
 		
 	  	}
 	 }
 	  
-	 public static  void notInfos(Node node) {
+	 public static  void notInfos(Node node, List<Node> listChangePoints) {
+		 
 		 int index = node.getParent().getChildren().indexOf(node);
-		 Node nodeWanted = Utils.getDiferentOperatatorNode(node);
-			
-		//Extraindo nó que não existe
-		List<Node> ignoreList = new ArrayList<Node>();
-		
-		if(nodeWanted.getFakeNode()) {
-			ignoreList.addAll(nodeWanted.getChildren());
-		}else {
-			ignoreList.add(nodeWanted);
-		}
-		
-		//Cópia do padrão para buscar apenas o trecho com operador de existência diferente
-		Node clone = new Node(node,ignoreList);
-		
-		if(nodeWanted.getFakeNode()) {
-			nodeWanted.getChildren().forEach(x -> x.setNotParent(clone));
-		}else {
-			nodeWanted.setNotParent(clone);
-		}
-		
-		if(nodeWanted.getFakeNode()) {
-			node.getParent().getChildren().addAll(index, nodeWanted.getChildren());
-		}else {
-			node.getParent().getChildren().add(index, nodeWanted);
-		}
-		
-		node.getParent().getChildren().remove(node);
-		
+		 
+		 Node block = node.getBlockChild();
+		 
+		 List<Node> blockChildren;
+		 Node nodeWanted;
+		 
+		 List<Node> ignoreList = new ArrayList<Node>();
+		 
+		 if(block != null) {
+			 blockChildren = block.getChildren();
+			 ignoreList.addAll(blockChildren);
+			 
+			 //FIXME Testar
+			 blockChildren.forEach(i -> {
+				 if(!i.getExists() && i.getChangeOperator()) {
+					 listChangePoints.add(i);
+				 }
+			 });
+			 
+			 Node clone = new Node(node,ignoreList);
+			 
+			 blockChildren.forEach(x -> x.setNotParent(clone));
+			 			 
+			 node.getParent().getChildren().addAll(index, blockChildren);
+			 
+			 node.getParent().getChildren().remove(node);
+			 
+		 }else {
+			 nodeWanted = Utils.getDiferentOperatatorNode(node);
+			 
+			 if(nodeWanted.getFakeNode()) {
+					ignoreList.addAll(nodeWanted.getChildren());
+			}else {
+					ignoreList.add(nodeWanted);
+			 }
+			 
+			 //Cópia do padrão para buscar apenas o trecho com operador de existência diferente
+			 Node clone = new Node(node,ignoreList);
+			 
+			 if(nodeWanted.getFakeNode()) {
+				 nodeWanted.getChildren().forEach(x -> x.setNotParent(clone));
+			 }else {
+				 nodeWanted.setNotParent(clone);
+			 }
+			 
+			 if(nodeWanted.getFakeNode()) {
+				 node.getParent().getChildren().addAll(index, nodeWanted.getChildren());
+			 }else {
+				 node.getParent().getChildren().add(index, nodeWanted);
+			 }
+			 
+			 node.getParent().getChildren().remove(node);
+		 }
+		 
 	 }
 		 	 	  
 }

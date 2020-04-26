@@ -264,13 +264,7 @@ public class SearchController {
 					ocorrences.add(a);
 					if(b.getExists()) {
 						a.setFullVisited(true);
-						if(returnedNode.get(round) == null) {
-							Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
-							aux.put(b, a);
-							returnedNode.put(round, aux);
-						}else {
-							returnedNode.get(round).put(b, a);
-						}
+						returnedNode.get(round).put(b, a);
 					}
 				}else {
 					wildcardsMap.clear();
