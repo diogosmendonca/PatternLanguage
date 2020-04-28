@@ -340,35 +340,6 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			 
 			 node.getParent().getChildren().remove(node);
 			 
-		 }else {
-			 nodeWanted = Utils.getDiferentOperatatorNode(node);
-			 
-			 if(nodeWanted.getFakeNode()) {
-					ignoreList.addAll(nodeWanted.getChildren());
-			}else {
-					ignoreList.add(nodeWanted);
-			 }
-			 
-			 //Cópia do padrão para buscar apenas o trecho com operador de existência diferente
-			 Node clone = new Node(node,ignoreList);
-			 
-			 if(nodeWanted.getFakeNode()) {
-				 nodeWanted.getChildren().forEach(x -> {
-					 x.getNotParents().addAll(node.getNotParents());
-					 x.getNotParents().add(clone);					 
-				 });
-			 }else {
-				 nodeWanted.getNotParents().addAll(node.getNotParents());
-				 nodeWanted.getNotParents().add(clone);
-			 }
-			 
-			 if(nodeWanted.getFakeNode()) {
-				 node.getParent().getChildren().addAll(index, nodeWanted.getChildren());
-			 }else {
-				 node.getParent().getChildren().add(index, nodeWanted);
-			 }
-			 
-			 node.getParent().getChildren().remove(node);
 		 }
 		 
 		 toCallRecursive.forEach(i -> {
