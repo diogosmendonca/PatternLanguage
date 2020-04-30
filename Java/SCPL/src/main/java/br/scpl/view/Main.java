@@ -11,22 +11,20 @@ public class Main {
 		
 		Action action = new Action();
 		
-		String[] argv = { "-a", "search", "-c", "./src/test/resources/AceitacaoFiles/ParseIntCheck.java", "-p", "./src/test/resources/AceitacaoFiles/ParseInt_Pattern.java" };
+		//args = { "-a", "search", "-c", "./src/test/resources/AceitacaoFiles/ParseIntCheck.java", "-p", "./src/test/resources/AceitacaoFiles/ParseInt_Pattern.java" };
 		
 		try {
 			JCommander.newBuilder()
 			  .addObject(action)
 			  .build()
-			  .parse(argv);
+			  .parse(args);
 			
 			action.execute();
 			
 		}catch (ParameterException  e) {
 			e.printStackTrace();
-			System.exit(1);
 		}catch (UnknownCommandException e) {
 			e.printStackTrace();
-			System.exit(1);
 		}
 	}
 }

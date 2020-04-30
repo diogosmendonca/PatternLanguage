@@ -40,7 +40,6 @@ public class StringUtil {
 	    		retorno.put(line+1, alert);
 	    	}
 	    }
-	    System.out.println(retorno);
 	    
 	    return retorno;
 	}
@@ -104,7 +103,6 @@ public class StringUtil {
 	    	retorno.put(line+1, exists);
 	    	
 	    }
-	    System.out.println(retorno);
 	    
 	    return retorno;
 	}

@@ -302,10 +302,6 @@ public class SearchController {
 				limitPath.clear();
 				limitPath.putAll(limitPathOld);
 				
-				if(child.getNode().getKind() == Kind.IF && b.getNode().getKind() == Kind.BLOCK) {
-					System.out.println("Entrou");
-				}
-				
 				ocorrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap, path, limitPath));
 				if(ocorrences.size() > 0) {
 					
