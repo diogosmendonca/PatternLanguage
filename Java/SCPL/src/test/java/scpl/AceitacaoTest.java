@@ -15,40 +15,16 @@ import javax.tools.StandardJavaFileManager;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.beust.jcommander.JCommander;
+
+import br.scpl.exception.UnknownCommandException;
 import br.scpl.model.Node;
+import br.scpl.view.Action;
+import br.scpl.view.Main;
 import br.scpl.view.View;
 
 public class AceitacaoTest {
 	
-	final String toolsJarFileName = "tools.jar";
-	final String javaHome = System.getProperty("java.home");
-	
-	@Test
-	public void sisgee() throws IOException {
-		//C:\\opt\\Projects\\sisgee\\Documents\\NetBeansProjects\\sisgee\\sisgee\\src\\main\\java\\br\\cefetrj\\sisgee\\view\\termoaditivo\\VerTermoAditivoServlet.java
-		List<Node> retorno = View.searchOcorrences("C:\\opt\\Projects\\sisgee\\Documents\\NetBeansProjects\\sisgee\\sisgee\\src\\main\\java\\br\\cefetrj\\sisgee\\view\\termoaditivo\\VerTermoAditivoServlet.java", 
-				"./src/test/resources/AceitacaoFiles/ParseInt_Pattern.java");
-		
-		assertEquals(1, retorno.size());
-		assertEquals(6, retorno.get(0).getStartLine());
- 		assertEquals(28, retorno.get(0).getStartColumn());
-		assertEquals(6, retorno.get(0).getEndLine());
-		assertEquals(54, retorno.get(0).getEndColumn());
-	}
-	
-	@Test
-	public void pdm() throws IOException {
-		
-		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/ParseIntCheck.java", 
-				"./src/test/resources/AceitacaoFiles/ParseInt_Pattern.java");
-		
-		assertEquals(1, retorno.size());
-		assertEquals(6, retorno.get(0).getStartLine());
- 		assertEquals(28, retorno.get(0).getStartColumn());
-		assertEquals(6, retorno.get(0).getEndLine());
-		assertEquals(54, retorno.get(0).getEndColumn());
-	}
-
 	@Test
 	public void tc01() throws IOException {
 		
@@ -847,6 +823,50 @@ public class AceitacaoTest {
 				,"./src/test/resources/AceitacaoFiles/TC65_Pattern.java");
 		
 		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc66() {
+		
+		String[] args = { "-a", "search", "-c", "./src/test/resources/AceitacaoFiles/TC66_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java" };
+		
+		Main.main(args);
+		
+	}
+	
+	@Test
+	public void tc67() {
+		
+		String[] args = { "-a", "busc", "-c", "./src/test/resources/AceitacaoFiles/TC66_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java" };
+		
+		Main.main(args);
+		
+	}
+	
+	@Test
+	public void tc68() {
+		
+		String[] args = {};
+		
+		Main.main(args);
+		
+	}
+	
+	@Test(expected = UnknownCommandException.class)
+	public void tc69() throws UnknownCommandException {
+		
+		Action action = new Action();
+		
+		String[] args = { "-a", "searc", "-c", "./src/test/resources/AceitacaoFiles/TC66_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java" };
+		
+		JCommander.newBuilder()
+		  .addObject(action)
+		  .build()
+		  .parse(args);
+		
+		action.execute();
+			
+		
 	}
 	
 }

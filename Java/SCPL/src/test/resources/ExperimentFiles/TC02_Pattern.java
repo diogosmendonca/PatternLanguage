@@ -2,13 +2,14 @@
 class anyClass {
     @anyModifier
     any anyMethod(anyType any) {
-		not:
+      not:
         try{
-            exists:{
-                Integer.parseInt(any);
-            }
+              
+          //exists
+          Integer.parseInt(any);
+              
         }catch(Exception any){
-                
+                  
         }
     }
 }
