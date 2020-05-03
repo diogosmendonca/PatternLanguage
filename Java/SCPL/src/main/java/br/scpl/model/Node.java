@@ -157,11 +157,12 @@ public class Node {
 	public void setFullVisited(Boolean fullVisited) {
 		if(!this.hasBrother(Tree.Kind.BLOCK)) {
 			this.fullVisited = fullVisited;
+			
+			for(Node child : this.children) {
+				child.setFullVisited(exists);
+			}
 		}
 		
-		for(Node child : this.children) {
-			child.setFullVisited(exists);
-		}
 	}
 
 	public Boolean hasBrother(Kind kind) {
@@ -301,6 +302,8 @@ public class Node {
 
 	public void setIsToReturn(Boolean isToReturn) {
 		this.isToReturn = isToReturn;
+		
+		this.children.forEach(n -> n.setIsToReturn(isToReturn));
 	}
 	
 	public String getReturnMessage() {

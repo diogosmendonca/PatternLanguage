@@ -135,6 +135,12 @@ public class SearchController {
 			returnedNode.get(round).put(b, a);
 		}
 		
+		if(b.getNode().getKind() == Kind.BLOCK && b.getChildren().size() == 0) {
+			ocorrences.add(a);
+			return ocorrences;
+		}
+		
+		
 		//Lista auxiliar que guarda as ocorrências da busca atual
 		List<Node> currentOcorrences = new ArrayList<>();
 		
