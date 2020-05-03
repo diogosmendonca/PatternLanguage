@@ -55,6 +55,9 @@ public class SearchController {
 		
 		do {
 			childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
+			if(ocorrences.containsAll(childrenNodesAux)) {
+				return ocorrences;
+			}
 			ocorrences.addAll(childrenNodesAux);
 			round++;
 		}while(childrenNodesAux.size() > 0);
@@ -132,12 +135,6 @@ public class SearchController {
 		}else {
 			returnedNode.get(round).put(b, a);
 		}
-		
-		if(b.getNode().getKind() == Kind.BLOCK && b.getChildren().size() == 0) {
-			ocorrences.add(a);
-			return ocorrences;
-		}
-		
 		
 		//Lista auxiliar que guarda as ocorrências da busca atual
 		List<Node> currentOcorrences = new ArrayList<>();

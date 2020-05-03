@@ -98,6 +98,14 @@ public class EqualsController {
 					retorno = isAnyExpression(b);
 					return retorno;
 				}
+				
+				if(b.getNode().getKind() == Kind.BLOCK) {
+					if(b.getChildren().size() == 0) {
+						retorno = true;
+						return retorno;
+					}
+				}
+				
 				return retorno;				
 			}
 			
