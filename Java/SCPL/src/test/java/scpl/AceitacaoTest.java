@@ -210,14 +210,17 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
-	@Ignore
 	@Test 
 	public void tc16() throws IOException {
   
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC16_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC16_Pattern.java");
   
-		assertEquals(0, retorno.size()); 
+		assertEquals(1, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(9, retorno.get(0).getStartColumn());
+		assertEquals(5, retorno.get(0).getEndLine());
+		assertEquals(10, retorno.get(0).getEndColumn());
 	}
  
 	@Test
