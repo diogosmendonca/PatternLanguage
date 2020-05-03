@@ -83,22 +83,20 @@ public class EqualsController {
 			
 			//Verifica se as árvores tem o mesmo número de filhos
 			if(a.getChildren().size()!=b.getChildren().size()) {
-				if(!b.getFakeNode()) {
-					if(b.getNode().getKind() == Kind.METHOD) {
-						retorno = anyMethod(a, b, wildcardsMap);
-						return retorno;
-					}
-					
-					if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
-						retorno = anyArgument(a, b, wildcardsMap);
-						return retorno;
-					}
-					
-					//FIXME REPENSAR
-					if(b.getNode().getKind() == Kind.IDENTIFIER) {
-						retorno = isAnyExpression(b);
-						return retorno;
-					}
+				if(b.getNode().getKind() == Kind.METHOD) {
+					retorno = anyMethod(a, b, wildcardsMap);
+					return retorno;
+				}
+				
+				if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
+					retorno = anyArgument(a, b, wildcardsMap);
+					return retorno;
+				}
+				
+				//FIXME REPENSAR
+				if(b.getNode().getKind() == Kind.IDENTIFIER) {
+					retorno = isAnyExpression(b);
+					return retorno;
 				}
 				return retorno;				
 			}
@@ -140,8 +138,6 @@ public class EqualsController {
 	
 	public static boolean basicComparation(Node a, Node b, Map<String, String> wildcardsMap) {		
 		//Se é um nó fake não realiza as verificações
-		if(!b.getFakeNode()) {
-						
 			boolean flagAny = false;
 			
 			if(b.getNode().getKind() == Kind.IDENTIFIER && (
@@ -167,8 +163,6 @@ public class EqualsController {
 			if(!compareName(a, b, flagAny, wildcardsMap)) {
 				return false;
 			}
-		
-		}
 		
 		return true;		
 	}
@@ -365,7 +359,7 @@ public class EqualsController {
 	
 	public static boolean equalsModifier(Node a, Node b) {
 		
-		if(!b.getFakeNode() && a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
+		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
 			if(isAnyModifier(b)) {
 				return true;

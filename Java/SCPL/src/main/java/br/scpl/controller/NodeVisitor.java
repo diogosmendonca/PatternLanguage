@@ -210,16 +210,12 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 							
 							  key.setParent(parentAux);
 							
-							  parentAux.setUsingExistsOperator(true);
-							
 							  key.setExists(exists);
 							  if(key.getParent().getExists()!=exists) {
 								  key.getParent().setChangeOperator(true);
-								  key.getParent().setChangePoint(true);
 							  }
 							  
 							  if(parentAux != null) {
-								  parentAux.setNodeOfDifferentOperator(key);
 								  listChangePoints.add(key);
 							  }
 						  }
@@ -268,16 +264,12 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 									
 									node.setParent(parentAux);
 									
-									parentAux.setUsingExistsOperator(true);
-									
 									node.setExists(exists);
 									if(node.getParent().getExists()!=exists) {
 										node.getParent().setChangeOperator(true);
-										node.getParent().setChangePoint(true);
 									}
 							  }
 							  if(parentAux != null) {
-								  parentAux.setNodeOfDifferentOperator(nodes.get(key));
 								  listChangePoints.addAll(nodes.get(key));
 							  }
 						  }
@@ -291,7 +283,6 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			  node.setExists(exists);
 				if(nodeParent.getExists()!=exists) {
 					nodeParent.setChangeOperator(true);
-					nodeParent.setChangePoint(true);
 				}  
 			}
 			  

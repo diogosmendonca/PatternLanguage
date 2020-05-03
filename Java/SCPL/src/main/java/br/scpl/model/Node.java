@@ -26,13 +26,9 @@ public class Node {
 	private CompilationUnitTree compilatioUnitTree;
 	private Long startPosition;
 	private Long endPosition;
-	private Boolean fakeNode;
 	private Boolean fullVisited;
 	private Boolean exists;
-	private Boolean usingExistsOperator;
 	private Boolean changeOperator;
-	private Boolean changePoint;
-	private Node nodeOfDifferentOperator;
 	private List<Node> notParents;
 	private Boolean isToReturn;
 	private String returnMessage;
@@ -40,28 +36,13 @@ public class Node {
 	private static final Map<Node,Node> cloneNodeMap = new LinkedHashMap<>();
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<Tree, Node>();
 	
-	public Node() {
-		this.children = new ArrayList<Node>();
-		this.fakeNode = false;
-		this.fullVisited = false;
-		this.exists = true;
-		this.usingExistsOperator = false;
-		this.changeOperator = false;
-		this.changePoint = false;
-		this.isToReturn = false;
-		this.notParents = new ArrayList<Node>();
-	}
-	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
 		this.node = node;
 		this.children = new ArrayList<Node>();
 		this.compilatioUnitTree = compilatioUnitTree;
-		this.fakeNode = false;
 		this.fullVisited = false;
 		this.exists = true;
-		this.usingExistsOperator = false;
 		this.changeOperator = false;
-		this.changePoint = false;
 		this.isToReturn = false;
 		this.notParents = new ArrayList<Node>();
 	}
@@ -83,12 +64,9 @@ public class Node {
 		
 		this.children = children;		
 		this.compilatioUnitTree = node.getCompilatioUnitTree();
-		this.fakeNode = false;
 		this.fullVisited = false;
 		this.exists = true;
-		this.usingExistsOperator = false;
 		this.changeOperator = false;
-		this.changePoint = false;
 		this.isToReturn = false;
 		this.notParents = new ArrayList<Node>();
 	}
@@ -142,14 +120,6 @@ public class Node {
 		return this.getLineMap().getColumnNumber(this.endPosition);
 	}
 	
-	public Boolean getFakeNode() {
-		return fakeNode;
-	}
-
-	public void setFakeNode(Boolean fakeNode) {
-		this.fakeNode = fakeNode;
-	}
-
 	public Boolean getFullVisited() {
 		return fullVisited;
 	}
@@ -188,22 +158,9 @@ public class Node {
 		
 		for(Node child : this.children) {
 			child.setExists(exists);
-			child.setUsingExistsOperator(true);
 		}
 	}
 
-	public Boolean getUsingExistsOperator() {
-		return usingExistsOperator;
-	}
-
-	public void setUsingExistsOperator(Boolean usingExistsOperator) {
-		this.usingExistsOperator = usingExistsOperator;
-		
-		if(this.parent != null) {
-			this.parent.setUsingExistsOperator(usingExistsOperator);
-		}
-	}
-	
 	public Boolean getChangeOperator() {
 		return changeOperator;
 	}
@@ -216,78 +173,13 @@ public class Node {
 		}
 		
 	}
-
-	public void setChangePoint(Boolean changePoint) {
-		this.changePoint = changePoint;
-	}
-
+	
 	public String toString() {
 		return this.node.toString();
 	}
 	
-	public Node getNodeOfDifferentOperator() {
-		return nodeOfDifferentOperator;
-	}
-	
-	public void setNodeOfDifferentOperator(Node nodeOfDifferentOperator) {
-		this.nodeOfDifferentOperator = nodeOfDifferentOperator;
-	}
-	
-	public void setNodeOfDifferentOperator(List<Node> nodeList) {
-		
-		if(this.nodeOfDifferentOperator == null) {
-			
-			Map<Integer,List<Node>> auxMap = new LinkedHashMap<>();
-			
-			for(int i=0 ; i<nodeList.size() ; i++) {
-				
-				Node n = nodeList.get(i);
-				
-				if(n.getNode().getKind() == Kind.LABELED_STATEMENT) {
-					
-					String label = ((LabeledStatementTree) n.getNode()).getLabel().toString();
-					
-					if(label.equalsIgnoreCase("not") || label.equalsIgnoreCase("exists")) {
-						
-						Node child = n.getChildren().get(0); 
-						
-						if(child.getNode().getKind() == Kind.BLOCK) {
-							auxMap.put(i, child.getChildren());
-						}else {
-							auxMap.put(i,n.getChildren());
-						}
-					}
-				}
-			}
-			
-			List<Integer> sortedKeys = new ArrayList(auxMap.keySet());
-			  
-		  	Collections.sort(sortedKeys,Collections.reverseOrder());
-			
-		  	for(Integer i : sortedKeys) {
-		  		nodeList.remove(i.intValue());
-		  		nodeList.addAll(i, auxMap.get(i));
-		  	}
-		  	
-			
-			if(nodeList.size() == 1) {
-				this.nodeOfDifferentOperator = nodeList.get(0);
-			}else {
-				Node fakeNode = new Node();
-				fakeNode.getChildren().addAll(nodeList);
-				fakeNode.setUsingExistsOperator(true);
-				fakeNode.setFakeNode(true);
-				this.nodeOfDifferentOperator = fakeNode;
-			}
-		}
-	}
-	
 	public List<Node> getNotParents() {
 		return notParents;
-	}
-
-	public void setNotParent(List<Node> notParents) {
-		this.notParents = notParents;
 	}
 
 	public Node getChildrenbyTree(Tree tree) {
@@ -320,11 +212,6 @@ public class Node {
 
 	public Map<Node, Integer> getPath() {
 		return path;
-	}
-
-	public void setPath(Map<Node, Integer> path) {
-		this.path.clear();
-		this.path.putAll(path);
 	}
 	
 	public Node getBlockChild() {
