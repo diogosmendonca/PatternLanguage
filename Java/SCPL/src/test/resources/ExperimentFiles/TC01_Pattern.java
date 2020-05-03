@@ -2,6 +2,7 @@
 class anyClass {
     @anyModifier
     any anyMethod(anyType any) {
-		Integer.parseInt(any);
+        //alert: Possible defect
+        Integer.parseInt(any);
     }
 }

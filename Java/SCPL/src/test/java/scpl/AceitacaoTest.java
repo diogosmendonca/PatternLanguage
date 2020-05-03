@@ -826,7 +826,6 @@ public class AceitacaoTest {
 	}
 	
 	@Test
-<<<<<<< HEAD
 	public void tc66() {
 		
 		String[] args = { "-a", "search", "-c", "./src/test/resources/AceitacaoFiles/TC66_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java" };
@@ -867,8 +866,8 @@ public class AceitacaoTest {
 		
 		action.execute();
 			
-		
-=======
+	}
+	
 	public void tc70() throws IOException {
 		
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC70_Code.java"
@@ -906,7 +905,6 @@ public class AceitacaoTest {
 				,"./src/test/resources/AceitacaoFiles/TC73_Pattern.java");
 		
 		assertEquals(0, retorno.size());
->>>>>>> 42df797f414e912aebf236adb2fe78ca234856b6
 	}
 	
 }
