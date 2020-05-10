@@ -23,6 +23,7 @@ import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
 import br.scpl.model.CompilationUnitStruct;
+import br.scpl.model.PatternFolder;
 
 public class FileHandler {
 	
@@ -52,6 +53,54 @@ public class FileHandler {
 			files.add(file);
 		}
 	}
+	
+	public static void browseFiles(File file, PatternFolder folder) {
+		// Testa se o arquivo é uma pasta
+		if (file.isDirectory()) {
+			// lista os arquivos da pasta
+			String[] subDirectory = file.list();
+
+			// Verifica se a lista de arquivos não é nula(Vazia)
+			if (subDirectory != null) {
+				// lista os arquivos desse subdiretório e pra cada arquivo, chama recursivamente
+				// o mesmo método
+				for (String dir : subDirectory) {
+					
+					File auxFile = new File(file + File.separator + dir);
+					
+					if(auxFile.isDirectory()) {
+						
+						PatternFolder auxFolder = new PatternFolder();
+						
+						folder.getFolders().add(auxFolder);
+						
+						browseFiles(auxFile, auxFolder);
+					}else {
+						browseFiles(auxFile, folder);
+					}
+				}
+			}
+			// Testa se o arquivo é um código fonte Java (termina com .java) e adiciona na
+			// lista de arquivos da classe
+		} else if (file.getName().endsWith(".java")) {
+			folder.getFiles().add(file);
+		}
+	}
+	
+	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException{
+		PatternFolder folder = new PatternFolder();
+		log.info(separator);
+		log.info("Buscando arquivos e pastas");
+		if(!(new File(rootPath)).exists()){
+			log.error("Falha ao encontrar o arquivo:" +rootPath);
+			throw new FileNotFoundException(rootPath);
+		}
+		browseFiles(new File(rootPath),folder);
+		log.info(separator);
+		//log.info("Total de arquivos: " +files.size());
+		log.info("Fim da Busca de arquivos.");
+		return folder;
+	} 
 
 	public static File[] getFiles(String rootPath) throws FileNotFoundException {
 		List<File> files = new ArrayList<>();
