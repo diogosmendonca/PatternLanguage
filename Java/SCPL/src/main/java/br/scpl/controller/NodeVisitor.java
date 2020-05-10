@@ -3,28 +3,22 @@ package br.scpl.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.sun.source.doctree.DocCommentTree;
-import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LabeledStatementTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
-import com.sun.source.util.DocTrees;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 
 import br.scpl.model.Node;
 import br.scpl.util.StringUtil;
-import br.scpl.util.Utils;
 
 public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	
@@ -35,18 +29,16 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private int indentLevel;
 	  private final CompilationUnitTree compilatioUnitTree;
 	  private Tree root;
-	  private DocTrees docTrees;
 	  private SourcePositions sourcePos;
 	  private Boolean isPattern;
 	  private final Map<Integer,String> alertMessagesMap;
 	  private final Map<Integer,Boolean> existsModifierMap;
 	  private final Map<Node, Boolean> commentExistsMap;
 
-	  public NodeVisitor(Tree tree, DocTrees docTrees, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap, Boolean isPattern) {
+	  public NodeVisitor(Tree tree, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap, Boolean isPattern) {
 		  this.sb = new StringBuilder();
 		this.indentLevel = 0;
 	    this.compilatioUnitTree = (CompilationUnitTree) tree;
-	    this.docTrees = docTrees;
 	    this.sourcePos = sourcePos;
 	    this.alertMessagesMap = alertMessagesMap;
 	    this.existsModifierMap = existsModifierMap;
@@ -54,7 +46,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	    this.commentExistsMap = new LinkedHashMap<>();
 	  }
 
-	  public static Node build(Tree tree, DocTrees docTrees, SourcePositions sourcePos, Boolean isPattern) throws IOException {
+	  public static Node build(Tree tree, SourcePositions sourcePos, Boolean isPattern) throws IOException {
 		Map<Integer,String> alertMessagesMap = new LinkedHashMap<>();
 		Map<Integer,Boolean> existsModifierMap = new LinkedHashMap<>();
 		
@@ -63,7 +55,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			existsModifierMap = StringUtil.extractExistsOperator(tree);
 		}
 		  
-	    NodeVisitor nv = new NodeVisitor(tree, docTrees, sourcePos, alertMessagesMap, existsModifierMap, isPattern);
+	    NodeVisitor nv = new NodeVisitor(tree, sourcePos, alertMessagesMap, existsModifierMap, isPattern);
 	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
     	addInfos(nodes, isPattern, nv.commentExistsMap);	    	
@@ -88,8 +80,6 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	        TreePath path = getCurrentPath();
 	        
 	        Tree parent = path == null? null: path.getLeaf();
-	        DocCommentTree dc = null;
-	        
 	        
 	        boolean isToReturn = false;
 	        
