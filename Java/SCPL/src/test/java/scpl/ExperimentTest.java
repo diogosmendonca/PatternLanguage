@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import br.scpl.model.Node;
@@ -39,6 +40,7 @@ public class ExperimentTest {
 	}
 	
 	//Ctx03
+	@Ignore
 	@Test
 	public void tc04() throws IOException {
 		List<Node> retorno = View.searchOcorrences("C:\\opt\\Projects\\sisgee\\sisgee",
@@ -50,8 +52,8 @@ public class ExperimentTest {
 	@Test
 	public void tc05() throws IOException {
 		List<Node> retorno = View.searchOcorrences("C:\\opt\\Projects\\sisgee\\sisgee",
-				"./src/test/resources/ExperimentFiles/TC05_Pattern.java");
-		assertEquals(3, retorno.size());
+				"./src/test/resources/ExperimentFiles/Template");
+		assertEquals(4, retorno.size());
 	}
 	
 }
