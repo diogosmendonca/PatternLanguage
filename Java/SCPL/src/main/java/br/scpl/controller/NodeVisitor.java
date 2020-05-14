@@ -59,7 +59,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
     	addInfos(nodes, isPattern, nv.commentExistsMap);	    	
-	    System.out.println(nv.sb.toString());
+	    //System.out.println(nv.sb.toString());
 	    return Node.getNodesMap().get(nv.root);
 	  }
 

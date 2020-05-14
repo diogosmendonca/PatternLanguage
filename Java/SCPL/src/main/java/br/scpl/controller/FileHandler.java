@@ -89,31 +89,31 @@ public class FileHandler {
 	
 	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException{
 		PatternFolder folder = new PatternFolder();
-		log.info(separator);
-		log.info("Buscando arquivos e pastas");
+		//log.info(separator);
+		//log.info("Buscando arquivos e pastas");
 		if(!(new File(rootPath)).exists()){
 			log.error("Falha ao encontrar o arquivo:" +rootPath);
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),folder);
-		log.info(separator);
+		//log.info(separator);
 		//log.info("Total de arquivos: " +files.size());
-		log.info("Fim da Busca de arquivos.");
+		//log.info("Fim da Busca de arquivos.");
 		return folder;
 	} 
 
 	public static File[] getFiles(String rootPath) throws FileNotFoundException {
 		List<File> files = new ArrayList<>();
-		log.info(separator);
-		log.info("Buscando arquivos e pastas");
+		//log.info(separator);
+		//log.info("Buscando arquivos e pastas");
 		if(!(new File(rootPath)).exists()){
 			log.error("Falha ao encontrar o arquivo:" +rootPath);
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),files);
-		log.info(separator);
-		log.info("Total de arquivos: " +files.size());
-		log.info("Fim da Busca de arquivos.");
+		//log.info(separator);
+		//log.info("Total de arquivos: " +files.size());
+		//log.info("Fim da Busca de arquivos.");
 		return files.isEmpty() ? null : files.toArray(new File[0]);
 	}
 	
