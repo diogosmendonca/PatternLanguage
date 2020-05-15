@@ -1,8 +1,10 @@
 package br.scpl.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -15,6 +17,9 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.apache.log4j.Logger;
+import org.apache.tika.parser.txt.CharsetDetector;
+import org.apache.tika.parser.txt.CharsetMatch;
+import org.mozilla.universalchardet.UniversalDetector;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.util.DocTrees;
@@ -124,19 +129,44 @@ public class FileHandler {
 	 * @param files array de arquivos de código-fonte java
 	 * @return CompilationUnitStruct correspondente aos arquivos passados, 
 	 * que contém um iterator de CompilationUnitTree e um onjsto SourcePositions(guarda as posições do nós)
+	 * @throws  
 	 */
 	
-	public static CompilationUnitStruct parserFileToCompilationUnit(File... files) throws IOException{
+	public static CompilationUnitStruct parserFileToCompilationUnit(File[] files) throws IOException{
+		
+		Charset charset = null;
+		
+		UniversalDetector detector = new UniversalDetector(null);
+		
+		
+	    
+		FileInputStream fis = new FileInputStream(files[0].getAbsolutePath());				
+		
+		byte[] buf = new byte[4096];
+		
+		int nread;
+		while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
+		  detector.handleData(buf, 0, nread);
+		}
+		detector.dataEnd();
+		
+		CharsetDetector cd = new CharsetDetector();
+		cd.setText(buf);
+	    CharsetMatch match = cd.detect();
+
+		String encoding = detector.getDetectedCharset();
+		
+		if(encoding != null) charset = Charset.forName(encoding);
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, Charset.forName(match.getName()));
 
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(files);
 		JavacTask javacTask = (JavacTask) compiler.getTask(null, fileManager, null, null, null, compilationUnits);
 		SourcePositions pos = Trees.instance(javacTask).getSourcePositions();
 		
 		DocTrees docTrees = DocTrees.instance(javacTask);
-				
+		
 		Iterable<? extends CompilationUnitTree> compilationUnitTrees = javacTask.parse();
 		Iterator<? extends CompilationUnitTree> iter = compilationUnitTrees.iterator();
 			
