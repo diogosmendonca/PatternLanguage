@@ -3,11 +3,14 @@ package br.scpl.controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -124,12 +127,18 @@ public class FileHandler {
 	 * @param files array de arquivos de código-fonte java
 	 * @return CompilationUnitStruct correspondente aos arquivos passados, 
 	 * que contém um iterator de CompilationUnitTree e um onjsto SourcePositions(guarda as posições do nós)
+	 * @throws IOException
 	 */
 	
-	public static CompilationUnitStruct parserFileToCompilationUnit(File... files) throws IOException{
+	public static CompilationUnitStruct parserFileToCompilationUnit(File[] files, Charset charset) throws IOException{
+		
+		//FIXME Verificar se posso deixar UTF-8 como padrão
+		/*if(charset == null) {
+			charset = Charset.forName("UTF-8");
+		}*/
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, charset);
 
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(files);
 		JavacTask javacTask = (JavacTask) compiler.getTask(null, fileManager, null, null, null, compilationUnits);
