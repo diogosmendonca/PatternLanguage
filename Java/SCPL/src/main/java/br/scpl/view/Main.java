@@ -11,7 +11,7 @@ public class Main {
 		
 		Action action = new Action();
 		
-		//args = { "-a", "search", "-c", "./src/test/resources/AceitacaoFiles/ParseIntCheck.java", "-p", "./src/test/resources/AceitacaoFiles/ParseInt_Pattern.java" };
+		//String[] args = { "-a", "search", "-c", "C:\\opt\\Projects\\sisgee\\sisgee", "-p", "./src/test/resources/ExperimentFiles/Template", "-charset", "CP1252" };
 		
 		try {
 			JCommander.newBuilder()
