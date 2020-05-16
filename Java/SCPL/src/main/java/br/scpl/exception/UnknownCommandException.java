@@ -5,8 +5,8 @@ public class UnknownCommandException extends Exception{
 	private String msg;
 	
     public UnknownCommandException(String msg){
-      super("O comando "+msg +" não foi encontrado.");
-      this.msg = "O comando "+msg +" não foi encontrado.";
+      super("The command "+msg +" was not found.");
+      this.msg = "The command "+msg +" was not found.";
     }
     public String getMessage(){
       return msg;
