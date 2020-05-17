@@ -24,7 +24,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 	 private Charset charset;
 	 
 	@Override
-	public List<Node> execute() {
+	public List<Node> execute(JCommander jc) {
 		
  		return View.searchOcorrences(code,pattern, charset);
 	}

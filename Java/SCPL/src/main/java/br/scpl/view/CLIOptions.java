@@ -9,11 +9,6 @@ import br.scpl.view.converter.CharsetConverter;
 
 public class CLIOptions extends JCommander {
 	
-	@Parameter(names = {"-h", "--help"}, description = "Shows help menu", help = true)
-	private boolean help = false;
-	
-	public boolean isHelp() {
-	    return help;
-	}
+	//Put CLI options here
 
 }
