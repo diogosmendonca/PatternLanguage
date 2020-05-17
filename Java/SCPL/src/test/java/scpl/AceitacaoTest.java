@@ -828,49 +828,6 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
-	@Test
-	public void tc66() {
-		
-		String[] args = { "-a", "search", "-c", "./src/test/resources/AceitacaoFiles/TC66_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java" };
-		
-		Main.main(args);
-		
-	}
-	
-	@Test
-	public void tc67() {
-		
-		String[] args = { "-a", "busc", "-c", "./src/test/resources/AceitacaoFiles/TC66_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java" };
-		
-		Main.main(args);
-		
-	}
-	
-	@Test
-	public void tc68() {
-		
-		String[] args = {};
-		
-		Main.main(args);
-		
-	}
-	
-	@Test(expected = UnknownCommandException.class)
-	public void tc69() throws UnknownCommandException {
-		
-		Action action = new Action();
-		
-		String[] args = { "-a", "searc", "-c", "./src/test/resources/AceitacaoFiles/TC66_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java" };
-		
-		JCommander.newBuilder()
-		  .addObject(action)
-		  .build()
-		  .parse(args);
-		
-		action.execute();
-			
-	}
-	
 	public void tc70() throws IOException {
 		
 		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC70_Code.java"

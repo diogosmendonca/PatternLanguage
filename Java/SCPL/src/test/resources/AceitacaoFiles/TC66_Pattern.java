@@ -4,11 +4,11 @@ class anyClass {
     any anyMethod(anyType any) {
     	
 		not:{
-            for(int any=any; any < any ; any++){
-                //exists
-                int any = any;
-            }            
+            if(true){
+                    exists:{
+                        String any;
+                    }
+            }
         }
-        
     }
 }
