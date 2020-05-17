@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -29,7 +30,7 @@ import br.scpl.util.Utils;
 
 public class View {
 	
-	private static String separator = "###---###---###---###---###---###---###";
+	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
 
 	private static Logger log = Logger.getLogger(View.class);
 	
@@ -47,9 +48,16 @@ public class View {
 			
 			List<Node> retorno = new ArrayList<>();
 			
+			log.info(separator);
+			log.info("Start of file search.");
+			
 			PatternFolder patternFolder = FileHandler.getPatternFolder(pathPattern);
 	        
 			File[] filesCode = FileHandler.getFiles(pathCode);
+			
+			log.info(separator);
+			log.info("End of file search.");
+			log.info(separator);
 			
 			CompilationUnitStruct compilationUnitStructCode = FileHandler.parserFileToCompilationUnit(filesCode, charset);
 			
@@ -83,19 +91,20 @@ public class View {
 					System.out.println("Alert Message: " +r.getReturnMessage());
 				}
 				
-				System.out.println("Start: " +r.getStartLine() +" C: " +r.getStartColumn() );
-				System.out.println("End: " +r.getEndLine() +" C: " +r.getEndColumn());
+				System.out.println("Start: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
+				System.out.println("End: L: " +r.getEndLine() +" C: " +r.getEndColumn());
 				
 			}
 			
-			System.out.println("\nLength: " +retorno.size());
+			System.out.println();
+			System.out.println("Return size: " +retorno.size());
 			return retorno;
 			
 		}catch(FileNotFoundException e) {
-			System.out.println(e.getMessage());
+			log.error("Failed to find the file: " +e.getMessage());
 		}
 		catch(IOException e) {
-			
+			System.out.println(e);
 		}
 		
 		return new ArrayList<>();

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -30,7 +31,7 @@ import br.scpl.model.PatternFolder;
 
 public class FileHandler {
 	
-	private static String separator = "###---###---###---###---###---###---###";
+	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
 
 	private static Logger log = Logger.getLogger(FileHandler.class);
 	
@@ -92,31 +93,27 @@ public class FileHandler {
 	
 	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException{
 		PatternFolder folder = new PatternFolder();
-		//log.info(separator);
-		//log.info("Buscando arquivos e pastas");
+		log.info(separator);
+		log.info("Searching patterns files.");
 		if(!(new File(rootPath)).exists()){
-			log.error("Falha ao encontrar o arquivo:" +rootPath);
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),folder);
-		//log.info(separator);
-		//log.info("Total de arquivos: " +files.size());
-		//log.info("Fim da Busca de arquivos.");
+		log.info(separator);
+		log.info("Total files: " +folder.size());
 		return folder;
 	} 
 
 	public static File[] getFiles(String rootPath) throws FileNotFoundException {
 		List<File> files = new ArrayList<>();
-		//log.info(separator);
-		//log.info("Buscando arquivos e pastas");
+		log.info(separator);
+		log.info("Searching source code files.");
 		if(!(new File(rootPath)).exists()){
-			log.error("Falha ao encontrar o arquivo:" +rootPath);
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),files);
-		//log.info(separator);
-		//log.info("Total de arquivos: " +files.size());
-		//log.info("Fim da Busca de arquivos.");
+		log.info(separator);
+		log.info("Total files: " +files.size());
 		return files.isEmpty() ? null : files.toArray(new File[0]);
 	}
 	
@@ -145,7 +142,7 @@ public class FileHandler {
 		SourcePositions pos = Trees.instance(javacTask).getSourcePositions();
 		
 		DocTrees docTrees = DocTrees.instance(javacTask);
-				
+		
 		Iterable<? extends CompilationUnitTree> compilationUnitTrees = javacTask.parse();
 		Iterator<? extends CompilationUnitTree> iter = compilationUnitTrees.iterator();
 			
