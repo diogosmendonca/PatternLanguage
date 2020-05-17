@@ -8,8 +8,6 @@ import java.util.Map;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-import br.scpl.exception.UnknownCommandException;
-
 public class Main {
 
 	public static void main(String[] args) {
@@ -18,7 +16,7 @@ public class Main {
 		
 		//List<String> test = Arrays.asList("search", "-c", "C:\\opt\\Projects\\sisgee\\sisgee", "-p", "./src/test/resources/ExperimentFiles/Template", "-charset", "UTF-8" );  
 		
-		List<String> test = Arrays.asList("-h");
+		//List<String> test = Arrays.asList("-h");
 		
 		//args = test.toArray(new String[0]);
 		

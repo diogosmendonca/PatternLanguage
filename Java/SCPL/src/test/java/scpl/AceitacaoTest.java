@@ -17,7 +17,6 @@ import org.junit.Test;
 
 import com.beust.jcommander.JCommander;
 
-import br.scpl.exception.UnknownCommandException;
 import br.scpl.model.Node;
 import br.scpl.view.Main;
 import br.scpl.view.View;
