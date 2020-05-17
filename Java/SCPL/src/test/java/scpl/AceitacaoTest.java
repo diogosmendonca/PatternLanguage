@@ -19,7 +19,6 @@ import com.beust.jcommander.JCommander;
 
 import br.scpl.exception.UnknownCommandException;
 import br.scpl.model.Node;
-import br.scpl.view.Action;
 import br.scpl.view.Main;
 import br.scpl.view.View;
 
@@ -828,10 +827,10 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
-	public void tc70() throws IOException {
+	public void tc66() throws IOException {
 		
-		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC70_Code.java"
-				,"./src/test/resources/AceitacaoFiles/TC70_Pattern.java");
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC66_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC66_Pattern.java");
 		
 		assertEquals(1, retorno.size());
 		assertEquals(4, retorno.get(0).getStartLine());
@@ -841,28 +840,28 @@ public class AceitacaoTest {
 	}	
 	
 	@Test
-	public void tc71() throws IOException {
+	public void tc67() throws IOException {
 		
-		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC71_Code.java"
-				,"./src/test/resources/AceitacaoFiles/TC71_Pattern.java");
-		
-		assertEquals(0, retorno.size());
-	}
-	
-	@Test
-	public void tc72() throws IOException {
-		
-		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC72_Code.java"
-				,"./src/test/resources/AceitacaoFiles/TC72_Pattern.java");
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC67_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC67_Pattern.java");
 		
 		assertEquals(0, retorno.size());
 	}
 	
 	@Test
-	public void tc73() throws IOException {
+	public void tc68() throws IOException {
 		
-		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC73_Code.java"
-				,"./src/test/resources/AceitacaoFiles/TC73_Pattern.java");
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC68_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC68_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc69() throws IOException {
+		
+		List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC69_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC69_Pattern.java");
 		
 		assertEquals(0, retorno.size());
 	}
