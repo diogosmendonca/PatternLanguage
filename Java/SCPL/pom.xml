@@ -11,6 +11,37 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>SCPL</name>
   <description>Source Code Pattern Language</description>
+  
+  <build>
+  	<finalName>scpl</finalName>  		
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-assembly-plugin</artifactId>
+			<executions>
+				<execution>
+					<phase>package</phase>
+					<goals>
+						<goal>single</goal>
+					</goals>
+					<configuration>
+						<archiveBaseDirectory>${project.basedir}</archiveBaseDirectory>
+						<archive>
+							<manifest>
+								<mainClass>br.scpl.view.Main</mainClass>
+							</manifest>
+						</archive>
+						<descriptorRefs>
+							<descriptorRef>jar-with-dependencies</descriptorRef>
+						</descriptorRefs>
+						<finalName>scpl</finalName>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+  </build>
+  
   <dependencies>
 		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
 		<dependency>

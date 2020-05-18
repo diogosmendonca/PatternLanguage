@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.StyledEditorKit.ForegroundAction;
+
 public class PatternFolder {
 	
 	private List<PatternFolder> folders;
@@ -26,6 +28,11 @@ public class PatternFolder {
 
 	public void setFiles(List<File> files) {
 		this.files = files;
+	}
+
+	public int size() {
+		
+		return files.size() + folders.stream().mapToInt(f -> f.size()).sum();
 	}
 	
 

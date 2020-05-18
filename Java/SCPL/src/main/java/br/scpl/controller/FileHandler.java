@@ -4,12 +4,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -32,7 +36,7 @@ import br.scpl.model.PatternFolder;
 
 public class FileHandler {
 	
-	private static String separator = "###---###---###---###---###---###---###";
+	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
 
 	private static Logger log = Logger.getLogger(FileHandler.class);
 	
@@ -94,31 +98,27 @@ public class FileHandler {
 	
 	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException{
 		PatternFolder folder = new PatternFolder();
-		//log.info(separator);
-		//log.info("Buscando arquivos e pastas");
+		log.info(separator);
+		log.info("Searching patterns files.");
 		if(!(new File(rootPath)).exists()){
-			log.error("Falha ao encontrar o arquivo:" +rootPath);
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),folder);
-		//log.info(separator);
-		//log.info("Total de arquivos: " +files.size());
-		//log.info("Fim da Busca de arquivos.");
+		log.info(separator);
+		log.info("Total files: " +folder.size());
 		return folder;
 	} 
 
 	public static File[] getFiles(String rootPath) throws FileNotFoundException {
 		List<File> files = new ArrayList<>();
-		//log.info(separator);
-		//log.info("Buscando arquivos e pastas");
+		log.info(separator);
+		log.info("Searching source code files.");
 		if(!(new File(rootPath)).exists()){
-			log.error("Falha ao encontrar o arquivo:" +rootPath);
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),files);
-		//log.info(separator);
-		//log.info("Total de arquivos: " +files.size());
-		//log.info("Fim da Busca de arquivos.");
+		log.info(separator);
+		log.info("Total files: " +files.size());
 		return files.isEmpty() ? null : files.toArray(new File[0]);
 	}
 	
@@ -132,34 +132,33 @@ public class FileHandler {
 	 * @throws  
 	 */
 	
-	public static CompilationUnitStruct parserFileToCompilationUnit(File[] files) throws IOException{
-		
-		Charset charset = null;
-		
-		UniversalDetector detector = new UniversalDetector(null);
-		
-		
-	    
-		FileInputStream fis = new FileInputStream(files[0].getAbsolutePath());				
-		
-		byte[] buf = new byte[4096];
-		
-		int nread;
-		while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
-		  detector.handleData(buf, 0, nread);
-		}
-		detector.dataEnd();
-		
-		CharsetDetector cd = new CharsetDetector();
-		cd.setText(buf);
-	    CharsetMatch match = cd.detect();
 
-		String encoding = detector.getDetectedCharset();
+	
+	public static CompilationUnitStruct parserFileToCompilationUnit(File[] files, Charset charset) throws IOException{
 		
-		if(encoding != null) charset = Charset.forName(encoding);
+		if(charset==null) {
+			
+			FileInputStream fis = new FileInputStream(files[0].getAbsolutePath());				
+			
+			byte[] buf = new byte[4096];
+			
+			int nread;
+			
+			do {
+				nread = fis.read(buf);
+			}while (nread > 0); 
+			
+			CharsetDetector cd = new CharsetDetector();
+			cd.setText(buf);
+		    CharsetMatch match = cd.detect();
+			
+			if(match.getName() != null && match.getConfidence() == 100) {
+				charset = Charset.forName(match.getName());
+			}
+		}
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, Charset.forName(match.getName()));
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, charset);
 
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(files);
 		JavacTask javacTask = (JavacTask) compiler.getTask(null, fileManager, null, null, null, compilationUnits);
