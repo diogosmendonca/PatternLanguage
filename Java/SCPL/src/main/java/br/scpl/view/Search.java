@@ -11,7 +11,7 @@ import com.beust.jcommander.Parameters;
 import br.scpl.model.Node;
 import br.scpl.view.converter.CharsetConverter;
 
-@Parameters(commandDescription = "Record changes to the repository")
+@Parameters(commandDescription = "Search for patterns in source code")
 public class Search extends JCommander implements Command<List<Node>>{
 	
 	 @Parameter(names = {"-c", "--code"}, description = "Source code path", required = true)

@@ -20,7 +20,8 @@ public interface Command<T> {
     
     public static final Map<String, String[]> commandAlias = new HashMap<>(){
         {
-            put("help", new String [] {"-h","--help"});
+        	put("search", new String [] {"-s"});
+        	put("help", new String [] {"-h","--help"});
         }
     };
 	
