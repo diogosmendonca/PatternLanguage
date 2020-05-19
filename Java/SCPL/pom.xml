@@ -31,6 +31,7 @@
 								<mainClass>br.scpl.view.Main</mainClass>
 							</manifest>
 						</archive>
+						<appendAssemblyId>false</appendAssemblyId>
 						<descriptorRefs>
 							<descriptorRef>jar-with-dependencies</descriptorRef>
 						</descriptorRefs>
