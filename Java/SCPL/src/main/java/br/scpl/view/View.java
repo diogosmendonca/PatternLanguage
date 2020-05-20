@@ -7,7 +7,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -16,7 +15,6 @@ import org.apache.log4j.Logger;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
-import com.sun.source.util.DocTrees;
 import com.sun.source.util.SourcePositions;
 
 import br.scpl.controller.FileHandler;
@@ -25,7 +23,6 @@ import br.scpl.controller.SearchController;
 import br.scpl.model.CompilationUnitStruct;
 import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
-import br.scpl.util.StringUtil;
 import br.scpl.util.Utils;
 
 public class View {

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.scpl.model.Node;

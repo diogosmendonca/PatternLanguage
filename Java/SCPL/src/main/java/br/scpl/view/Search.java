@@ -1,7 +1,6 @@
 package br.scpl.view;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.beust.jcommander.JCommander;

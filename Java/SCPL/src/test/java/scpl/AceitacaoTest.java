@@ -1,24 +1,14 @@
 package scpl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-
-import javax.tools.JavaCompiler;
-import javax.tools.StandardJavaFileManager;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.beust.jcommander.JCommander;
-
 import br.scpl.model.Node;
-import br.scpl.view.Main;
 import br.scpl.view.View;
 
 public class AceitacaoTest {

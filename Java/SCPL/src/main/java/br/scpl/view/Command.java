@@ -1,13 +1,9 @@
 package br.scpl.view;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.beust.jcommander.JCommander;
-
-import br.scpl.model.Node;
 
 public interface Command<T> {
 	

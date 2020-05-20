@@ -1,8 +1,6 @@
 package br.scpl.util;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;

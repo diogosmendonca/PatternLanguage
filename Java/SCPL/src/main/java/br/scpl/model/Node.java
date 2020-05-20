@@ -1,22 +1,14 @@
 package br.scpl.model;
 
-import java.lang.management.CompilationMXBean;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.tree.LabeledStatementTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
-import com.sun.source.tree.TreeVisitor;
-import com.sun.source.util.SourcePositions;
-import com.sun.source.util.Trees;
-import org.apache.commons.lang3.SerializationUtils;
 
 public class Node {
 	

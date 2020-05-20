@@ -1,7 +1,5 @@
 package scpl;
 
-import static org.hamcrest.CoreMatchers.containsString;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
