@@ -18,8 +18,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.apache.log4j.Logger;
-import org.apache.tika.parser.txt.CharsetDetector;
-import org.apache.tika.parser.txt.CharsetMatch;
+import org.mozilla.universalchardet.UniversalDetector;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.util.DocTrees;
@@ -134,23 +133,22 @@ public class FileHandler {
 		
 		if(charset==null) {
 			
+			UniversalDetector detector = new UniversalDetector(null);
+			
 			FileInputStream fis = new FileInputStream(files[0].getAbsolutePath());				
-			
+						
 			byte[] buf = new byte[4096];
-			
+						
 			int nread;
-			
-			do {
-				nread = fis.read(buf);
-			}while (nread > 0); 
-			
-			CharsetDetector cd = new CharsetDetector();
-			cd.setText(buf);
-		    CharsetMatch match = cd.detect();
-			
-			if(match.getName() != null && match.getConfidence() == 100) {
-				charset = Charset.forName(match.getName());
+			while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
+			detector.handleData(buf, 0, nread);
 			}
+			detector.dataEnd();
+			
+			if(detector.getDetectedCharset() != null) {
+				charset = Charset.forName(detector.getDetectedCharset());
+			}
+			
 		}
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
