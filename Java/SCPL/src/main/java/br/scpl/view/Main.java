@@ -1,5 +1,6 @@
 package br.scpl.view;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -59,6 +60,8 @@ public class Main {
 		}catch (ParameterException  e) {
 			log.error("Error: " + e.getLocalizedMessage());
 		    jc.usage();
+		} catch (IOException e) {
+			log.error("Error: " + e.getLocalizedMessage());
 		}
 	}
 }

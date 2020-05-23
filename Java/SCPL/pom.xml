@@ -5,15 +5,17 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>br.cefetrj.eic</groupId>
-  <artifactId>SCPL</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>SCPL</name>
-  <description>Source Code Pattern Language</description>
   
+  <modelVersion>4.0.0</modelVersion>
+  
+  <name>SCPL</name>
+  <artifactId>SCPL</artifactId>
+  <groupId>br.cefetrj.eic</groupId>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>Source Code Pattern Language</description>
+   	
   <build>
-  	<finalName>scpl</finalName>  		
+ 	<finalName>scpl</finalName>  		
 	<plugins>
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
@@ -35,12 +37,21 @@
 						<descriptorRefs>
 							<descriptorRef>jar-with-dependencies</descriptorRef>
 						</descriptorRefs>
-						<finalName>scpl</finalName>
 					</configuration>
 				</execution>
 			</executions>
 		</plugin>
 	</plugins>
+	<resources>
+		<resource>
+			<directory>src/main/resources</directory>
+			<filtering>true</filtering>
+		</resource>
+		<resource>
+			<directory>src/test/resources</directory>
+			<filtering>true</filtering>
+	    </resource>
+	</resources> 
   </build>
   
   <dependencies>
@@ -75,6 +86,5 @@
 		    <artifactId>juniversalchardet</artifactId>
 		    <version>1.0.3</version>
 		</dependency>
-				
 	</dependencies>
 </project>
