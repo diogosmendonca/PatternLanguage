@@ -76,6 +76,8 @@ public class View {
 			//FIXME Problema de retornar modifiers
 			retorno = retorno.stream().filter(x -> x.getNode().getKind() != Kind.MODIFIERS && x.getNode().getKind() != Kind.PRIMITIVE_TYPE).collect(Collectors.toList());
 			
+			log.debug(separator);
+			
 			for(Node r : retorno) {
 				r.setStartPosition(posCode.getStartPosition(r.getCompilatioUnitTree(), r.getNode()));
 				r.setEndPosition(posCode.getEndPosition(r.getCompilatioUnitTree(), r.getNode()));
@@ -90,11 +92,11 @@ public class View {
 				}
 				
 				log.info("Start: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
-				log.info("End: L: " +r.getEndLine() +" C: " +r.getEndColumn());
+				log.info("End: L: " +r.getEndLine() +" C: " +r.getEndColumn() +System.lineSeparator());
 				
 			}
 			
-			log.info(System.lineSeparator() +"Return size: " +retorno.size() +System.lineSeparator());
+			log.info("Found patterns: " +retorno.size() +System.lineSeparator());
 			return retorno;
 			
 		}catch(FileNotFoundException e) {
