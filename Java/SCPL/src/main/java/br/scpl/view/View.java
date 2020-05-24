@@ -41,20 +41,21 @@ public class View {
 	 * @return
 	 */	
 	public static List<Node> searchOcorrences(String pathCode, String pathPattern, Charset charset) {
+		
+		List<Node> retorno = new ArrayList<>();
+		
 		try {
 			
-			List<Node> retorno = new ArrayList<>();
 			
-			log.info(separator);
-			log.info("Start of file search.");
+			log.debug(separator);
+			log.debug("Start of file search.");
 			
 			PatternFolder patternFolder = FileHandler.getPatternFolder(pathPattern);
 	        
 			File[] filesCode = FileHandler.getFiles(pathCode);
 			
-			log.info(separator);
-			log.info("End of file search.");
-			log.info(separator);
+			log.debug(separator);
+			log.debug("End of file search.");
 			
 			CompilationUnitStruct compilationUnitStructCode = FileHandler.parserFileToCompilationUnit(filesCode, charset);
 			
@@ -70,7 +71,7 @@ public class View {
 			}
 			
 			//TODO editar saida do retorno (Arquivo, linhas e colunas)
-			String arquivoAtual = "";
+			String currentFile = "";
 			
 			//FIXME Problema de retornar modifiers
 			retorno = retorno.stream().filter(x -> x.getNode().getKind() != Kind.MODIFIERS && x.getNode().getKind() != Kind.PRIMITIVE_TYPE).collect(Collectors.toList());
@@ -79,32 +80,31 @@ public class View {
 				r.setStartPosition(posCode.getStartPosition(r.getCompilatioUnitTree(), r.getNode()));
 				r.setEndPosition(posCode.getEndPosition(r.getCompilatioUnitTree(), r.getNode()));
 				
-				if(!r.getFilePath().equals(arquivoAtual)) {
-					arquivoAtual = r.getFilePath();
-					System.out.println("\nFile: " +arquivoAtual);
+				if(!r.getFilePath().equals(currentFile)) {
+					currentFile = r.getFilePath();
+					log.info("File: " +currentFile);
 				}
 				
 				if(r.getReturnMessage() != null) {
-					System.out.println("Alert Message: " +r.getReturnMessage());
+					log.info("Alert Message: " +r.getReturnMessage());
 				}
 				
-				System.out.println("Start: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
-				System.out.println("End: L: " +r.getEndLine() +" C: " +r.getEndColumn());
+				log.info("Start: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
+				log.info("End: L: " +r.getEndLine() +" C: " +r.getEndColumn());
 				
 			}
 			
-			System.out.println();
-			System.out.println("Return size: " +retorno.size());
+			log.info(System.lineSeparator() +"Return size: " +retorno.size() +System.lineSeparator());
 			return retorno;
 			
 		}catch(FileNotFoundException e) {
 			log.error("Failed to find the file: " +e.getMessage());
 		}
 		catch(IOException e) {
-			System.out.println(e);
+			log.error("Error: " +e.getLocalizedMessage());
 		}
 		
-		return new ArrayList<>();
+		return retorno;
 	}
 	
 	public static List<Node> searchOcorrences(String pathCode, String pathPattern) {
@@ -146,19 +146,6 @@ public class View {
 					retorno.addAll(SearchController.subtree(rootCode, rootPattern));//;					
 				}
 				
-			}
-			
-			List<Node> returnFilter = Utils.filterReturnNodes(retorno);
-			
-			List<Node> listToRemoveFilter = Utils.filterReturnNodes(listToRemove);
-			
-			
-			if(returnFilter.size()>0) {
-				retorno = returnFilter;
-			}
-			
-			if(listToRemoveFilter.size()>0) {
-				listToRemove = listToRemoveFilter;
 			}
 			
 			List<Tree> treesToRemove =  listToRemove.stream().map(n -> n.getNode()).collect(Collectors.toList());

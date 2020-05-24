@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import org.apache.log4j.Logger;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.ExpressionTree;
@@ -17,6 +20,9 @@ import br.scpl.model.Node;
 import br.scpl.util.Utils;
 
 public class SearchController {
+	
+	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
+	private static Logger log = Logger.getLogger(SearchController.class);
 	
 	private static final Map<Integer,Map<Node,Node>> returnedNode = new LinkedHashMap<>();
 	private static Integer round = 0;
@@ -31,39 +37,53 @@ public class SearchController {
 	
 	public static List<Node> subtree(Node a, Node b) {
 		
+		log.debug(separator);
+		log.debug("Searching the pattern " +(b.getCompilatioUnitTree()).getSourceFile().getName()
+				+System.lineSeparator()
+				+" in source code file " +(a.getCompilatioUnitTree()).getSourceFile().getName());
+		
 		List<Node> ocorrences = new ArrayList<>();
 		
-		//Se os nós são iguais, a sub-árvore é toda a ávore
-		if(EqualsController.isEquals(a, b, new LinkedHashMap<>())) {
-			if(!b.getChangeOperator()) {
-				ocorrences.add(a);
-				if(b.getExists()) {
-					a.setFullVisited(true);
-					if(returnedNode.get(round) == null) {
-						Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
-						aux.put(b, a);
-						returnedNode.put(round, aux);
-					}else {
-						returnedNode.get(round).put(b, a);
+		try {
+			
+			//Se os nós são iguais, a sub-árvore é toda a ávore
+			if(EqualsController.isEquals(a, b, new LinkedHashMap<>())) {
+				if(!b.getChangeOperator()) {
+					ocorrences.add(a);
+					if(b.getExists()) {
+						a.setFullVisited(true);
+						if(returnedNode.get(round) == null) {
+							Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
+							aux.put(b, a);
+							returnedNode.put(round, aux);
+						}else {
+							returnedNode.get(round).put(b, a);
+						}
 					}
+					
+					ocorrences = Utils.getReturnNode(ocorrences);
+					return ocorrences;
 				}
-				return ocorrences;
 			}
+			
+			List<Node> childrenNodesAux = new ArrayList<Node>();
+			
+			do {
+				childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
+				if(ocorrences.containsAll(childrenNodesAux)) {
+					ocorrences = Utils.getReturnNode(ocorrences);
+					return ocorrences;
+				}
+				ocorrences.addAll(childrenNodesAux);
+				round++;
+			}while(childrenNodesAux.size() > 0);
+			
+			ocorrences = Utils.getReturnNode(ocorrences);
+			return ocorrences;
+		
+		}finally {
+			log.debug(System.lineSeparator() +"Found patterns in file: " +ocorrences.size());
 		}
-		
-		List<Node> childrenNodesAux = new ArrayList<Node>();
-		
-		do {
-			childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
-			if(ocorrences.containsAll(childrenNodesAux)) {
-				return ocorrences;
-			}
-			ocorrences.addAll(childrenNodesAux);
-			round++;
-		}while(childrenNodesAux.size() > 0);
-		
-		
-		return ocorrences;
 	}
 	
 

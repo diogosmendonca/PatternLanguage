@@ -39,7 +39,7 @@ public class Utils {
 		return true;
 	}
 	
-	public static List<Node> filterReturnNodes(List<Node> nodes) {
+	private static List<Node> filterReturnNodes(List<Node> nodes) {
 		
 		List<Node> retorno = new ArrayList<>();
 		
@@ -54,4 +54,16 @@ public class Utils {
 		
 		return retorno;
 	}
+	
+	public static List<Node> getReturnNode(List<Node> nodes){
+		
+		List<Node> retorno = Utils.filterReturnNodes(nodes);
+		
+		if(retorno.size()>0) {
+			nodes = retorno;
+		}
+		
+		return nodes;
+	}
+		
 }

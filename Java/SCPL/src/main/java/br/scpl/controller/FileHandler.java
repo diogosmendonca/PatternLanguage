@@ -93,27 +93,27 @@ public class FileHandler {
 	
 	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException{
 		PatternFolder folder = new PatternFolder();
-		log.info(separator);
-		log.info("Searching patterns files.");
+		log.debug(separator);
+		log.debug("Searching patterns files.");
 		if(!(new File(rootPath)).exists()){
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),folder);
-		log.info(separator);
-		log.info("Total files: " +folder.size());
+		log.debug(separator);
+		log.debug("Total files: " +folder.size());
 		return folder;
 	} 
 
 	public static File[] getFiles(String rootPath) throws FileNotFoundException {
 		List<File> files = new ArrayList<>();
-		log.info(separator);
-		log.info("Searching source code files.");
+		log.debug(separator);
+		log.debug("Searching source code files.");
 		if(!(new File(rootPath)).exists()){
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),files);
-		log.info(separator);
-		log.info("Total files: " +files.size());
+		log.debug(separator);
+		log.debug("Total files: " +files.size());
 		return files.isEmpty() ? null : files.toArray(new File[0]);
 	}
 	
@@ -126,9 +126,6 @@ public class FileHandler {
 	 * que contém um iterator de CompilationUnitTree e um onjsto SourcePositions(guarda as posições do nós)
 	 * @throws  
 	 */
-	
-
-	
 	public static CompilationUnitStruct parserFileToCompilationUnit(File[] files, Charset charset) throws IOException{
 		
 		if(charset==null) {

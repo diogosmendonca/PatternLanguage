@@ -2,8 +2,12 @@ package br.scpl.view;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.beust.jcommander.JCommander;
@@ -19,13 +23,11 @@ public class Main {
 		
 		CLIOptions cli = new CLIOptions();
 		
-		//List<String> test = Arrays.asList("search", "-c", "C:\\opt\\Projects\\sisgee\\sisgee", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java", "--charset", "UTF-8");
+		//List<String> test = Arrays.asList("--verbose", "search", "-c", "C:\\opt\\Projects\\sisgee\\sisgee", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java", "--charset", "UTF-8");
 		
-		//List<String> test = Arrays.asList("-h");
+		//List<String> test = Arrays.asList("--verbose");
 		
 		//args = test.toArray(new String[0]);
-		
-		log.debug("Parameters: " +Arrays.toString(args));
 		
 		JCommander jc = JCommander.newBuilder()
 				  .addObject(cli)
@@ -44,13 +46,24 @@ public class Main {
 			
 		});
 		
-		
 		try {
+		  
+		  jc.parse(args);
+		  
+		  if(cli.isVerbose()) {
+			  ((AppenderSkeleton)Logger.getRootLogger().getAppender("stdout"))
+			   .setThreshold(Level.DEBUG);
+		  }
+		  
+		  log.debug("Parameters: " +Arrays.toString(args));
+		  
 		  if(args.length == 0) {
 			  throw new ParameterException("Missing parameters");
 		  }
 		  
-		  jc.parse(args);
+		  if(jc.getParsedCommand() == null) {
+			  throw new ParameterException("Expected a command, got none");
+		  }
 		  
 		  Command command = (Command) jc.getCommands()
 				  .get(jc.getParsedCommand()).getObjects().get(0);
