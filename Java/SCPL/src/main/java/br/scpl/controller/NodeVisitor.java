@@ -288,12 +288,13 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			  }
 			  
 			for(Node node: commentExistsMap.keySet()) {
-			  Boolean exists = commentExistsMap.get(node);
-			  Node nodeParent = node.getParent();
-			  node.setExists(exists);
+				Boolean exists = commentExistsMap.get(node);
+			  	Node nodeParent = node.getParent();
+			  	node.setExists(exists);
 				if(nodeParent.getExists()!=exists) {
 					nodeParent.setChangeOperator(true);
-				}  
+				}
+				listChangePoints.add(node);
 			}
 			  
 			for(Node n : listToRemove) {
