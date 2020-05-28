@@ -508,14 +508,18 @@ public class AceitacaoTest {
 	}
 	
 	
-	@Ignore
     @Test 
     public void tc40() throws IOException {
   
     List<Node> retorno = View.searchOcorrences("./src/test/resources/AceitacaoFiles/TC40_Code.java"
     			,"./src/test/resources/AceitacaoFiles/TC40_Pattern.java");
   
-  		assertEquals(0, retorno.size()); 
+  		assertEquals(1, retorno.size());
+  		assertEquals(4, retorno.get(0).getStartLine());
+		assertEquals(13, retorno.get(0).getStartColumn());
+		assertEquals(4, retorno.get(0).getEndLine());
+		assertEquals(24, retorno.get(0).getEndColumn());
+  		
   	}
 	 
 	
