@@ -17,6 +17,7 @@ import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 
+import br.scpl.model.Issue;
 import br.scpl.model.Node;
 import br.scpl.util.StringUtil;
 
@@ -33,15 +34,17 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private Boolean isPattern;
 	  private final Map<Integer,String> alertMessagesMap;
 	  private final Map<Integer,Boolean> existsModifierMap;
+	  private final Map<Integer, Issue> issuesMap;
 	  private final Map<Node, Boolean> commentExistsMap;
 
-	  public NodeVisitor(Tree tree, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap, Boolean isPattern) {
+	  public NodeVisitor(Tree tree, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap, Map<Integer,Issue> issuesMap, Boolean isPattern) {
 		  this.sb = new StringBuilder();
 		this.indentLevel = 0;
 	    this.compilatioUnitTree = (CompilationUnitTree) tree;
 	    this.sourcePos = sourcePos;
 	    this.alertMessagesMap = alertMessagesMap;
 	    this.existsModifierMap = existsModifierMap;
+	    this.issuesMap = issuesMap;
 	    this.isPattern = isPattern;
 	    this.commentExistsMap = new LinkedHashMap<>();
 	  }
@@ -49,13 +52,17 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  public static Node build(Tree tree, SourcePositions sourcePos, Boolean isPattern) throws IOException {
 		Map<Integer,String> alertMessagesMap = new LinkedHashMap<>();
 		Map<Integer,Boolean> existsModifierMap = new LinkedHashMap<>();
+		Map<Integer,Issue> issuesMap = new LinkedHashMap<>();
 		
-		if(sourcePos != null) {
-			alertMessagesMap = StringUtil.extractAlertMessages(tree);
-			existsModifierMap = StringUtil.extractExistsOperator(tree);
+		if(isPattern) {
+			if(sourcePos != null) {
+				alertMessagesMap = StringUtil.extractAlertMessages(tree);
+				existsModifierMap = StringUtil.extractExistsOperator(tree);
+				issuesMap = StringUtil.extractIssue(tree);
+			}
 		}
-		  
-	    NodeVisitor nv = new NodeVisitor(tree, sourcePos, alertMessagesMap, existsModifierMap, isPattern);
+		
+	    NodeVisitor nv = new NodeVisitor(tree, sourcePos, alertMessagesMap, existsModifierMap, issuesMap, isPattern);
 	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
     	addInfos(nodes, isPattern, nv.commentExistsMap);	    	
@@ -93,6 +100,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
         	if(nodeParent != null) {
         		node.setIsToReturn(nodeParent.getIsToReturn());
         		node.setReturnMessage(nodeParent.getReturnMessage());
+        		node.setIssue(nodeParent.getIssue());
         		nodeParent.getChildren().add(node);
         	}
         	Node.getNodesMap().put(tree,node);
@@ -109,7 +117,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	        
 	        if(isPattern) {
 	        
-		        if(!alertMessagesMap.isEmpty() || !existsModifierMap.isEmpty()) {
+		        if(!alertMessagesMap.isEmpty() || !existsModifierMap.isEmpty() || !issuesMap.isEmpty()) {
 		        	node.setStartPosition(sourcePos.getStartPosition(node.getCompilatioUnitTree(), node.getNode()));
 					node.setEndPosition(sourcePos.getEndPosition(node.getCompilatioUnitTree(), node.getNode()));
 					
@@ -131,6 +139,17 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 						if(exists!=null) {
 							//extraido para depois do processamento dos labels
 							commentExistsMap.put(node, exists);
+						}
+					}
+					
+					if(!issuesMap.isEmpty()) {
+						Issue issue = issuesMap.remove(line);
+						
+						if(issue != null) {
+							node.setIsToReturn(true);
+							node.setReturnMessage(issue.getPrimaryLocation().getMessage());
+							node.setIssue(issue);
+							commentExistsMap.put(node, true);
 						}
 					}
 		        }

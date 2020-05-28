@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
@@ -23,7 +25,7 @@ import br.scpl.controller.SearchController;
 import br.scpl.model.CompilationUnitStruct;
 import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
-import br.scpl.util.Utils;
+import br.scpl.model.SonarQubeFormat;
 
 public class View {
 	
@@ -38,9 +40,10 @@ public class View {
 	 * @param pathCode Caminho da pasta com os arquivos de código-fonte alvos da busca
 	 * @param pathPattern Caminho da pasta com os arquivos da regras dos padrões buscados
 	 * @param charset Charset que será utilizado
+	 * @param format Formato de saída
 	 * @return
 	 */	
-	public static List<Node> searchOcorrences(String pathCode, String pathPattern, Charset charset) {
+	public static List<Node> searchOcorrences(String pathCode, String pathPattern, Charset charset, String format) {
 		
 		List<Node> retorno = new ArrayList<>();
 		
@@ -81,22 +84,49 @@ public class View {
 			for(Node r : retorno) {
 				r.setStartPosition(posCode.getStartPosition(r.getCompilatioUnitTree(), r.getNode()));
 				r.setEndPosition(posCode.getEndPosition(r.getCompilatioUnitTree(), r.getNode()));
-				
-				if(!r.getFilePath().equals(currentFile)) {
-					currentFile = r.getFilePath();
-					log.info("File: " +currentFile);
-				}
-				
-				if(r.getReturnMessage() != null) {
-					log.info("Alert Message: " +r.getReturnMessage());
-				}
-				
-				log.info("Start: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
-				log.info("End: L: " +r.getEndLine() +" C: " +r.getEndColumn() +System.lineSeparator());
-				
 			}
 			
-			log.info("Found patterns: " +retorno.size() +System.lineSeparator());
+			if(format != null) {
+				format = format.toLowerCase();
+				
+				switch(format) {
+				
+					case "sonarqube":
+						
+						SonarQubeFormat sonarQubeFormat = SonarQubeFormat.listNodeToSonarQubeFormat(retorno);
+						
+						Gson g = new GsonBuilder().setPrettyPrinting().create();
+	
+						String outputJson = g.toJson(sonarQubeFormat);
+						
+						log.info(outputJson);
+						
+						break;
+						
+					default:
+						log.error("Error: Unknow format");
+						break;
+				}
+				
+			}else {
+				for(Node r : retorno) {
+					
+					if(!r.getFilePath().equals(currentFile)) {
+						currentFile = r.getFilePath();
+						log.info("File: " +currentFile);
+					}
+					
+					if(r.getReturnMessage() != null) {
+						log.info("Alert Message: " +r.getReturnMessage());
+					}
+					
+					log.info("Start: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
+					log.info("End: L: " +r.getEndLine() +" C: " +r.getEndColumn() +System.lineSeparator());
+					
+				}
+				
+				log.info("Found patterns: " +retorno.size() +System.lineSeparator());
+			}
 			return retorno;
 			
 		}catch(FileNotFoundException e) {
@@ -110,7 +140,15 @@ public class View {
 	}
 	
 	public static List<Node> searchOcorrences(String pathCode, String pathPattern) {
-		return searchOcorrences(pathCode, pathPattern, null);
+		return searchOcorrences(pathCode, pathPattern, null, null);
+	}
+	
+	public static List<Node> searchOcorrences(String pathCode, String pathPattern, Charset charset) {
+		return searchOcorrences(pathCode, pathPattern, charset, null);
+	}
+	
+	public static List<Node> searchOcorrences(String pathCode, String pathPattern, String format) {
+		return searchOcorrences(pathCode, pathPattern, null, format);
 	}
 	
 	public static List<Node> searchOcorrencesFolder(Tree treeCode, PatternFolder pattern, Charset charset) throws IOException{

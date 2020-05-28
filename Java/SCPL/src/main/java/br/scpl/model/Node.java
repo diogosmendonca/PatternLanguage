@@ -24,6 +24,7 @@ public class Node {
 	private List<Node> notParents;
 	private Boolean isToReturn;
 	private String returnMessage;
+	private Issue issue;
 	private Map<Node, Integer> path = new LinkedHashMap<>();
 	private static final Map<Node,Node> cloneNodeMap = new LinkedHashMap<>();
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<Tree, Node>();
@@ -196,6 +197,14 @@ public class Node {
 
 	public void setReturnMessage(String returnMessage) {
 		this.returnMessage = returnMessage;
+	}
+	
+	public Issue getIssue() {
+		return issue;
+	}
+
+	public void setIssue(Issue issue) {
+		this.issue = issue;
 	}
 
 	public static Map<Tree, Node> getNodesMap() {

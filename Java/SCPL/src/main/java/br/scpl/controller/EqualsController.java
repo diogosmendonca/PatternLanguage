@@ -127,6 +127,7 @@ public class EqualsController {
 				if(b.getIsToReturn()) {
 					a.setIsToReturn(true);
 					a.setReturnMessage(b.getReturnMessage());
+					a.setIssue(b.getIssue());
 				}
 			}
 	    }
