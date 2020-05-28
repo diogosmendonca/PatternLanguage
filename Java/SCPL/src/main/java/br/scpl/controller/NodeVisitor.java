@@ -17,8 +17,8 @@ import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 
-import br.scpl.model.Issue;
 import br.scpl.model.Node;
+import br.scpl.model.sonarqube.Issue;
 import br.scpl.util.StringUtil;
 
 public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {

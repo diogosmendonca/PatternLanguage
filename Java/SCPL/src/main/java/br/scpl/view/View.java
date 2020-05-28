@@ -25,7 +25,7 @@ import br.scpl.controller.SearchController;
 import br.scpl.model.CompilationUnitStruct;
 import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
-import br.scpl.model.SonarQubeFormat;
+import br.scpl.model.sonarqube.SonarQubeFormat;
 
 public class View {
 	

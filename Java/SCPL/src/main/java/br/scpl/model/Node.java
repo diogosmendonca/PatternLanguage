@@ -10,6 +10,8 @@ import com.sun.source.tree.LineMap;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 
+import br.scpl.model.sonarqube.Issue;
+
 public class Node {
 	
 	private Node parent;

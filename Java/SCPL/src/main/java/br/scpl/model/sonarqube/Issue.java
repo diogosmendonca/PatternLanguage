@@ -1,4 +1,4 @@
-package br.scpl.model;
+package br.scpl.model.sonarqube;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,11 +10,11 @@ public class Issue {
     
 	private String ruleId;
 	
-	private Location primaryLocation;
-	
 	private String type;
 	
 	private String severity;
+	
+	private Location primaryLocation;
 	
 	private Integer effortMinutes;
 

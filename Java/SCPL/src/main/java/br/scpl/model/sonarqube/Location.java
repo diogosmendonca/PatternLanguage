@@ -1,4 +1,4 @@
-package br.scpl.model;
+package br.scpl.model.sonarqube;
 
 public class Location {
 	

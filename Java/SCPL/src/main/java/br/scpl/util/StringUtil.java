@@ -15,11 +15,11 @@ import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
 
 import br.scpl.controller.FileHandler;
-import br.scpl.model.Issue;
-import br.scpl.model.Location;
 import br.scpl.model.Node;
-import br.scpl.model.SonarQubeFormat;
-import br.scpl.model.TextRange;
+import br.scpl.model.sonarqube.Issue;
+import br.scpl.model.sonarqube.Location;
+import br.scpl.model.sonarqube.SonarQubeFormat;
+import br.scpl.model.sonarqube.TextRange;
 
 public class StringUtil {
 	

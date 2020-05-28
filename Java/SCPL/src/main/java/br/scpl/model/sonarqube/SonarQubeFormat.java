@@ -1,8 +1,10 @@
-package br.scpl.model;
+package br.scpl.model.sonarqube;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import br.scpl.model.Node;
 
 public class SonarQubeFormat {
 	
