@@ -44,8 +44,6 @@ public class SearchController {
 		
 		List<Node> ocorrences = new ArrayList<>();
 		
-		try {
-			
 			//Se os nós são iguais, a sub-árvore é toda a ávore
 			if(EqualsController.isEquals(a, b, new LinkedHashMap<>())) {
 				if(!b.getChangeOperator()) {
@@ -72,18 +70,15 @@ public class SearchController {
 				childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
 				if(ocorrences.containsAll(childrenNodesAux)) {
 					ocorrences = Utils.getReturnNode(ocorrences);
-					return ocorrences;
+					break;
+				}else {
+					ocorrences.addAll(childrenNodesAux);
+					round++;
 				}
-				ocorrences.addAll(childrenNodesAux);
-				round++;
 			}while(childrenNodesAux.size() > 0);
-			
-			ocorrences = Utils.getReturnNode(ocorrences);
-			return ocorrences;
 		
-		}finally {
-			log.debug(System.lineSeparator() +"Found patterns in file: " +ocorrences.size());
-		}
+		log.debug(System.lineSeparator() +"Found patterns in file: " +ocorrences.size());
+		return ocorrences;
 	}
 	
 
@@ -326,7 +321,6 @@ public class SearchController {
 				ocorrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap, path, limitPath));
 				if(ocorrences.size() > 0) {
 					
-					//FIXME pode dar problema no NOT
 					if(!b.getChangeOperator()) {
 						if(b.getExists()) {
 							path.put(a, counter);
