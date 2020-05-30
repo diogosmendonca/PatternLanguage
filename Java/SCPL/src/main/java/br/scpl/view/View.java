@@ -22,6 +22,7 @@ import com.sun.source.util.SourcePositions;
 import br.scpl.controller.FileHandler;
 import br.scpl.controller.NodeVisitor;
 import br.scpl.controller.SearchController;
+import br.scpl.exception.NoFilesFoundException;
 import br.scpl.model.CompilationUnit;
 import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
@@ -48,7 +49,6 @@ public class View {
 		List<Node> retorno = new ArrayList<>();
 		
 		try {
-			
 			
 			log.debug(separator);
 			log.debug("Start of file search.");
@@ -134,6 +134,8 @@ public class View {
 		}
 		catch(IOException e) {
 			log.error("Error: " +e.getLocalizedMessage());
+		} catch (NoFilesFoundException e) {
+			log.error(e.getLocalizedMessage());
 		}
 		
 		return retorno;

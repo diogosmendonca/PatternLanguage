@@ -26,6 +26,7 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
+import br.scpl.exception.NoFilesFoundException;
 import br.scpl.model.CompilationUnit;
 import br.scpl.model.PatternFolder;
 
@@ -91,7 +92,7 @@ public class FileHandler {
 		}
 	}
 	
-	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException{
+	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException, NoFilesFoundException{
 		PatternFolder folder = new PatternFolder();
 		log.debug(separator);
 		log.debug("Searching patterns files.");
@@ -101,10 +102,13 @@ public class FileHandler {
 		browseFiles(new File(rootPath),folder);
 		log.debug(separator);
 		log.debug("Total files: " +folder.size());
+		if(folder.size()==0) {
+			throw new NoFilesFoundException(rootPath);
+		}
 		return folder;
 	} 
 
-	public static File[] getFiles(String rootPath) throws FileNotFoundException {
+	public static File[] getFiles(String rootPath) throws FileNotFoundException, NoFilesFoundException {
 		List<File> files = new ArrayList<>();
 		log.debug(separator);
 		log.debug("Searching source code files.");
@@ -114,7 +118,10 @@ public class FileHandler {
 		browseFiles(new File(rootPath),files);
 		log.debug(separator);
 		log.debug("Total files: " +files.size());
-		return files.isEmpty() ? null : files.toArray(new File[0]);
+		if(files.size()==0) {
+			throw new NoFilesFoundException(rootPath);
+		}
+		return files.toArray(new File[0]);
 	}
 	
 	/**
