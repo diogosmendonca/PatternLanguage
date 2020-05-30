@@ -25,6 +25,10 @@ import com.sun.source.tree.VariableTree;
 
 import br.scpl.model.Node;
 
+ /**
+ * @author Denis
+ */
+
 class EqualsController {
 	
 	private static final ResourceBundle wildcards = ResourceBundle.getBundle("wildcards");
@@ -43,13 +47,12 @@ class EqualsController {
 	
 	
 	/***
-	 * Recebe duas árvores e um mapa com os wildcard já utilizados.
-	 * Retorna um booleano que indica se as duas árvores são iguais.
+	 * Gets two trees and says if the both are equals.
 	 * 
-	 * @param a Árvore do código-fonte alvo
-	 * @param b Árvore do padrão buscado
-	 * @param wildcardsMap Mapa de wildcards
-	 * @return Se duas árvores são iguais 
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
+	 * @param wildcardsMap Map for wildcard mapping.
+	 * @return Boolean that indicates if the trees are equals. 
 	 */
 	
 	public static boolean isEquals(Node a, Node b, Map<String, String> wildcardsMap) {
@@ -93,7 +96,6 @@ class EqualsController {
 					return retorno;
 				}
 				
-				//FIXME REPENSAR
 				if(b.getNode().getKind() == Kind.IDENTIFIER) {
 					retorno = isAnyExpression(b);
 					return retorno;
@@ -135,14 +137,13 @@ class EqualsController {
 	
 	
 	/***
-	 * Recebe duas árvores e um mapa com os wildcard já utilizados.
-	 * Faz as comparações básicas, verifica se são nulos e se o tipo e nome são iguais.
-	 * Retorna booleano que indica se passou em todas as comparações básicas.
 	 * 
-	 * @param a Árvore do código-fonte alvo
-	 * @param b Árvore do padrão buscado
-	 * @param wildcardsMap Mapa de wildcards
-	 * @return booleano que indica se passou em todas as comparações básicas
+	 * Gets two trees and says if the both roots informations are equals (kind, name and value).
+	 * 
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
+	 * @param wildcardsMap Map for wildcard mapping.
+	 * @return Boolean that indicates if the trees roots are equals.
 	 */
 	
 	public static boolean basicComparation(Node a, Node b, Map<String, String> wildcardsMap) {		
@@ -178,12 +179,14 @@ class EqualsController {
 	
 	/**
 	 * 
-	 * Realiza a comparação do nome dos nós passados, de acordo com o tipo do nó.
+	 * Get two nodes and verify if the name of both is equals.
+	 * Used for name of variables, methods, classes and modifiers.
 	 * 
-	 * @param node1 Árvore do código-fonte alvo
-	 * @param node2 Árvore do padrão buscado
-	 * @param wildcardsMap Mapa de wildcards
-	 * @return booleano que indica se os nós possuem o mesmo nome
+	 * @param node1 Node representing the source code tree.
+	 * @param node2 Node representing the pattern tree.
+	 * @param flagAny Flag that indicates if the any wildcard is being used. 
+	 * @param wildcardsMap Map for wildcard mapping.
+	 * @return Boolean that indicates if the name of nodes are equals.
 	 */
 	
 	private static boolean compareName(Node node1, Node node2, boolean flagAny, Map<String, String> wildcardsMap) {
@@ -366,6 +369,14 @@ class EqualsController {
 		
 	}
 	
+	
+	/**
+	 * Special equals method for equality of nodes of modifier kind.  
+	 * 
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
+	 * @return Boolean that indicates if two modifier nodes are equals.
+	 */
 	private static boolean equalsModifier(Node a, Node b) {
 		
 		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
@@ -399,6 +410,16 @@ class EqualsController {
 		return false;
 	}
 	
+	
+	/**
+	 * Method used when a method tree equality fails. 
+	 * Checks if wildcard is being used in the method and performs equality correctly.
+	 * 
+	 * @param node1 Node representing the source code tree.
+	 * @param node2 Node representing the pattern tree.
+	 * @param wildcardsMap Map for wildcard mapping.
+	 * @return Boolean that indicates if wildcard is being used and the methods are equals.
+	 */
 	private static boolean anyMethod(Node a, Node b, Map<String, String> wildcardsMap) {
 		
 		MethodTree methodPattern = (MethodTree)b.getNode();
@@ -445,11 +466,25 @@ class EqualsController {
 		return false;
 	}
 	
+	/**
+	 * Verify if the parameter of the method tree uses any wildcard.
+	 * 
+	 * @param node Node representing the source code tree.
+	 * @return Boolean that indicates if wildcard is being used in the parameter of the method tree.
+	 */
+	
 	public static boolean isAnyParameter(Node node) {
 		MethodTree methodPattern = (MethodTree)node.getNode();
 		
 		return methodPattern.getParameters().stream().anyMatch(x -> x.toString().startsWith(anyParameter));
 	}
+	
+	/**
+	 * Verify if the throws clause of the method tree uses any wildcard.
+	 * 
+	 * @param node Node representing the source code tree.
+	 * @return Boolean that indicates if wildcard is being used in throws clause of the method tree.
+	 */
 	
 	public static boolean isAnyThrows(Node node) {
 		MethodTree methodPattern = (MethodTree)node.getNode();
@@ -457,6 +492,12 @@ class EqualsController {
 		return methodPattern.getThrows().stream().anyMatch(x -> x.toString().startsWith(anyException));
 	}
 	
+	/**
+	 * Verify if the identifier tree uses any wildcard.
+	 * 
+	 * @param node Node representing the source code tree.
+	 * @return Boolean that indicates if wildcard is being used in identifier tree uses any wildcard.
+	 */
 	private static boolean isAnyExpression(Node node) {
 		
 		IdentifierTree identifier = (IdentifierTree)node.getNode();
@@ -464,6 +505,12 @@ class EqualsController {
 		return identifier.getName().toString().startsWith(anyExpression);
 	}
 	
+	/**
+	 * Verify if the modifier tree uses any wildcard.
+	 * 
+	 * @param node Node representing the source code tree.
+	 * @return Boolean that indicates if wildcard is being used in modifier tree uses any wildcard.
+	 */
 	public static boolean isAnyModifier(Node node) {
 		
 		switch(node.getNode().getKind()) {
@@ -486,6 +533,13 @@ class EqualsController {
 		
 		return false;
 	}
+	
+	/**
+	 * Verify if the argument of the method invocation tree uses any wildcard.
+	 * 
+	 * @param node Node representing the source code tree.
+	 * @return Boolean that indicates if wildcard is being used in the argument of the method invocation.
+	 */
 	
 	private static boolean anyArgument(Node a, Node b, Map<String, String> wildcardsMap) {
 		
@@ -528,6 +582,18 @@ class EqualsController {
 		return false;
 	}
 	
+	/**
+	 * 
+	 * Get two nodes and verify if the value of both is equals.
+	 * Used for value of literal kinds (int, float, double, boolean, char and string).
+	 * 
+	 * @param node1 Node representing the source code tree.
+	 * @param node2 Node representing the pattern tree.
+	 * @param flagAny Flag that indicates if the any wildcard is being used. 
+	 * @param wildcardsMap Map for wildcar mapping.
+	 * @return Boolean that indicates if the value of nodes are equals.
+	 */
+	
 	private static boolean compareValue(Node node1, Node node2, boolean flagAny, Map<String, String> wildcardsMap) {
 		
 		if(flagAny) {
@@ -547,6 +613,15 @@ class EqualsController {
 		return true;
 	}
 	
+	/**
+	 * Gets two trees and says if the both are partially equals. If is subtree, but the root have be equals.
+	 * 
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
+	 * @param wildcardsMap Map for wildcard mapping.
+	 * @return Boolean that indicates if the trees are partially equals.
+	 */
+	
 	public static boolean partialEquals(Node a, Node b, Map<String, String> wildcardsMap) {
 			
 		if(equalsModifier(a,b)) {
@@ -557,7 +632,6 @@ class EqualsController {
 			return false;
 		}
 		
-		//Verifica se as árvores tem o mesmo número de filhos
 		if(a.getChildren().size()!=b.getChildren().size()) {
 			
 			if(b.getNode().getKind() == Kind.METHOD) {
@@ -568,7 +642,6 @@ class EqualsController {
 				return anyArgument(a, b, wildcardsMap);
 			}
 			
-			//FIXME REPENSAR
 			if(b.getNode().getKind() == Kind.IDENTIFIER) {
 				return isAnyExpression(b);
 			}

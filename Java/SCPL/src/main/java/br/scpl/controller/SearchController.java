@@ -35,8 +35,8 @@ class SearchController {
 	/**
 	 * Checks whether a tree is subtree of another and returns all occurrences.
 	 * 
-	 * @param a Source code tree
-	 * @param b Pattern tree
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
 	 * @return List of pattern occurrences in the source code 
 	 */
 	
@@ -91,7 +91,7 @@ class SearchController {
 	 * 
 	 * @param a Node representing the source code tree.
 	 * @param b Node representing the pattern tree.
-	 * @param wildcardsMap Map for wildcar mapping.
+	 * @param wildcardsMap Map for wildcard mapping.
 	 * @param path Map that stores the current path in the tree, through the child list indexes.
 	 * @param limitPath Map that stores the limit path in current search, through the child list indexes.
 	 * @return All nodes that make up the occurrence of a pattern.
@@ -281,7 +281,7 @@ class SearchController {
 	 * 
 	 * @param a Node representing the source code tree.
 	 * @param b Node representing the pattern tree.
-	 * @param wildcardsMap Map for wildcar mapping.
+	 * @param wildcardsMap Map for wildcard mapping.
 	 * @param path Map that stores the current path in the tree, through the child list indexes.
 	 * @param limitPath Map that stores the limit path in current search, through the child list indexes.
 	 * @return Returns only the first occurrence of the subtree.
@@ -371,7 +371,7 @@ class SearchController {
 	 * 
 	 * @param a Node representing the source code tree.
 	 * @param b Node representing the pattern tree.
-	 * @param wildcardsMap Map for wildcar mapping.
+	 * @param wildcardsMap Map for wildcard mapping.
 	 * @return  boolean that indicating whether it satisfies or not.
 	 */
 	
