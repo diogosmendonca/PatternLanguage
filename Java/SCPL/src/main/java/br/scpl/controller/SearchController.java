@@ -1,6 +1,7 @@
 package br.scpl.controller;
 
 import java.util.ArrayList;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,10 @@ import com.sun.source.tree.VariableTree;
 import br.scpl.model.Node;
 import br.scpl.util.Utils;
 
+/**
+ * @author Denis
+ */
+
 class SearchController {
 	
 	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
@@ -28,11 +33,11 @@ class SearchController {
 	private static Integer round = 0;
 	
 	/**
-	 * Verifica se uma árvore é sub árvore de outra e retorna todas as ocorrências
+	 * Checks whether a tree is subtree of another and returns all occurrences.
 	 * 
-	 * @param a Árvore do código-fonte alvo
-	 * @param b Árvore do padrão buscado
-	 * @return Lista das ocorrências do padrão no código-fonte 
+	 * @param a Source code tree
+	 * @param b Pattern tree
+	 * @return List of pattern occurrences in the source code 
 	 */
 	
 	public static List<Node> subtree(Node a, Node b) {
@@ -66,7 +71,7 @@ class SearchController {
 			List<Node> childrenNodesAux = new ArrayList<Node>();
 			
 			do {
-				childrenNodesAux = searchChildren(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
+				childrenNodesAux = search(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
 				if(ocorrences.containsAll(childrenNodesAux)) {
 					ocorrences = Utils.getReturnNode(ocorrences);
 					break;
@@ -80,8 +85,19 @@ class SearchController {
 		return ocorrences;
 	}
 	
+	/**
+	 * Manages the search for patterns by calling the subtreeFirstOcorrence function for each child node 
+	 * and get an occurrence of an entire pattern.  
+	 * 
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
+	 * @param wildcardsMap Map for wildcar mapping.
+	 * @param path Map that stores the current path in the tree, through the child list indexes.
+	 * @param limitPath Map that stores the limit path in current search, through the child list indexes.
+	 * @return All nodes that make up the occurrence of a pattern.
+	 */
 
-	private static List<Node> searchChildren(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
+	private static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
 		//Lista de ocorrências do padrão
 		List<Node> ocorrences = new ArrayList<>();
@@ -188,7 +204,7 @@ class SearchController {
 					if(!a.getChildren().get(counter).getFullVisited()) {
 						//Se é igual é adicionado a lista de ocorrencias auxiliar 
 						
-						subtreeAux = search(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap, path, limitPath);
+						subtreeAux = subtreeFirstOcorrence(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap, path, limitPath);
 						
 						
 						if(subtreeAux.size() > 0) {
@@ -259,6 +275,18 @@ class SearchController {
 		return ocorrences;
 	}
 	
+	/***
+	 * Do a subtree search, but only return the first ocorrence.
+	 * Go through the entire tree recursively looking for an equal tree.
+	 * 
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
+	 * @param wildcardsMap Map for wildcar mapping.
+	 * @param path Map that stores the current path in the tree, through the child list indexes.
+	 * @param limitPath Map that stores the limit path in current search, through the child list indexes.
+	 * @return Returns only the first occurrence of the subtree.
+	 */
+	
 	private static List<Node> subtreeFirstOcorrence(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath){
 		
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
@@ -296,7 +324,7 @@ class SearchController {
 		limitPath.clear();
 		limitPath.putAll(limitPathOld);
 		
-		ocorrences.addAll(searchChildren(a, b, wildcardsMap, path, limitPath));
+		ocorrences.addAll(search(a, b, wildcardsMap, path, limitPath));
 		
 		if(ocorrences.size() > 0) {
 			return ocorrences;
@@ -337,10 +365,15 @@ class SearchController {
 		return ocorrences;
 	}
 
-	private static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
-		
-		return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
-	}
+	/**
+	 * Checks whether the corresponding node meets the 
+	 * scope conditions that the node cannot be.
+	 * 
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
+	 * @param wildcardsMap Map for wildcar mapping.
+	 * @return  boolean that indicating whether it satisfies or not.
+	 */
 	
 	private static boolean verifyNotParent(Node a, Node b, Map<String, String> wildcardsMap) {
 		

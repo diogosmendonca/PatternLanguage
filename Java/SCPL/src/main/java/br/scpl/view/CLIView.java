@@ -5,13 +5,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.source.tree.CompilationUnitTree;
@@ -33,167 +38,65 @@ public class CLIView {
 
 	private static Logger log = Logger.getLogger(CLIView.class);
 	
-	/**
-	 * Recebe o path da pasta do código-fonte alvo e a pasta com os padrões buscados.
-	 * Retorna as ocorrências dos padrões em cada arquivo de código-fonte
-	 * 
-	 * @param pathCode Caminho da pasta com os arquivos de código-fonte alvos da busca
-	 * @param pathPattern Caminho da pasta com os arquivos da regras dos padrões buscados
-	 * @param charset Charset que será utilizado
-	 * @param format Formato de saída
-	 * @return
-	 */	
-	public static List<Node> searchOcorrences(String pathCode, String pathPattern, Charset charset, String format) {
-		
-		List<Node> retorno = new ArrayList<>();
-		
-		try {
-			
-			log.debug(separator);
-			log.debug("Start of file search.");
-			
-			PatternFolder patternFolder = FileHandler.getPatternFolder(pathPattern);
-	        
-			File[] filesCode = FileHandler.getFiles(pathCode);
-			
-			log.debug(separator);
-			log.debug("End of file search.");
-			
-			CompilationUnit compilationUnitStructCode = FileHandler.parserFileToCompilationUnit(filesCode, charset);
-			
-			Iterator<? extends CompilationUnitTree> compilationUnitsCode = compilationUnitStructCode.getCompilationUnitTree();
-			
-			SourcePositions posCode = compilationUnitStructCode.getPos();
-			
-			while(compilationUnitsCode.hasNext()) {
-				
-				CompilationUnitTree treeCode = compilationUnitsCode.next();
-				
-				retorno.addAll(searchOcorrencesFolder(treeCode,patternFolder));
-			}
-			
-			String currentFile = "";
-			
-			//FIXME Problema de retornar modifiers
-			retorno = retorno.stream().filter(x -> x.getNode().getKind() != Kind.MODIFIERS && x.getNode().getKind() != Kind.PRIMITIVE_TYPE).collect(Collectors.toList());
-			
-			log.debug(separator);
-			
-			for(Node r : retorno) {
-				r.setStartPosition(posCode.getStartPosition(r.getCompilatioUnitTree(), r.getNode()));
-				r.setEndPosition(posCode.getEndPosition(r.getCompilatioUnitTree(), r.getNode()));
-			}
-			
-			if(format != null) {
-				format = format.toLowerCase();
-				
-				switch(format) {
-				
-					case "sonarqube":
-						
-						SonarQubeFormat sonarQubeFormat = SonarQubeFormat.listNodeToSonarQubeFormat(retorno);
-						
-						Gson g = new GsonBuilder().setPrettyPrinting().create();
 	
-						String outputJson = g.toJson(sonarQubeFormat);
-						
-						log.info(outputJson);
-						
-						break;
-						
-					default:
-						log.error("Error: Unknow format");
-						break;
-				}
+	public static void parserCLI(String[] args) {
+		
+		CLIOptions cli = new CLIOptions();
+		
+		//List<String> test = Arrays.asList("--verbose", "search", "-c", "C:\\opt\\Projects\\sisgee\\sisgee", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java", "--charset", "UTF-8");
+		
+		//List<String> test = Arrays.asList("--verbose");
+		
+		//args = test.toArray(new String[0]);
+		
+		JCommander jc = JCommander.newBuilder()
+				  .addObject(cli)
+				  .build();
+		
+		Command.command.forEach((key,value) ->{
+			
+			String[] alias = Command.commandAlias.get(key);
+			
+			if(alias != null) {
+				jc.addCommand(key, value, alias);
 				
 			}else {
-				for(Node r : retorno) {
-					
-					if(!r.getFilePath().equals(currentFile)) {
-						currentFile = r.getFilePath();
-						log.info("File: " +currentFile);
-					}
-					
-					if(r.getReturnMessage() != null) {
-						log.info("Alert Message: " +r.getReturnMessage());
-					}
-					
-					log.info("Start: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
-					log.info("End: L: " +r.getEndLine() +" C: " +r.getEndColumn() +System.lineSeparator());
-					
-				}
-				
-				log.info("Found patterns: " +retorno.size() +System.lineSeparator());
-			}
-			return retorno;
-			
-		}catch(FileNotFoundException e) {
-			log.error("Failed to find the file: " +e.getMessage());
-		}
-		catch(IOException e) {
-			log.error("Error: " +e.getLocalizedMessage());
-		} catch (NoFilesFoundException e) {
-			log.error(e.getLocalizedMessage());
-		}
-		
-		return retorno;
-	}
-	
-	public static List<Node> searchOcorrences(String pathCode, String pathPattern) {
-		return searchOcorrences(pathCode, pathPattern, null, null);
-	}
-	
-	public static List<Node> searchOcorrences(String pathCode, String pathPattern, Charset charset) {
-		return searchOcorrences(pathCode, pathPattern, charset, null);
-	}
-	
-	public static List<Node> searchOcorrences(String pathCode, String pathPattern, String format) {
-		return searchOcorrences(pathCode, pathPattern, null, format);
-	}
-	
-	public static List<Node> searchOcorrencesFolder(CompilationUnitTree treeCode, PatternFolder pattern, Charset charset) throws IOException{
-		List<Node> retorno = new ArrayList<>();
-		
-		for(PatternFolder folder : pattern.getFolders()) {
-			retorno.addAll(searchOcorrencesFolder(treeCode, folder, charset));
-		}
-		
-		if(pattern.getFiles().size() > 0) {
-			
-			File[] filesPatterns = pattern.getFiles().toArray(new File[0]);
-			
-			CompilationUnit compilationUnitStructPattern = FileHandler.parserFileToCompilationUnit(filesPatterns, charset);
-			
-			Iterator<? extends CompilationUnitTree> compilationUnitsPattern = compilationUnitStructPattern.getCompilationUnitTree();
-			
-			SourcePositions posPattern = compilationUnitStructPattern.getPos();
-			
-			List<Node> listToRemove = new ArrayList<>();
-			
-			while(compilationUnitsPattern.hasNext()) {
-				
-				CompilationUnitTree treePattern = compilationUnitsPattern.next();
-				
-				String fileName = treePattern.getSourceFile().getName().toUpperCase();
-				
-				if(fileName.endsWith("EXCLUDE.JAVA")){
-					listToRemove.addAll(ControllerFacade.searchOcorrences(treeCode, treePattern, posPattern));
-				}else {
-					retorno.addAll(ControllerFacade.searchOcorrences(treeCode, treePattern, posPattern));					
-				}
-				
+				jc.addCommand(key,value);
 			}
 			
-			List<Tree> treesToRemove =  listToRemove.stream().map(n -> n.getNode()).collect(Collectors.toList());
-			
-			retorno = retorno.stream().filter(r -> !(treesToRemove.contains(r.getNode()))).collect(Collectors.toList());
-			
-		}
+		});
 		
-		return retorno;
+		try {
+		  
+		  jc.parse(args);
+		  
+		  if(cli.isVerbose()) {
+			  ((AppenderSkeleton)Logger.getRootLogger().getAppender("stdout"))
+			   .setThreshold(Level.DEBUG);
+		  }
+		  
+		  log.debug("Parameters: " +Arrays.toString(args));
+		  
+		  if(args.length == 0) {
+			  throw new ParameterException("Missing parameters");
+		  }
+		  
+		  if(jc.getParsedCommand() == null) {
+			  throw new ParameterException("Expected a command, got none");
+		  }
+		  
+		  Command command = (Command) jc.getCommands()
+				  .get(jc.getParsedCommand()).getObjects().get(0);
+		  
+		  command.execute(jc);
+			  
+		}catch (ParameterException  e) {
+			log.error("Error: " + e.getLocalizedMessage());
+		    jc.usage();
+		} catch (IOException e) {
+			log.error("Error: " + e.getLocalizedMessage());
+		}
 	}
 	
-	public static List<Node> searchOcorrencesFolder(CompilationUnitTree treeCode, PatternFolder pattern) throws IOException{
-		return searchOcorrencesFolder(treeCode, pattern, null);
-	}
+	
 }
