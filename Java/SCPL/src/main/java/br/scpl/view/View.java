@@ -22,7 +22,7 @@ import com.sun.source.util.SourcePositions;
 import br.scpl.controller.FileHandler;
 import br.scpl.controller.NodeVisitor;
 import br.scpl.controller.SearchController;
-import br.scpl.model.CompilationUnitStruct;
+import br.scpl.model.CompilationUnit;
 import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
 import br.scpl.model.sonarqube.SonarQubeFormat;
@@ -60,7 +60,7 @@ public class View {
 			log.debug(separator);
 			log.debug("End of file search.");
 			
-			CompilationUnitStruct compilationUnitStructCode = FileHandler.parserFileToCompilationUnit(filesCode, charset);
+			CompilationUnit compilationUnitStructCode = FileHandler.parserFileToCompilationUnit(filesCode, charset);
 			
 			Iterator<? extends CompilationUnitTree> compilationUnitsCode = compilationUnitStructCode.getCompilationUnitTree();
 			
@@ -162,7 +162,7 @@ public class View {
 			
 			File[] filesPatterns = pattern.getFiles().toArray(new File[0]);
 			
-			CompilationUnitStruct compilationUnitStructPattern = FileHandler.parserFileToCompilationUnit(filesPatterns, charset);
+			CompilationUnit compilationUnitStructPattern = FileHandler.parserFileToCompilationUnit(filesPatterns, charset);
 			
 			Iterator<? extends CompilationUnitTree> compilationUnitsPattern = compilationUnitStructPattern.getCompilationUnitTree();
 			

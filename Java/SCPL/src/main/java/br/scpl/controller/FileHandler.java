@@ -26,7 +26,7 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
-import br.scpl.model.CompilationUnitStruct;
+import br.scpl.model.CompilationUnit;
 import br.scpl.model.PatternFolder;
 
 public class FileHandler {
@@ -126,7 +126,7 @@ public class FileHandler {
 	 * que contém um iterator de CompilationUnitTree e um onjsto SourcePositions(guarda as posições do nós)
 	 * @throws  
 	 */
-	public static CompilationUnitStruct parserFileToCompilationUnit(File[] files, Charset charset) throws IOException{
+	public static CompilationUnit parserFileToCompilationUnit(File[] files, Charset charset) throws IOException{
 		
 		if(charset==null) {
 			
@@ -160,7 +160,7 @@ public class FileHandler {
 		Iterable<? extends CompilationUnitTree> compilationUnitTrees = javacTask.parse();
 		Iterator<? extends CompilationUnitTree> iter = compilationUnitTrees.iterator();
 			
-		return new CompilationUnitStruct(iter,pos,docTrees);
+		return new CompilationUnit(iter,pos,docTrees);
 	}
 	
 	public static String getStringContent(JavaFileObject sourceFile) throws IOException {
