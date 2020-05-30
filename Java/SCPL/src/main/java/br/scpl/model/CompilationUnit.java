@@ -26,8 +26,4 @@ public class CompilationUnit {
 		return pos;
 	}
 
-	public DocTrees getDoctrees() {
-		return doctrees;
-	}
-
 }

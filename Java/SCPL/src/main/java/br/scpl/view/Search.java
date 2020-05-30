@@ -28,6 +28,6 @@ public class Search extends JCommander implements Command<List<Node>>{
 	@Override
 	public List<Node> execute(JCommander jc) {
 		
- 		return View.searchOcorrences(code,pattern, charset,format);
+ 		return CLIView.searchOcorrences(code,pattern, charset,format);
 	}
 }

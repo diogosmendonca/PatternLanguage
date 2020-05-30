@@ -19,7 +19,7 @@ import com.sun.source.tree.VariableTree;
 import br.scpl.model.Node;
 import br.scpl.util.Utils;
 
-public class SearchController {
+class SearchController {
 	
 	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
 	private static Logger log = Logger.getLogger(SearchController.class);
@@ -38,9 +38,8 @@ public class SearchController {
 	public static List<Node> subtree(Node a, Node b) {
 		
 		log.debug(separator);
-		log.debug("Searching the pattern " +(b.getCompilatioUnitTree()).getSourceFile().getName()
-				+System.lineSeparator()
-				+" in source code file " +(a.getCompilatioUnitTree()).getSourceFile().getName());
+		log.debug("Searching the pattern " +(b.getCompilatioUnitTree()).getSourceFile().getName());
+		log.debug(" in source code file " +(a.getCompilatioUnitTree()).getSourceFile().getName());
 		
 		List<Node> ocorrences = new ArrayList<>();
 		
@@ -76,8 +75,8 @@ public class SearchController {
 					round++;
 				}
 			}while(childrenNodesAux.size() > 0);
-		
-		log.debug(System.lineSeparator() +"Found patterns in file: " +ocorrences.size());
+		System.out.println();
+		log.debug("Found patterns in file: " +ocorrences.size());
 		return ocorrences;
 	}
 	
@@ -139,7 +138,7 @@ public class SearchController {
 		}
 		
 		
-		if(!Utils.verifyNotParent(a, b, wildcardsMap)) {
+		if(!verifyNotParent(a, b, wildcardsMap)) {
 			return ocorrences;
 		}
 		
@@ -276,7 +275,7 @@ public class SearchController {
 		//Se os nós são iguais, a sub-árvore é toda a ávore
 		if(EqualsController.isEquals(a, b, wildcardsMap)) {
 			if(!b.getChangeOperator()) {
-				if(Utils.verifyNotParent(a, b, wildcardsMap)){
+				if(verifyNotParent(a, b, wildcardsMap)){
 					ocorrences.add(a);
 					if(b.getExists()) {
 						a.setFullVisited(true);
@@ -338,8 +337,30 @@ public class SearchController {
 		return ocorrences;
 	}
 
-	public static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
+	private static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
 		return subtreeFirstOcorrence(a, b, wildcardsMap, path, limitPath);
+	}
+	
+	private static boolean verifyNotParent(Node a, Node b, Map<String, String> wildcardsMap) {
+		
+		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
+		wildcardsMapBefore.putAll(wildcardsMap);
+		
+		for(Node notParent: b.getNotParents()) {
+			
+			Node parentAux = a.getParent();
+			
+			while(parentAux!=null) {
+				Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
+				wildcardsMapAux.putAll(wildcardsMapBefore);
+				if(EqualsController.partialEquals(parentAux,notParent, wildcardsMapAux)) {
+					return false;
+				}
+				parentAux = parentAux.getParent();
+			}
+		}
+		
+		return true;
 	}
 }

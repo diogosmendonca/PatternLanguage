@@ -17,19 +17,12 @@ public class PatternFolder {
 	public List<PatternFolder> getFolders() {
 		return folders;
 	}
-	public void setFolders(List<PatternFolder> folders) {
-		this.folders = folders;
-	}
+
 	public List<File> getFiles() {
 		return files;
 	}
 
-	public void setFiles(List<File> files) {
-		this.files = files;
-	}
-
 	public int size() {
-		
 		return files.size() + folders.stream().mapToInt(f -> f.size()).sum();
 	}
 	

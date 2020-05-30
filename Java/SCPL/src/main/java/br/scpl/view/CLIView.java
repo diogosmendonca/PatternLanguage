@@ -19,20 +19,19 @@ import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.SourcePositions;
 
+import br.scpl.controller.ControllerFacade;
 import br.scpl.controller.FileHandler;
-import br.scpl.controller.NodeVisitor;
-import br.scpl.controller.SearchController;
 import br.scpl.exception.NoFilesFoundException;
 import br.scpl.model.CompilationUnit;
 import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
 import br.scpl.model.sonarqube.SonarQubeFormat;
 
-public class View {
+public class CLIView {
 	
 	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
 
-	private static Logger log = Logger.getLogger(View.class);
+	private static Logger log = Logger.getLogger(CLIView.class);
 	
 	/**
 	 * Recebe o path da pasta do código-fonte alvo e a pasta com os padrões buscados.
@@ -68,12 +67,11 @@ public class View {
 			
 			while(compilationUnitsCode.hasNext()) {
 				
-				Tree treeCode = compilationUnitsCode.next();
+				CompilationUnitTree treeCode = compilationUnitsCode.next();
 				
 				retorno.addAll(searchOcorrencesFolder(treeCode,patternFolder));
 			}
 			
-			//TODO editar saida do retorno (Arquivo, linhas e colunas)
 			String currentFile = "";
 			
 			//FIXME Problema de retornar modifiers
@@ -153,7 +151,7 @@ public class View {
 		return searchOcorrences(pathCode, pathPattern, null, format);
 	}
 	
-	public static List<Node> searchOcorrencesFolder(Tree treeCode, PatternFolder pattern, Charset charset) throws IOException{
+	public static List<Node> searchOcorrencesFolder(CompilationUnitTree treeCode, PatternFolder pattern, Charset charset) throws IOException{
 		List<Node> retorno = new ArrayList<>();
 		
 		for(PatternFolder folder : pattern.getFolders()) {
@@ -174,18 +172,14 @@ public class View {
 			
 			while(compilationUnitsPattern.hasNext()) {
 				
-				Tree treePattern = compilationUnitsPattern.next();
+				CompilationUnitTree treePattern = compilationUnitsPattern.next();
 				
-				Node rootCode = NodeVisitor.build(treeCode, null, false);
-				
-				Node rootPattern = NodeVisitor.build(treePattern, posPattern, true);
-				
-				String fileName = ((CompilationUnitTree) treePattern).getSourceFile().getName().toUpperCase();
+				String fileName = treePattern.getSourceFile().getName().toUpperCase();
 				
 				if(fileName.endsWith("EXCLUDE.JAVA")){
-					listToRemove.addAll(SearchController.subtree(rootCode, rootPattern));
+					listToRemove.addAll(ControllerFacade.searchOcorrences(treeCode, treePattern, posPattern));
 				}else {
-					retorno.addAll(SearchController.subtree(rootCode, rootPattern));//;					
+					retorno.addAll(ControllerFacade.searchOcorrences(treeCode, treePattern, posPattern));					
 				}
 				
 			}
@@ -199,7 +193,7 @@ public class View {
 		return retorno;
 	}
 	
-	public static List<Node> searchOcorrencesFolder(Tree treeCode, PatternFolder pattern) throws IOException{
+	public static List<Node> searchOcorrencesFolder(CompilationUnitTree treeCode, PatternFolder pattern) throws IOException{
 		return searchOcorrencesFolder(treeCode, pattern, null);
 	}
 }

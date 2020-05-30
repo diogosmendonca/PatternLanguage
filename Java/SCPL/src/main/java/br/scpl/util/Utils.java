@@ -5,7 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.scpl.controller.EqualsController;
 import br.scpl.model.Node;
 
 /***
@@ -16,28 +15,6 @@ import br.scpl.model.Node;
  */
 
 public class Utils {
-	
-	public static boolean verifyNotParent(Node a, Node b, Map<String, String> wildcardsMap) {
-		
-		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
-		wildcardsMapBefore.putAll(wildcardsMap);
-		
-		for(Node notParent: b.getNotParents()) {
-			
-			Node parentAux = a.getParent();
-			
-			while(parentAux!=null) {
-				Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
-				wildcardsMapAux.putAll(wildcardsMapBefore);
-				if(EqualsController.partialEquals(parentAux,notParent, wildcardsMapAux)) {
-					return false;
-				}
-				parentAux = parentAux.getParent();
-			}
-		}
-		
-		return true;
-	}
 	
 	private static List<Node> filterReturnNodes(List<Node> nodes) {
 		

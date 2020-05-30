@@ -25,7 +25,7 @@ import com.sun.source.tree.VariableTree;
 
 import br.scpl.model.Node;
 
-public class EqualsController {
+class EqualsController {
 	
 	private static final ResourceBundle wildcards = ResourceBundle.getBundle("wildcards");
 	private final static String anyClass = wildcards.getString("anyClass");
@@ -366,7 +366,7 @@ public class EqualsController {
 		
 	}
 	
-	public static boolean equalsModifier(Node a, Node b) {
+	private static boolean equalsModifier(Node a, Node b) {
 		
 		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
@@ -399,7 +399,7 @@ public class EqualsController {
 		return false;
 	}
 	
-	public static boolean anyMethod(Node a, Node b, Map<String, String> wildcardsMap) {
+	private static boolean anyMethod(Node a, Node b, Map<String, String> wildcardsMap) {
 		
 		MethodTree methodPattern = (MethodTree)b.getNode();
 		MethodTree methodCode = (MethodTree)a.getNode();
@@ -457,7 +457,7 @@ public class EqualsController {
 		return methodPattern.getThrows().stream().anyMatch(x -> x.toString().startsWith(anyException));
 	}
 	
-	public static boolean isAnyExpression(Node node) {
+	private static boolean isAnyExpression(Node node) {
 		
 		IdentifierTree identifier = (IdentifierTree)node.getNode();
 			

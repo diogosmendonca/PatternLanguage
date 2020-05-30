@@ -21,7 +21,7 @@ import br.scpl.model.Node;
 import br.scpl.model.sonarqube.Issue;
 import br.scpl.util.StringUtil;
 
-public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
+class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	
 	
 	  private static final int INDENT_SPACES = 2;
@@ -37,10 +37,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private final Map<Integer, Issue> issuesMap;
 	  private final Map<Node, Boolean> commentExistsMap;
 
-	  public NodeVisitor(Tree tree, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap, Map<Integer,Issue> issuesMap, Boolean isPattern) {
+	  private NodeVisitor(CompilationUnitTree tree, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap, Map<Integer,Issue> issuesMap, Boolean isPattern) {
 		  this.sb = new StringBuilder();
 		this.indentLevel = 0;
-	    this.compilatioUnitTree = (CompilationUnitTree) tree;
+	    this.compilatioUnitTree = tree;
 	    this.sourcePos = sourcePos;
 	    this.alertMessagesMap = alertMessagesMap;
 	    this.existsModifierMap = existsModifierMap;
@@ -49,7 +49,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	    this.commentExistsMap = new LinkedHashMap<>();
 	  }
 
-	  public static Node build(Tree tree, SourcePositions sourcePos, Boolean isPattern) throws IOException {
+	  public static Node build(CompilationUnitTree tree, SourcePositions sourcePos, Boolean isPattern) throws IOException {
 		Map<Integer,String> alertMessagesMap = new LinkedHashMap<>();
 		Map<Integer,Boolean> existsModifierMap = new LinkedHashMap<>();
 		Map<Integer,Issue> issuesMap = new LinkedHashMap<>();
@@ -68,6 +68,10 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
     	addInfos(nodes, isPattern, nv.commentExistsMap);	    	
 	    //System.out.println(nv.sb.toString());
 	    return Node.getNodesMap().get(nv.root);
+	  }
+	  
+	  public static Node build(CompilationUnitTree tree) throws IOException {
+		  return build(tree, null, false);
 	  }
 
 	  private StringBuilder indent() {
@@ -310,7 +314,7 @@ public class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  	}
 	 }
 	  
-	 public static  void notInfos(Node node, List<Node> listChangePoints) {
+	 private static  void notInfos(Node node, List<Node> listChangePoints) {
 		 
 		 int index = node.getParent().getChildren().indexOf(node);
 		 List<Node> toCallRecursive = new ArrayList<>();
