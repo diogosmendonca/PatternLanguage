@@ -30,6 +30,11 @@ import br.scpl.exception.NoFilesFoundException;
 import br.scpl.model.CompilationUnit;
 import br.scpl.model.PatternFolder;
 
+/**
+ * 
+ * @author Denis
+ *
+ */
 public class FileHandler {
 	
 	private static final String separator = ResourceBundle.getBundle("config").getString("separator");

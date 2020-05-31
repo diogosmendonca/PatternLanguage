@@ -21,6 +21,11 @@ import br.scpl.model.Node;
 import br.scpl.model.sonarqube.Issue;
 import br.scpl.util.StringUtil;
 
+/**
+ * 
+ * @author Denis
+ *
+ */
 class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	
 	
@@ -48,7 +53,17 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	    this.isPattern = isPattern;
 	    this.commentExistsMap = new LinkedHashMap<>();
 	  }
-
+	  
+	  /**
+	   * 
+	   * Build a new tree through CompilationUnitTree with more information that will be used in comparing trees.
+	   * 
+	   * @param tree CompilationUnitTree corresponding the CompilationUnit of the Java file source code. 
+	   * @param sourcePos SourcePositions corresponding the positions of the trees.
+	   * @param isPattern Boolean that indicates if is a pattern tree or source code tree.
+	   * @return root node of the new tree.
+	   * @throws IOException
+	   */
 	  public static Node build(CompilationUnitTree tree, SourcePositions sourcePos, Boolean isPattern) throws IOException {
 		Map<Integer,String> alertMessagesMap = new LinkedHashMap<>();
 		Map<Integer,Boolean> existsModifierMap = new LinkedHashMap<>();
@@ -77,7 +92,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private StringBuilder indent() {
 	    return sb.append(StringUtils.leftPad("", INDENT_SPACES * indentLevel));
 	  }	  
-
+	  
 	  @Override
 	  public Void scan(Tree tree, Map<Node, List<Node>> nodes) {
 	      if (tree != null && tree.getClass().getInterfaces() != null && tree.getClass().getInterfaces().length > 0) {
@@ -166,6 +181,15 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		 return null;
 	  }
 	  
+	  /**
+	   * 
+	   * After visiting all nodes adds additional information on the nodes,
+	   * information needed for comparison trees.
+	   * 
+	   * @param nodes Map that stores all the children of a node.
+	   * @param isPattern Boolean that indicates if is a pattern tree.
+	   * @param commentExistsMap Map that keeps its existence modifier comment for each node.
+	   */
 	  private static void addInfos(Map<Node, List<Node>> nodes, Boolean isPattern, Map<Node, Boolean> commentExistsMap) {
 		  List<Node> listToRemove = new ArrayList<Node>();
 		  List<Node> listChangePoints = new ArrayList<Node>();
@@ -313,7 +337,13 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		
 	  	}
 	 }
-	  
+	 
+	 /**
+	  *  Adds non-existent information, scopes that the node cannot be present.
+	  *  
+	  * @param node Node that will be evaluated and added non-existent scope information.
+	  * @param listChangePoints List of change points of existence.
+	  */
 	 private static  void notInfos(Node node, List<Node> listChangePoints) {
 		 
 		 int index = node.getParent().getChildren().indexOf(node);
