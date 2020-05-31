@@ -10,6 +10,15 @@ import br.scpl.model.Node;
 
 public class ControllerFacade {
 	
+	/**
+	 * Searches for all occurrences of the pattern present in the source code.
+	 * 
+	 * @param code CompilationUnitTree corresponding the source code tree.
+	 * @param pattern CompilationUnitTree corresponding the pattern tree.
+	 * @param sourcePositionsPattern SourcePositions corresponding the positions of the within the source code file.
+	 * @return List of all occurrences of the pattern present in the source code.
+	 * @throws IOException
+	 */
 	public static List<Node> searchOcorrences(CompilationUnitTree code, CompilationUnitTree pattern, SourcePositions sourcePositionsPattern) throws IOException {
 		 
 		Node rootCode = NodeVisitor.build(code);
