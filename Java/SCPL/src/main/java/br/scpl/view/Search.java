@@ -23,7 +23,6 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.SourcePositions;
 
 import br.scpl.controller.ControllerFacade;
-import br.scpl.controller.FileHandler;
 import br.scpl.exception.NoFilesFoundException;
 import br.scpl.model.CompilationUnit;
 import br.scpl.model.Node;

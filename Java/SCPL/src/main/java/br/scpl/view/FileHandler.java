@@ -1,4 +1,4 @@
-package br.scpl.controller;
+package br.scpl.view;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +37,13 @@ public class FileHandler {
 	private static Logger log = Logger.getLogger(FileHandler.class);
 	
 	private FileHandler() {}
-
+	
+	/**
+	 * Browse the specified file and insert the Java files into the list.
+	 * 
+	 * @param file File to be browsed
+	 * @param files List that stores all the Java files already browsed.
+	 */
 	public static void browseFiles(File file, List<File> files) {
 		// Testa se o arquivo é uma pasta
 		if (file.isDirectory()) {
@@ -59,6 +65,13 @@ public class FileHandler {
 		}
 	}
 	
+	/**
+	 * Browse the specified file and insert the Java files into the PatternFolder object, 
+	 * respecting the folder structure.
+	 * 
+	 * @param file File to be browsed
+	 * folder folder PatternFolder object that stores all the Java files already browsed, respecting the folder structure.
+	 */
 	public static void browseFiles(File file, PatternFolder folder) {
 		// Testa se o arquivo é uma pasta
 		if (file.isDirectory()) {
@@ -92,6 +105,14 @@ public class FileHandler {
 		}
 	}
 	
+	/**
+	 * Groups all Java patterns files by folders using the object PatternFolder.
+	 * 
+	 * @param rootPath Path of pattern. 
+	 * @return PatternFolder object that contains all patterns.
+	 * @throws FileNotFoundException
+	 * @throws NoFilesFoundException
+	 */
 	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException, NoFilesFoundException{
 		PatternFolder folder = new PatternFolder();
 		log.debug(separator);
@@ -107,7 +128,15 @@ public class FileHandler {
 		}
 		return folder;
 	} 
-
+	
+	/**
+	 * Gets all Java files of the specified path.
+	 * 
+	 * @param rootPath Path of source code.
+	 * @return files array containing all Java files in the specified path.
+	 * @throws FileNotFoundException
+	 * @throws NoFilesFoundException
+	 */
 	public static File[] getFiles(String rootPath) throws FileNotFoundException, NoFilesFoundException {
 		List<File> files = new ArrayList<>();
 		log.debug(separator);
@@ -125,13 +154,12 @@ public class FileHandler {
 	}
 	
 	/**
-	 * Faz o parse dos arquivos java e retorna as ASTs e um objeto com as posições de cada nó.
+	 * Parse the java files and return the ASTs and an object with the positions of each node.
 	 * 
-	 * 
-	 * @param files array de arquivos de código-fonte java
-	 * @return CompilationUnitStruct correspondente aos arquivos passados, 
-	 * que contém um iterator de CompilationUnitTree e um onjsto SourcePositions(guarda as posições do nós)
-	 * @throws  
+	 * @param files array of Java code files.
+	 * @return The compilationUnit object corresponding to the passed files, which contains a 
+	 * CompilationUnitTree iterator and a SourcePositions object (stores the node positions)  
+	 * @throws IOException
 	 */
 	public static CompilationUnit parserFileToCompilationUnit(File[] files, Charset charset) throws IOException{
 		
@@ -170,6 +198,13 @@ public class FileHandler {
 		return new CompilationUnit(iter,pos,docTrees);
 	}
 	
+	/**
+	 * Return the string content of the object specified.	 
+	 * 
+	 * @param sourceFile JavaFileObject
+	 * @return String content of the object specified.
+	 * @throws IOException
+	 */
 	public static String getStringContent(JavaFileObject sourceFile) throws IOException {
 		return new String(Files.readAllBytes(Paths.get(sourceFile.getName())));
 	}
