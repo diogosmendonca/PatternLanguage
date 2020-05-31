@@ -52,7 +52,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 	@Override
 	public List<Node> execute(JCommander jc) {
 		
- 		return searchOcorrences(code,pattern, charset,format);
+ 		return searchOccurrences(code,pattern, charset,format);
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 	 * @param format Formato de saída
 	 * @return
 	 */	
-	public static List<Node> searchOcorrences(String pathCode, String pathPattern, Charset charset, String format) {
+	public static List<Node> searchOccurrences(String pathCode, String pathPattern, Charset charset, String format) {
 		
 		List<Node> retorno = new ArrayList<>();
 		
@@ -91,7 +91,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 				
 				CompilationUnitTree treeCode = compilationUnitsCode.next();
 				
-				retorno.addAll(searchOcorrencesFolder(treeCode,patternFolder, charset));
+				retorno.addAll(searchOccurrencesFolder(treeCode,patternFolder, charset));
 			}
 			
 			String currentFile = "";
@@ -161,11 +161,11 @@ public class Search extends JCommander implements Command<List<Node>>{
 		return retorno;
 	}
 	
-	private static List<Node> searchOcorrencesFolder(CompilationUnitTree treeCode, PatternFolder pattern, Charset charset) throws IOException{
+	private static List<Node> searchOccurrencesFolder(CompilationUnitTree treeCode, PatternFolder pattern, Charset charset) throws IOException{
 		List<Node> retorno = new ArrayList<>();
 		
 		for(PatternFolder folder : pattern.getFolders()) {
-			retorno.addAll(searchOcorrencesFolder(treeCode, folder, charset));
+			retorno.addAll(searchOccurrencesFolder(treeCode, folder, charset));
 		}
 		
 		if(pattern.getFiles().size() > 0) {
@@ -187,9 +187,9 @@ public class Search extends JCommander implements Command<List<Node>>{
 				String fileName = treePattern.getSourceFile().getName().toUpperCase();
 				
 				if(fileName.endsWith("EXCLUDE.JAVA")){
-					listToRemove.addAll(ControllerFacade.searchOcorrences(treeCode, treePattern, posPattern));
+					listToRemove.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posPattern));
 				}else {
-					retorno.addAll(ControllerFacade.searchOcorrences(treeCode, treePattern, posPattern));					
+					retorno.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posPattern));					
 				}
 				
 			}
@@ -203,7 +203,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 		return retorno;
 	}
 
-	public static List<Node> searchOcorrences(String pathCode, String pathPattern) {
-		return searchOcorrences(pathCode, pathPattern, null, null);
+	public static List<Node> searchOccurrences(String pathCode, String pathPattern) {
+		return searchOccurrences(pathCode, pathPattern, null, null);
 	}
 }

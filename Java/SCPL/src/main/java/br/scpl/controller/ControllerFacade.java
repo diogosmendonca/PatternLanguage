@@ -19,7 +19,7 @@ public class ControllerFacade {
 	 * @return List of all occurrences of the pattern present in the source code.
 	 * @throws IOException
 	 */
-	public static List<Node> searchOcorrences(CompilationUnitTree code, CompilationUnitTree pattern, SourcePositions sourcePositionsPattern) throws IOException {
+	public static List<Node> searchOccurrences(CompilationUnitTree code, CompilationUnitTree pattern, SourcePositions sourcePositionsPattern) throws IOException {
 		 
 		Node rootCode = NodeVisitor.build(code);
 		

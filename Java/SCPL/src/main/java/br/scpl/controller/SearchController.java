@@ -46,12 +46,12 @@ class SearchController {
 		log.debug("Searching the pattern " +(b.getCompilatioUnitTree()).getSourceFile().getName());
 		log.debug(" in source code file " +(a.getCompilatioUnitTree()).getSourceFile().getName());
 		
-		List<Node> ocorrences = new ArrayList<>();
+		List<Node> occurrences = new ArrayList<>();
 		
 			//Se os nós são iguais, a sub-árvore é toda a ávore
 			if(EqualsController.isEquals(a, b, new LinkedHashMap<>())) {
 				if(!b.getChangeOperator()) {
-					ocorrences.add(a);
+					occurrences.add(a);
 					if(b.getExists()) {
 						a.setFullVisited(true);
 						if(returnedNode.get(round) == null) {
@@ -63,8 +63,8 @@ class SearchController {
 						}
 					}
 					
-					ocorrences = Utils.getReturnNode(ocorrences);
-					return ocorrences;
+					occurrences = Utils.getReturnNode(occurrences);
+					return occurrences;
 				}
 			}
 			
@@ -72,17 +72,17 @@ class SearchController {
 			
 			do {
 				childrenNodesAux = search(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
-				if(ocorrences.containsAll(childrenNodesAux)) {
-					ocorrences = Utils.getReturnNode(ocorrences);
+				if(occurrences.containsAll(childrenNodesAux)) {
+					occurrences = Utils.getReturnNode(occurrences);
 					break;
 				}else {
-					ocorrences.addAll(childrenNodesAux);
+					occurrences.addAll(childrenNodesAux);
 					round++;
 				}
 			}while(childrenNodesAux.size() > 0);
 		System.out.println();
-		log.debug("Found patterns in file: " +ocorrences.size());
-		return ocorrences;
+		log.debug("Found patterns in file: " +occurrences.size());
+		return occurrences;
 	}
 	
 	/**
@@ -100,12 +100,12 @@ class SearchController {
 	private static List<Node> search(Node a, Node b, Map<String, String> wildcardsMap, Map<Node, Integer> path, Map<Node, Integer> limitPath) {
 		
 		//Lista de ocorrências do padrão
-		List<Node> ocorrences = new ArrayList<>();
+		List<Node> occurrences = new ArrayList<>();
 		
 		//Se as raízes são diferentes, retorna vazio
 		if(!EqualsController.basicComparation(a, b, wildcardsMap)) {
 			
-			return ocorrences;
+			return occurrences;
 		}
 		
 		List<Integer> anyIndex = new ArrayList<Integer>(); 
@@ -113,7 +113,7 @@ class SearchController {
 		int notChilds = 0;
 		
 		if(b.getNode() instanceof ExpressionTree || b.getNode() instanceof VariableTree) {
-			return ocorrences;
+			return occurrences;
 		}
 		
 		if(b.getNode().getKind()==Kind.METHOD) {
@@ -149,13 +149,13 @@ class SearchController {
 		
 		if(b.getNode().getKind() == Kind.BLOCK) {
 			if(!a.getParent().equals(returnedNode.get(round).get(b.getParent()))){
-				return ocorrences;
+				return occurrences;
 			}
 		}
 		
 		
 		if(!verifyNotParent(a, b, wildcardsMap)) {
-			return ocorrences;
+			return occurrences;
 		}
 		
 		if(returnedNode.get(round) == null) {
@@ -167,7 +167,7 @@ class SearchController {
 		}
 		
 		//Lista auxiliar que guarda as ocorrências da busca atual
-		List<Node> currentOcorrences = new ArrayList<>();
+		List<Node> currentOccurrences = new ArrayList<>();
 		
 		List<Node> subtreeAux;
 		
@@ -191,7 +191,7 @@ class SearchController {
 		for(i =0;i<b.getChildren().size();i++) { 
 			
 			if(searching) {
-				return ocorrences;
+				return occurrences;
 			}
 			
 			if(!anyIndex.contains(i)) {
@@ -209,7 +209,7 @@ class SearchController {
 						
 						if(subtreeAux.size() > 0) {
 							if(b.getChildren().get(i).getExists()) {
-								currentOcorrences.addAll(subtreeAux);
+								currentOccurrences.addAll(subtreeAux);
 								searching=false;
 								lastOcorrenceIndex = counter;
 								limitPath.clear();
@@ -218,7 +218,7 @@ class SearchController {
 							}else {
 								//FIXME
  								if(i == b.getChildren().size() - 1) {
-									return ocorrences;
+									return occurrences;
 								}
 								searching=false;
 								maxIndexA = counter;
@@ -231,7 +231,7 @@ class SearchController {
 						path.put(a, counter);
 					}
 					
-					if(searching==true || currentOcorrences.contains(a.getChildren().get(counter)) ) {
+					if(searching==true || currentOccurrences.contains(a.getChildren().get(counter)) ) {
 						counter++;
 					}
 				}
@@ -246,13 +246,13 @@ class SearchController {
 			if(i == b.getChildren().size() - 1) {
 				if(searching){
 					if(!b.getChildren().get(i).getExists() && !b.getChildren().get(i).getChangeOperator()) {
-						ocorrences.addAll(currentOcorrences);
+						occurrences.addAll(currentOccurrences);
 					}else {
 						//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
 						if(!wildcardsMap.equals(wildcardsMapBefore) && (wildcardsMapLastFail.isEmpty() || !wildcardsMap.equals(wildcardsMapLastFail))) {
 							i =-1;
 							searching=false;
-							currentOcorrences.clear();
+							currentOccurrences.clear();
 							wildcardsMapLastFail.clear();
 							wildcardsMapLastFail.putAll(wildcardsMap);
 							wildcardsMap.clear();
@@ -267,12 +267,12 @@ class SearchController {
 					}
 					
 				}else{
-					ocorrences.addAll(currentOcorrences);
+					occurrences.addAll(currentOccurrences);
 				}
 			}
 		}
 					
-		return ocorrences;
+		return occurrences;
 	}
 	
 	/***
@@ -298,13 +298,13 @@ class SearchController {
 		Map<Node, Integer> limitPathOld = new LinkedHashMap<>();
 		limitPathOld.putAll(limitPath);
 		
-		List<Node> ocorrences = new ArrayList<>();
+		List<Node> occurrences = new ArrayList<>();
 			
 		//Se os nós são iguais, a sub-árvore é toda a ávore
 		if(EqualsController.isEquals(a, b, wildcardsMap)) {
 			if(!b.getChangeOperator()) {
 				if(verifyNotParent(a, b, wildcardsMap)){
-					ocorrences.add(a);
+					occurrences.add(a);
 					if(b.getExists()) {
 						a.setFullVisited(true);
 						returnedNode.get(round).put(b, a);
@@ -313,7 +313,7 @@ class SearchController {
 					wildcardsMap.clear();
 					wildcardsMap.putAll(wildcardsMapBefore);
 				}
-				return ocorrences;
+				return occurrences;
 			}
 		}
 		
@@ -324,10 +324,10 @@ class SearchController {
 		limitPath.clear();
 		limitPath.putAll(limitPathOld);
 		
-		ocorrences.addAll(search(a, b, wildcardsMap, path, limitPath));
+		occurrences.addAll(search(a, b, wildcardsMap, path, limitPath));
 		
-		if(ocorrences.size() > 0) {
-			return ocorrences;
+		if(occurrences.size() > 0) {
+			return occurrences;
 		}
 		
 		
@@ -345,8 +345,8 @@ class SearchController {
 				limitPath.clear();
 				limitPath.putAll(limitPathOld);
 				
-				ocorrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap, path, limitPath));
-				if(ocorrences.size() > 0) {
+				occurrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap, path, limitPath));
+				if(occurrences.size() > 0) {
 					
 					if(!b.getChangeOperator()) {
 						if(b.getExists()) {
@@ -356,13 +356,13 @@ class SearchController {
 						}
 					}
 						
-					return ocorrences;
+					return occurrences;
 				}
 			}
 			counter++;
 		}
 		
-		return ocorrences;
+		return occurrences;
 	}
 
 	/**

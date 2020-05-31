@@ -16,7 +16,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc01() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC01_Code.java", 
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC01_Code.java", 
 				"./src/test/resources/AceitacaoFiles/TC01_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -29,7 +29,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc02() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC02_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC02_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC02_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -38,7 +38,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc03() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC03_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC03_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC03_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -51,7 +51,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc04() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC04_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC04_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC04_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -68,7 +68,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc05() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC05_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC05_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC05_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -77,7 +77,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc06() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC06_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC06_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC06_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -90,7 +90,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc07() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC07_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC07_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC07_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -107,7 +107,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc08() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC08_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC08_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC08_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -116,7 +116,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc09() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC09_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC09_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC09_Pattern.java");
 
 		assertEquals(1, retorno.size());
@@ -130,7 +130,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc10() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC10_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC10_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC10_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -147,7 +147,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc11() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC11_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC11_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC11_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -156,7 +156,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc12() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC12_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC12_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC12_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -169,7 +169,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc13() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC13_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC13_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC13_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -183,7 +183,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc14() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC14_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC14_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC14_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -192,7 +192,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc15() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC15_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC15_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC15_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -201,7 +201,7 @@ public class AceitacaoTest {
 	@Test 
 	public void tc16() throws IOException {
   
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC16_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC16_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC16_Pattern.java");
   
 		assertEquals(1, retorno.size());
@@ -214,7 +214,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc17() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC17_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC17_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC17_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -227,7 +227,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc18() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC18_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC18_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC18_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -236,7 +236,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc19() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC19_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC19_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC19_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -253,7 +253,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc20() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC20_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC20_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC20_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -270,7 +270,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc21() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC21_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC21_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC21_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -287,7 +287,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc22() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC22_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC22_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC22_Pattern.java");
 		
 		assertEquals(3, retorno.size());
@@ -304,7 +304,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc23() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC23_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC23_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC23_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -313,7 +313,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc24() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC24_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC24_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC24_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -330,7 +330,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc25() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC25_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC25_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC25_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -347,7 +347,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc26() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC26_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC26_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC26_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -360,7 +360,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc27() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC27_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC27_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC27_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -373,7 +373,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc28() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC28_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC28_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC28_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -383,7 +383,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc29() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC29_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC29_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC29_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -396,7 +396,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc30() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC30_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC30_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC30_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -409,7 +409,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc31() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC31_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC31_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC31_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -422,7 +422,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc32() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC32_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC32_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC32_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -435,7 +435,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc33() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC33_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC33_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC33_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -448,7 +448,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc34() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC34_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC34_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC34_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -461,7 +461,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc35() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC35_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC35_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC35_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -470,7 +470,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc36() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC36_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC36_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC36_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -483,7 +483,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc37() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC37_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC37_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC37_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -492,7 +492,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc38() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC38_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC38_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC38_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -501,7 +501,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc39() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC39_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC39_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC39_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -511,7 +511,7 @@ public class AceitacaoTest {
     @Test 
     public void tc40() throws IOException {
   
-    List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC40_Code.java"
+    List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC40_Code.java"
     			,"./src/test/resources/AceitacaoFiles/TC40_Pattern.java");
   
   		assertEquals(1, retorno.size());
@@ -526,7 +526,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc41() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC41_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC41_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC41_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -535,7 +535,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc42() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles"
 				,"./src/test/resources/AceitacaoFiles/TC42_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -548,7 +548,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc43() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC43_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC43_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC43_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -561,7 +561,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc44() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC44_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC44_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC44_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -570,7 +570,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc45() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC45_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC45_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC45_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -583,7 +583,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc46() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC46_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC46_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC46_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -596,7 +596,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc47() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC47_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC47_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC47_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -609,7 +609,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc48() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC48_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC48_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC48_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -618,7 +618,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc49() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC49_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC49_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC49_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -631,7 +631,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc50() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC50_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC50_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC50_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -640,7 +640,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc51() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC51_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC51_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC51_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -653,7 +653,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc52() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC52_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC52_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC52_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -662,7 +662,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc53() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC53_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC53_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC53_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -675,7 +675,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc54() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC54_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC54_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC54_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -684,7 +684,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc55() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC55_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC55_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC55_Pattern.java");
 		
 		assertEquals(4, retorno.size());
@@ -709,7 +709,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc56() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC56_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC56_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC56_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -718,7 +718,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc57() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC57_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC57_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC57_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -735,7 +735,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc58() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC58_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC58_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC58_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -752,7 +752,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc59() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC59_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC59_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC59_Pattern.java");
 		
 		assertEquals(2, retorno.size());
@@ -769,7 +769,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc60() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC60_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC60_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC60_Pattern.java");
 
 		assertEquals(0, retorno.size());
@@ -778,7 +778,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc61() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC61_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC61_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC61_Pattern.java");
 
 		assertEquals(0, retorno.size());
@@ -787,7 +787,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc62() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC62_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC62_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC62_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -796,7 +796,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc63() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC63_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC63_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC63_Pattern.java");
 
 		assertEquals(0, retorno.size());
@@ -805,7 +805,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc64() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC64_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC64_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC64_Pattern.java");
 
 		assertEquals(0, retorno.size());
@@ -814,7 +814,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc65() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC65_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC65_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC65_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -822,7 +822,7 @@ public class AceitacaoTest {
 	
 	public void tc66() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC66_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC66_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC66_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -835,7 +835,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc67() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC67_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC67_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC67_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -844,7 +844,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc68() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC68_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC68_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC68_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -853,7 +853,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc69() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC69_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC69_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC69_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -862,7 +862,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc70() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC70_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC70_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC70_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -876,7 +876,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc71() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC71_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC71_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC71_Pattern.java");
 		
 		assertEquals(1, retorno.size());
@@ -890,7 +890,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc72() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC71_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC71_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC72_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -900,7 +900,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc73() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/TC72_Code.java"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC72_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC71_Pattern.java");
 		
 		assertEquals(0, retorno.size());
@@ -910,7 +910,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc74() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/EmptyFolder"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/EmptyFolder"
 				,"./src/test/resources/AceitacaoFiles/EmptyFolder");
 		
 		assertEquals(0, retorno.size());
@@ -919,7 +919,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc75() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/EmptyFolder"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/EmptyFolder"
 				,"./src/test/resources/AceitacaoFiles/EmptyFolder");
 		
 		assertEquals(0, retorno.size());
@@ -928,7 +928,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc76() throws IOException {
 		
-		List<Node> retorno = Search.searchOcorrences("./src/test/resources/AceitacaoFiles/PatternFolder/test.txt"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/PatternFolder/test.txt"
 				,"./src/test/resources/AceitacaoFiles/PatternFolder");
 		
 		assertEquals(0, retorno.size());
