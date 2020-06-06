@@ -27,8 +27,8 @@ public class Node {
 	private Boolean isToReturn;
 	private String returnMessage;
 	private Issue issue;
+	private Node matchingNode;
 	private Map<Node, Integer> path = new LinkedHashMap<>();
-	private static final Map<Node,Node> cloneNodeMap = new LinkedHashMap<>();
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<Tree, Node>();
 	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
@@ -207,6 +207,14 @@ public class Node {
 
 	public void setIssue(Issue issue) {
 		this.issue = issue;
+	}
+	
+	public Node getMatchingNode() {
+		return matchingNode;
+	}
+
+	public void setMatchingNode(Node matchingNode) {
+		this.matchingNode = matchingNode;
 	}
 
 	public static Map<Tree, Node> getNodesMap() {

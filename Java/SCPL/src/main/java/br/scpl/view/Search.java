@@ -23,6 +23,7 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.SourcePositions;
 
 import br.scpl.controller.ControllerFacade;
+import br.scpl.exception.NoAlertFoundException;
 import br.scpl.exception.NoValidFilesFoundException;
 import br.scpl.model.CompilationUnit;
 import br.scpl.model.Node;
@@ -161,6 +162,8 @@ public class Search extends JCommander implements Command<List<Node>>{
 		catch(IOException e) {
 			log.error("Error: " +e.getLocalizedMessage());
 		} catch (NoValidFilesFoundException e) {
+			log.error(e.getLocalizedMessage());
+		} catch (NoAlertFoundException e) {
 			log.error(e.getLocalizedMessage());
 		}
 		

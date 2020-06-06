@@ -130,6 +130,7 @@ class EqualsController {
 					a.setIsToReturn(true);
 					a.setReturnMessage(b.getReturnMessage());
 					a.setIssue(b.getIssue());
+					a.setMatchingNode(b);
 				}
 			}
 	    }

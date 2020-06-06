@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.scpl.exception.NoAlertFoundException;
 import br.scpl.model.Node;
 
 public class SonarQubeFormat {
@@ -18,13 +19,17 @@ public class SonarQubeFormat {
 		return issues;
 	}
 
-	public static SonarQubeFormat listNodeToSonarQubeFormat(List<Node> nodes) {
+	public static SonarQubeFormat listNodeToSonarQubeFormat(List<Node> nodes) throws NoAlertFoundException {
 		
 		SonarQubeFormat sonarQubeFormat = new SonarQubeFormat();
 		
 		for(Node node: nodes) {
 			
 			Issue issue = node.getIssue();
+			
+			if(issue==null) {
+				throw new NoAlertFoundException(node.getMatchingNode());
+			}
 			issue.getPrimaryLocation().setFilePath(node.getFilePath().replaceAll("(\\\\)+", "/"));
 			
 			TextRange textRange = issue.getPrimaryLocation().getTextRange();
