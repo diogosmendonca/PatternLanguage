@@ -52,7 +52,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 	 @Parameter(names = {"-C", "--charset"}, description = "Specifies the charset to be used", required = false, converter = CharsetConverter.class)
 	 private Charset charset;
 	 
-	 @Parameter(names = {"-f", "--format"}, description = "Specifies the format of the output")
+	 @Parameter(names = {"-f", "--format"}, description = "Specifies the format of the output                             Options: sonarqube")
 	 private String format;
 	 
 	@Override

@@ -80,7 +80,6 @@ class SearchController {
 					round++;
 				}
 			}while(childrenNodesAux.size() > 0);
-		System.out.println();
 		log.debug("Found patterns in file: " +occurrences.size());
 		return occurrences;
 	}
