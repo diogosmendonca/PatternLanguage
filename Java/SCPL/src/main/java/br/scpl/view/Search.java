@@ -23,7 +23,7 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.SourcePositions;
 
 import br.scpl.controller.ControllerFacade;
-import br.scpl.exception.NoFilesFoundException;
+import br.scpl.exception.NoValidFilesFoundException;
 import br.scpl.model.CompilationUnit;
 import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
@@ -87,11 +87,11 @@ public class Search extends JCommander implements Command<List<Node>>{
 			log.debug(separator);
 			log.debug("End of file search.");
 			
-			CompilationUnit compilationUnitStructCode = FileHandler.parserFileToCompilationUnit(filesCode, charset);
+			CompilationUnit compilationUnitCode = FileHandler.parserFileToCompilationUnit(filesCode, charset);
 			
-			Iterator<? extends CompilationUnitTree> compilationUnitsCode = compilationUnitStructCode.getCompilationUnitTree();
+			Iterator<? extends CompilationUnitTree> compilationUnitsCode = compilationUnitCode.getCompilationUnitTree();
 			
-			SourcePositions posCode = compilationUnitStructCode.getPos();
+			SourcePositions posCode = compilationUnitCode.getPos();
 			
 			while(compilationUnitsCode.hasNext()) {
 				
@@ -160,7 +160,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 		}
 		catch(IOException e) {
 			log.error("Error: " +e.getLocalizedMessage());
-		} catch (NoFilesFoundException e) {
+		} catch (NoValidFilesFoundException e) {
 			log.error(e.getLocalizedMessage());
 		}
 		

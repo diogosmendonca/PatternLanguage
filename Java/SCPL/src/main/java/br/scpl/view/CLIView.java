@@ -1,15 +1,9 @@
 package br.scpl.view;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
@@ -17,19 +11,6 @@ import org.apache.log4j.Logger;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.Tree.Kind;
-import com.sun.source.util.SourcePositions;
-
-import br.scpl.controller.ControllerFacade;
-import br.scpl.exception.NoFilesFoundException;
-import br.scpl.model.CompilationUnit;
-import br.scpl.model.Node;
-import br.scpl.model.PatternFolder;
-import br.scpl.model.sonarqube.SonarQubeFormat;
 
 /**
  * 
@@ -53,7 +34,7 @@ public class CLIView {
 		
 		//List<String> test = Arrays.asList("--verbose", "search", "-c", "C:\\opt\\Projects\\sisgee\\sisgee", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java", "--charset", "UTF-8");
 		
-		//List<String> test = Arrays.asList("--verbose");
+		//List<String> test = Arrays.asList("@C:\\opt\\Projects\\PatternLanguage\\Java\\SCPL\\target\\args.txt");
 		
 		//args = test.toArray(new String[0]);
 		

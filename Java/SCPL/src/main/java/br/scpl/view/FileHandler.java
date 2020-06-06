@@ -26,7 +26,7 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
-import br.scpl.exception.NoFilesFoundException;
+import br.scpl.exception.NoValidFilesFoundException;
 import br.scpl.model.CompilationUnit;
 import br.scpl.model.PatternFolder;
 
@@ -116,9 +116,9 @@ public class FileHandler {
 	 * @param rootPath Path of pattern. 
 	 * @return PatternFolder object that contains all patterns.
 	 * @throws FileNotFoundException
-	 * @throws NoFilesFoundException
+	 * @throws NoValidFilesFoundException
 	 */
-	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException, NoFilesFoundException{
+	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException, NoValidFilesFoundException{
 		PatternFolder folder = new PatternFolder();
 		log.debug(separator);
 		log.debug("Searching patterns files.");
@@ -129,7 +129,7 @@ public class FileHandler {
 		log.debug(separator);
 		log.debug("Total files: " +folder.size());
 		if(folder.size()==0) {
-			throw new NoFilesFoundException(rootPath);
+			throw new NoValidFilesFoundException(rootPath);
 		}
 		return folder;
 	} 
@@ -140,9 +140,9 @@ public class FileHandler {
 	 * @param rootPath Path of source code.
 	 * @return files array containing all Java files in the specified path.
 	 * @throws FileNotFoundException
-	 * @throws NoFilesFoundException
+	 * @throws NoValidFilesFoundException
 	 */
-	public static File[] getFiles(String rootPath) throws FileNotFoundException, NoFilesFoundException {
+	public static File[] getFiles(String rootPath) throws FileNotFoundException, NoValidFilesFoundException {
 		List<File> files = new ArrayList<>();
 		log.debug(separator);
 		log.debug("Searching source code files.");
@@ -153,7 +153,7 @@ public class FileHandler {
 		log.debug(separator);
 		log.debug("Total files: " +files.size());
 		if(files.size()==0) {
-			throw new NoFilesFoundException(rootPath);
+			throw new NoValidFilesFoundException(rootPath);
 		}
 		return files.toArray(new File[0]);
 	}
