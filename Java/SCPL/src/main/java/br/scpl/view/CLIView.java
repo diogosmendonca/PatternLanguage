@@ -31,13 +31,22 @@ import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
 import br.scpl.model.sonarqube.SonarQubeFormat;
 
+/**
+ * 
+ * @author Denis
+ *
+ */
 public class CLIView {
 	
 	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
 
 	private static Logger log = Logger.getLogger(CLIView.class);
 	
-	
+	/**
+	 * Do the parser of the CLI parameters and executes the respective command.
+	 * 
+	 * @param args CLI parameters
+	 */
 	public static void parserCLI(String[] args) {
 		
 		CLIOptions cli = new CLIOptions();

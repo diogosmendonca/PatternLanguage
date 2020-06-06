@@ -18,10 +18,6 @@ public class SonarQubeFormat {
 		return issues;
 	}
 
-	public void setIssues(List<Issue> issues) {
-		this.issues = issues;
-	}
-	
 	public static SonarQubeFormat listNodeToSonarQubeFormat(List<Node> nodes) {
 		
 		SonarQubeFormat sonarQubeFormat = new SonarQubeFormat();

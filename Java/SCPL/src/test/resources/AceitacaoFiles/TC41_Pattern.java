@@ -5,10 +5,10 @@ class anyClass {
         
 		not:{
             if(true){
-                exists:{
-                    String someVariable = any;
-                    someVariable.anyMethod();
-                }
+                //exists
+                String someVariable = any;
+                //exists   
+                someVariable.anyMethod();
             }
         }
     }

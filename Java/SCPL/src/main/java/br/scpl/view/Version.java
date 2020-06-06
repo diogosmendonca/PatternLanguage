@@ -8,6 +8,11 @@ import org.apache.log4j.Logger;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameters;
 
+/**
+ * 
+ * @author Denis
+ *
+ */
 @Parameters(commandDescription = "Shows the version of the application")
 public class Version extends JCommander implements Command<String>{
 	

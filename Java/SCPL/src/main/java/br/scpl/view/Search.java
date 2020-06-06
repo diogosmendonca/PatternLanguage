@@ -30,6 +30,12 @@ import br.scpl.model.PatternFolder;
 import br.scpl.model.sonarqube.SonarQubeFormat;
 import br.scpl.view.converter.CharsetConverter;
 
+/**
+ * 
+ * @author Denis
+ *
+ */
+
 @Parameters(commandDescription = "Search for patterns in source code")
 public class Search extends JCommander implements Command<List<Node>>{
 	
@@ -56,14 +62,14 @@ public class Search extends JCommander implements Command<List<Node>>{
 	}
 	
 	/**
-	 * Recebe o path da pasta do código-fonte alvo e a pasta com os padrões buscados.
-	 * Retorna as ocorrências dos padrões em cada arquivo de código-fonte
+	 * Receives the path of the target source code and the folder with the searched patterns.
+	 * Returns the occurrences of the patterns in each source code file.
 	 * 
-	 * @param pathCode Caminho da pasta com os arquivos de código-fonte alvos da busca
-	 * @param pathPattern Caminho da pasta com os arquivos da regras dos padrões buscados
-	 * @param charset Charset que será utilizado
-	 * @param format Formato de saída
-	 * @return
+	 * @param pathCode Source code path target search.
+	 * @param pathPattern Code path of the fetched pattern.
+	 * @param charset Specifies the charset tha will be used.
+	 * @param format Specifies the output format.
+	 * @return List o Node representing the occurrences of the pattern in the source code.
 	 */	
 	public static List<Node> searchOccurrences(String pathCode, String pathPattern, Charset charset, String format) {
 		
@@ -161,6 +167,16 @@ public class Search extends JCommander implements Command<List<Node>>{
 		return retorno;
 	}
 	
+	/**
+	 * Receives the CompilationUnitTree of the target source code and PatternFolder containing the searched patterns.
+	 * Returns the occurrences of the patterns in source code tree.
+	 * 
+	 * @param treeCode Source code CompilationUnitTree.
+	 * @param pattern PatternFolder containing the searched patterns.
+	 * @param charset Specifies the charset tha will be used.
+	 * @return List o Node representing the occurrences of the pattern in the source code.
+	 * @throws IOException
+	 */
 	private static List<Node> searchOccurrencesFolder(CompilationUnitTree treeCode, PatternFolder pattern, Charset charset) throws IOException{
 		List<Node> retorno = new ArrayList<>();
 		
@@ -202,7 +218,15 @@ public class Search extends JCommander implements Command<List<Node>>{
 		
 		return retorno;
 	}
-
+	
+	/**
+	 * Receives the path of the target source code and the folder with the searched patterns.
+	 * Returns the occurrences of the patterns in each source code file.
+	 * 
+	 * @param pathCode Source code path target search.
+	 * @param pathPattern Code path of the fetched pattern.
+	 * @return List o Node representing the occurrences of the pattern in the source code.
+	 */	
 	public static List<Node> searchOccurrences(String pathCode, String pathPattern) {
 		return searchOccurrences(pathCode, pathPattern, null, null);
 	}

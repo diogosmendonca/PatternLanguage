@@ -6,7 +6,6 @@ import java.util.List;
 import br.scpl.model.Node;
 
 /***
- * Classe com métodos utilitários
  * 
  * @author Denis
  *

@@ -6,6 +6,12 @@ import java.util.Map;
 
 import com.beust.jcommander.JCommander;
 
+/**
+ * 
+ * @author Denis
+ *
+ * @param <T>
+ */
 public interface Command<T> {
 	
 	public static final Map<String, Command> command = new HashMap<>(){

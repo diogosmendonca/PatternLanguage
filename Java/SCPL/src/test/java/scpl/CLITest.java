@@ -1,28 +1,30 @@
 package scpl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.scpl.view.Main;
 
-@Ignore
 public class CLITest {
 	
-	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+	private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
 	private final PrintStream originalErr = System.err;
 	
 	@Before
 	public void setUpStreams() {
-	    System.setOut(new PrintStream(outContent));
-	    System.setErr(new PrintStream(errContent));
+		outContent = new ByteArrayOutputStream();
+		errContent = new ByteArrayOutputStream();
+		//true, autoFlush
+	    System.setOut(new PrintStream(outContent,true));
+	    System.setErr(new PrintStream(errContent,true));
 	}
 
 	@After
@@ -32,45 +34,68 @@ public class CLITest {
 	}
 	
 	@Test
-	public void tc01() {
+	public void tc01() throws IOException {
 		
-		String[] args = new String[0];
+        String[] args = new String[0];
 		
 		Main.main(args);
 		
-		Assert.assertTrue(outContent.toString().contains("Error: Missing parameters"));
-		Assert.assertTrue(outContent.toString().contains("Usage:"));
-		
+        Assert.assertTrue(outContent.toString().contains("Error: Missing parameters"));
+        Assert.assertTrue(outContent.toString().contains("Usage:"));
 	}
 	
 	@Test
-	public void tc02() {
+	public void tc02() throws IOException {
 		
-		String[] args = { "--help"};
+        String[] args = { "--help"};
 		
 		Main.main(args);
 		
-		Assert.assertTrue(outContent.toString().contains("Usage:"));
+        Assert.assertTrue(outContent.toString().contains("Usage:"));
 	}
 	
 	@Test
-	public void tc03() {
+	public void tc03() throws IOException {
 		
-		String[] args = { "search", "-c", "./src/test/resources/AceitacaoFiles/TC66_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java", "--charset", "UTF-8" };
+        String[] args = { "--version"};
 		
 		Main.main(args);
-		
-		Assert.assertTrue(outContent.toString().contains("Return size:"));
+
+        Assert.assertTrue(outContent.toString().contains("1.0"));
 	}
 	
 	@Test
-	public void tc04() {
+	public void tc04() throws IOException {
 		
-		String[] args = { "search", "-c", "./src/test/a/", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java", "--charset", "UTF-8" };
+        String[] args = { "--verbose"};
 		
 		Main.main(args);
-		
-		//Assert.assertTrue(outContent.toString().contains("Return size:"));
+
+        Assert.assertTrue(outContent.toString().contains("Parameters: [--verbose]"));
 	}
+	
+	
+	@Test
+	public void tc05() throws IOException {
+		
+        String[] args = { "--verbose","search", "-c", "./src/test/resources/AceitacaoFiles/TC40_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC40_Pattern.java", "--charset", "UTF-8", "-f", "eclipse" };
+		
+		Main.main(args);
+        
+        Assert.assertTrue(outContent.toString().contains("Error: Unknow format"));
+	}
+	
+	
+	
+	@Test
+	public void tc06() throws IOException {
+        
+        String[] args = { "search", "-c", "./src/test/resources/AceitacaoFiles/TC40_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC40_Pattern.java", "--charset", "UTF-8", "-f", "sonarqube" };
+		
+		Main.main(args);
+
+        Assert.assertTrue(outContent.toString().contains("issues"));
+	}
+	
 
 }

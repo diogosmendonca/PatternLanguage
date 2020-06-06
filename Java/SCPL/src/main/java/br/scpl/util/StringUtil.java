@@ -21,6 +21,12 @@ import br.scpl.model.sonarqube.SonarQubeFormat;
 import br.scpl.model.sonarqube.TextRange;
 import br.scpl.view.FileHandler;
 
+/***
+ * 
+ * @author Denis
+ *
+ */
+
 public class StringUtil {
 	
 	public static Map<Integer,String> extractAlertMessages(Tree tree) throws IOException{
@@ -155,6 +161,7 @@ public class StringUtil {
 	    	issue.getPrimaryLocation().setTextRange(new TextRange());
 	    	issue.setType(properties.getProperty("type"));
 	    	issue.setSeverity(properties.getProperty("severity"));
+	    	issue.setEffortMinutes(0);
 	    	
 	    }	
 		
