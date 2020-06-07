@@ -884,7 +884,6 @@ public class AceitacaoTest {
 		assertEquals(5, retorno.get(0).getStartColumn());
 		assertEquals(3, retorno.get(0).getEndLine());
 		assertEquals(17, retorno.get(0).getEndColumn());
-		System.out.println(retorno.get(0).toString());
 		
 	}
 	
@@ -944,6 +943,8 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
+	
+	@Ignore
 	@Test
 	public void tc78() throws IOException {
 		
