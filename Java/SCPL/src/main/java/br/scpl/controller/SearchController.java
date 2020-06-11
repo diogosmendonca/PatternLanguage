@@ -26,7 +26,6 @@ import br.scpl.util.Utils;
 
 class SearchController {
 	
-	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
 	private static Logger log = Logger.getLogger(SearchController.class);
 	
 	private static final Map<Integer,Map<Node,Node>> returnedNode = new LinkedHashMap<>();
@@ -42,7 +41,7 @@ class SearchController {
 	
 	public static List<Node> subtree(Node a, Node b) {
 		
-		log.debug(separator);
+		log.debug("");
 		log.debug("Searching the pattern " +(b.getCompilatioUnitTree()).getSourceFile().getName());
 		log.debug(" in source code file " +(a.getCompilatioUnitTree()).getSourceFile().getName());
 		

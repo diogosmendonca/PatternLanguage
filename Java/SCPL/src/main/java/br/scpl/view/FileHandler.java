@@ -37,8 +37,6 @@ import br.scpl.model.PatternFolder;
  */
 public class FileHandler {
 	
-	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
-
 	private static Logger log = Logger.getLogger(FileHandler.class);
 	
 	private FileHandler() {}
@@ -120,13 +118,13 @@ public class FileHandler {
 	 */
 	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException, NoValidFilesFoundException{
 		PatternFolder folder = new PatternFolder();
-		log.debug(separator);
+		log.debug("");
 		log.debug("Searching patterns files.");
 		if(!(new File(rootPath)).exists()){
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),folder);
-		log.debug(separator);
+		log.debug("");
 		log.debug("Total files: " +folder.size());
 		if(folder.size()==0) {
 			throw new NoValidFilesFoundException(rootPath);
@@ -144,13 +142,13 @@ public class FileHandler {
 	 */
 	public static File[] getFiles(String rootPath) throws FileNotFoundException, NoValidFilesFoundException {
 		List<File> files = new ArrayList<>();
-		log.debug(separator);
+		log.debug("");
 		log.debug("Searching source code files.");
 		if(!(new File(rootPath)).exists()){
 			throw new FileNotFoundException(rootPath);
 		}
 		browseFiles(new File(rootPath),files);
-		log.debug(separator);
+		log.debug("");
 		log.debug("Total files: " +files.size());
 		if(files.size()==0) {
 			throw new NoValidFilesFoundException(rootPath);

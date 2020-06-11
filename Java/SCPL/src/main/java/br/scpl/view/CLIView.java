@@ -19,8 +19,6 @@ import com.beust.jcommander.ParameterException;
  */
 public class CLIView {
 	
-	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
-
 	private static Logger log = Logger.getLogger(CLIView.class);
 	
 	/**

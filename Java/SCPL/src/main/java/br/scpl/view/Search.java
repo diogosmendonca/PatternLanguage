@@ -40,8 +40,6 @@ import br.scpl.view.converter.CharsetConverter;
 @Parameters(commandDescription = "Search for patterns in source code")
 public class Search extends JCommander implements Command<List<Node>>{
 	
-	private static final String separator = ResourceBundle.getBundle("config").getString("separator");
-
 	private static Logger log = Logger.getLogger(Search.class);
 	
 	 @Parameter(names = {"-c", "--code"}, description = "Source code path", required = true)
@@ -78,14 +76,14 @@ public class Search extends JCommander implements Command<List<Node>>{
 		
 		try {
 			
-			log.debug(separator);
+			log.debug("");
 			log.debug("Start of file search.");
 			
 			PatternFolder patternFolder = FileHandler.getPatternFolder(pathPattern);
 	        
 			File[] filesCode = FileHandler.getFiles(pathCode);
 			
-			log.debug(separator);
+			log.debug("");
 			log.debug("End of file search.");
 			
 			CompilationUnit compilationUnitCode = FileHandler.parserFileToCompilationUnit(filesCode, charset);
@@ -106,7 +104,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 			//FIXME Problema de retornar modifiers
 			retorno = retorno.stream().filter(x -> x.getNode().getKind() != Kind.MODIFIERS && x.getNode().getKind() != Kind.PRIMITIVE_TYPE).collect(Collectors.toList());
 			
-			log.debug(separator);
+			log.debug("");
 			
 			for(Node r : retorno) {
 				r.setStartPosition(posCode.getStartPosition(r.getCompilatioUnitTree(), r.getNode()));
