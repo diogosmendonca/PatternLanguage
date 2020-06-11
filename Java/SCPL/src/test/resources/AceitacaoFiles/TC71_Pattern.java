@@ -1,6 +1,6 @@
 @anyModifier
 class anyClass {
-	//not-exists
+	//not_exists
 	@anyModifier
 	public static void run(anyType any) {
 		//alert: msg

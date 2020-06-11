@@ -1,6 +1,6 @@
 @anyModifier
 class anyClass {
-	//not-exists
+	//not_exists
 	@anyModifier
 	any anyMethod(anyType any) {
 		//alert: msg

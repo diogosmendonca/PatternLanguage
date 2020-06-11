@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +29,10 @@ import br.scpl.view.FileHandler;
  */
 
 public class StringUtil {
+	
+	private static final ResourceBundle config = ResourceBundle.getBundle("config");
+	private final static String not = config.getString("not");
+	private final static String exists = config.getString("exists");
 	
 	public static Map<Integer,String> extractAlertMessages(Tree tree) throws IOException{
 		Map<Integer,String> retorno = new LinkedHashMap<>();
@@ -177,7 +182,7 @@ public class StringUtil {
 		
 		String content = FileHandler.getStringContent(sourceFile);
 			
-		Pattern pattern = Pattern.compile("(?s)(/\\*(not-exists|exists)\\*/|//(not-exists|exists)(\\n|\\r))",
+		Pattern pattern = Pattern.compile("(?s)(/\\*("+not+"|"+exists+")\\*/|//("+not+"|"+exists+")(\\n|\\r))",
 				Pattern.CASE_INSENSITIVE);
 		
 	    Matcher matcher = pattern.matcher(content);
@@ -186,7 +191,7 @@ public class StringUtil {
 	    	
 	    	Boolean exists = null;
 	    	
-	    	if(existsText.contains("not")) {
+	    	if(existsText.contains(not)) {
 	    		exists = false;
 	    	}else {
 	    		exists = true;

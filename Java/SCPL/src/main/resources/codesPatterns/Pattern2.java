@@ -2,7 +2,7 @@ public class blabla {
 	
 	public void stubMethod(){
 		
-		not:{
+		not_exists:{
 			try{
 				exists:{
 					String a = anyMethod();

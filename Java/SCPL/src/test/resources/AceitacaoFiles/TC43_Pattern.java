@@ -7,7 +7,7 @@ class anyClass {
         
         someVariable = null;
 
-        //not-exists
+        //not_exists
         someVariable = any;
         
         //alert:Teste        	

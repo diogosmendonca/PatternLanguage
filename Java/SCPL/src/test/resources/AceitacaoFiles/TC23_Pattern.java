@@ -6,7 +6,7 @@ class anyClass {
 
         someVariable = anyMethod();
 
-		not:
+		not_exists:
         try{
             exists:{
                 someVariable.anyMethod();

@@ -3,7 +3,7 @@ class anyClass {
     @anyModifier
     any anyMethod(anyType any) {
     	
-		not:{
+		not_exists:{
             if(true){
             	exists:{
 	            	String someVariable;
@@ -13,7 +13,7 @@ class anyClass {
             }
         }
     
-    	not:{
+    	not_exists:{
             while(true){
             	exists:{
 	            	String someVariable2;

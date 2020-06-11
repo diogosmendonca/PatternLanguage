@@ -4,7 +4,7 @@ class anyClass {
     any anyMethod(anyType any) {
         int someVariable;
         
-        /*not-exists*/
+        /*not_exists*/
         someVariable = any;
         
     }

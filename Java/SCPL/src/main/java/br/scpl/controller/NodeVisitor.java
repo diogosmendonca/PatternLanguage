@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,8 +28,11 @@ import br.scpl.util.StringUtil;
  *
  */
 class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
-	
-	
+
+	  private static final ResourceBundle config = ResourceBundle.getBundle("config");
+	  private final static String not = config.getString("not");
+	  private final static String exists = config.getString("exists");  	
+
 	  private static final int INDENT_SPACES = 2;
 		
 	  private final StringBuilder sb;
@@ -154,11 +158,11 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 					}
 					
 					if(!existsModifierMap.isEmpty()) {
-						Boolean exists = existsModifierMap.remove(line);
+						Boolean booleanExists = existsModifierMap.remove(line);
 						
-						if(exists!=null) {
+						if(booleanExists!=null) {
 							//extraido para depois do processamento dos labels
-							commentExistsMap.put(node, exists);
+							commentExistsMap.put(node, booleanExists);
 						}
 					}
 					
@@ -212,21 +216,21 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		  }
 		  if(isPattern) {
 			  for(Node key : nodes.keySet()) {
-				  Boolean exists = null;
+				  Boolean booleanExists = null;
 				  if(key != null) {
 					  
 					  if(key.getNode().getKind() != Kind.BLOCK && key.getParent() != null && key.getParent().getNode().getKind() == Kind.LABELED_STATEMENT) {
-						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase("not")) {
-							  exists = false;
+						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(not)) {
+							  booleanExists = false;
 						  }
 						  
-						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase("exists")) {
-							  exists = true;
+						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(exists)) {
+							  booleanExists = true;
 						  }
 						  
 						  Node parentAux = null;
 						  
-						  if(exists != null) {
+						  if(booleanExists != null) {
 							  
 							  listToRemove.add(key.getParent());
 							  
@@ -249,8 +253,8 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 							
 							  key.setParent(parentAux);
 							
-							  key.setExists(exists);
-							  if(key.getParent().getExists()!=exists) {
+							  key.setExists(booleanExists);
+							  if(key.getParent().getExists()!=booleanExists) {
 								  key.getParent().setChangeOperator(true);
 							  }
 							  
@@ -262,15 +266,15 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 					  } 
 					  
 					  if(key.getNode().getKind() == Kind.BLOCK && key.getParent().getNode().getKind() == Kind.LABELED_STATEMENT) {
-						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase("not")) {
-							  exists = false;
+						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(not)) {
+							  booleanExists = false;
 						  }
 						  
-						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase("exists")) {
-							  exists = true;
+						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(exists)) {
+							  booleanExists = true;
 						  }
 						  
-						  if(exists != null) {
+						  if(booleanExists != null) {
 							  
 							  listToRemove.add(key);
 							  listToRemove.add(key.getParent());
@@ -303,8 +307,8 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 									
 									node.setParent(parentAux);
 									
-									node.setExists(exists);
-									if(node.getParent().getExists()!=exists) {
+									node.setExists(booleanExists);
+									if(node.getParent().getExists()!=booleanExists) {
 										node.getParent().setChangeOperator(true);
 									}
 							  }
@@ -317,10 +321,10 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			  }
 			  
 			for(Node node: commentExistsMap.keySet()) {
-				Boolean exists = commentExistsMap.get(node);
+				Boolean booleanExists = commentExistsMap.get(node);
 			  	Node nodeParent = node.getParent();
-			  	node.setExists(exists);
-				if(nodeParent.getExists()!=exists) {
+			  	node.setExists(booleanExists);
+				if(nodeParent.getExists()!=booleanExists) {
 					nodeParent.setChangeOperator(true);
 				}
 				listChangePoints.add(node);
@@ -353,7 +357,6 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		 Node block = node.getBlockChild();
 		 
 		 List<Node> blockChildren;
-		 Node nodeWanted;
 		 
 		 List<Node> ignoreList = new ArrayList<Node>();
 		 

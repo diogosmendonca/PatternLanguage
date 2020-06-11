@@ -3,12 +3,12 @@ class anyClass {
     @anyModifier
     any anyMethod(anyType any) {
     	
-		not:{
+		not_exists:{
             if(true){
             	exists:{
 	            	String someVariable;
                 	
-                    not:{
+                    not_exists:{
                         int someVariable2;
                     }
 	                

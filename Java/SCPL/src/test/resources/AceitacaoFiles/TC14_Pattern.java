@@ -2,7 +2,7 @@
 class anyClass {
     @anyModifier
     any anyMethod(){
-        //not-exists
+        //not_exists
         any someVariable = null;
 
         someVariable.anyMethod();
