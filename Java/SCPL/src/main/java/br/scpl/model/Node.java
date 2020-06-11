@@ -23,7 +23,7 @@ public class Node {
 	private Boolean fullVisited;
 	private Boolean exists;
 	private Boolean changeOperator;
-	private List<Node> notParents;
+	private List<Node> notExistsAsParents;
 	private Boolean isToReturn;
 	private String returnMessage;
 	private Issue issue;
@@ -39,7 +39,7 @@ public class Node {
 		this.exists = true;
 		this.changeOperator = false;
 		this.isToReturn = false;
-		this.notParents = new ArrayList<Node>();
+		this.notExistsAsParents = new ArrayList<Node>();
 	}
 	
 	public Node(Node node, List<Node> ignore) {
@@ -63,7 +63,7 @@ public class Node {
 		this.exists = true;
 		this.changeOperator = false;
 		this.isToReturn = false;
-		this.notParents = new ArrayList<Node>();
+		this.notExistsAsParents = new ArrayList<Node>();
 	}
 	
 	public Node getParent() {
@@ -173,8 +173,8 @@ public class Node {
 		return this.node.toString();
 	}
 	
-	public List<Node> getNotParents() {
-		return notParents;
+	public List<Node> getNotExistsAsParents() {
+		return notExistsAsParents;
 	}
 
 	public Node getChildrenbyTree(Tree tree) {

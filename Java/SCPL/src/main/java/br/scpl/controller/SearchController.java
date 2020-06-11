@@ -378,7 +378,7 @@ class SearchController {
 		Map<String, String> wildcardsMapBefore = new LinkedHashMap<>();
 		wildcardsMapBefore.putAll(wildcardsMap);
 		
-		for(Node notParent: b.getNotParents()) {
+		for(Node notParent: b.getNotExistsAsParents()) {
 			
 			Node parentAux = a.getParent();
 			

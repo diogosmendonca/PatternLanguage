@@ -373,8 +373,8 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			 Node clone = new Node(node,ignoreList);
 			 
 			 blockChildren.forEach(x -> {
-				 	x.getNotParents().addAll(node.getNotParents());
-				 	x.getNotParents().add(clone);
+				 	x.getNotExistsAsParents().addAll(node.getNotExistsAsParents());
+				 	x.getNotExistsAsParents().add(clone);
 				 	x.setParent(node.getParent());
 			 });
 			 			 
