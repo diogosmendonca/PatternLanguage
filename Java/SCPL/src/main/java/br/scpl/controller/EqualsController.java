@@ -31,20 +31,9 @@ import br.scpl.model.Node;
 
 class EqualsController {
 	
-	private static final ResourceBundle wildcards = ResourceBundle.getBundle("wildcards");
-	private final static String anyClass = wildcards.getString("anyClass");
-	private final static String anyMethod = wildcards.getString("anyMethod");
-	private final static String someMethod = wildcards.getString("someMethod");
-	private final static String anyVariable = wildcards.getString("anyVariable");
-	private final static String someVariable = wildcards.getString("someVariable");
-	private final static String anyValue = wildcards.getString("anyValue");
-	private final static String anyParameter = wildcards.getString("anyParameter");
-	private final static String anyArgument = wildcards.getString("anyArgument");
-	private final static String anyModifier = wildcards.getString("anyModifier");
-	private final static String anyType = wildcards.getString("anyType");
-	private final static String anyException = wildcards.getString("anyException");
-	private final static String anyExpression = wildcards.getString("anyExpression");
-	
+	private static final ResourceBundle config = ResourceBundle.getBundle("config");
+	private final static String any = config.getString("any");
+	private final static String some = config.getString("some");
 	
 	/***
 	 * Gets two trees and says if the both are equals.
@@ -151,13 +140,9 @@ class EqualsController {
 		//Se é um nó fake não realiza as verificações
 			boolean flagAny = false;
 			
-			if(b.getNode().getKind() == Kind.IDENTIFIER && (
-					(((IdentifierTree) b.getNode()).getName().toString()).startsWith(anyValue) || 
-						(((IdentifierTree) b.getNode()).getName().toString()).startsWith(anyType) ||
-							(((IdentifierTree) b.getNode()).getName().toString()).startsWith(anyExpression))){
-				
+			if(b.getNode().getKind() == Kind.IDENTIFIER && 
+					(((IdentifierTree) b.getNode()).getName().toString()).startsWith(any)){
 				flagAny = true;
-				
 			}
 			
 			//Compara se os tipos sao iguais.
@@ -206,7 +191,7 @@ class EqualsController {
 				name1 = ((ClassTree) node1.getNode()).getSimpleName().toString();
 				name2 = ((ClassTree) node2.getNode()).getSimpleName().toString();
 				
-				if(name2.startsWith(anyClass)) {
+				if(name2.startsWith(any)) {
 					return true;
 				}
 				
@@ -217,11 +202,11 @@ class EqualsController {
 				name1 = ((MethodTree) node1.getNode()).getName().toString();
 				name2 = ((MethodTree) node2.getNode()).getName().toString();
 				
-				if(name2.startsWith(anyMethod)) {
+				if(name2.startsWith(any)) {
 					return true;
 				}
 				
-				if(name2.startsWith(someMethod)) {
+				if(name2.startsWith(some)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -261,11 +246,11 @@ class EqualsController {
 					
 				}
 				
-				if(name2.startsWith(anyMethod)) {
+				if(name2.startsWith(any)) {
 					return true;
 				}
 				
-				if(name2.startsWith(someMethod)) {
+				if(name2.startsWith(some)) {
 					
 					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
 					wildcardsMapAux.putAll(wildcardsMap);
@@ -296,11 +281,11 @@ class EqualsController {
 				name1 = ((VariableTree) node1.getNode()).getName().toString();
 				name2 = ((VariableTree) node2.getNode()).getName().toString();
 				
-				if(name2.startsWith(anyVariable)) {
+				if(name2.startsWith(any)) {
 					return true;
 				}
 				
-				if(name2.startsWith(someVariable)) {
+				if(name2.startsWith(some)) {
 					
 					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
 					wildcardsMapAux.putAll(wildcardsMap);
@@ -332,11 +317,11 @@ class EqualsController {
 				name2 = ((IdentifierTree) node2.getNode()).getName().toString();
 				
 				//TODO rever a necessidade
-				if(name2.startsWith(anyVariable)) {
+				if(name2.startsWith(any)) {
 					return true;
 				}
 				
-				if(name2.startsWith(someVariable)) {
+				if(name2.startsWith(some)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -477,7 +462,7 @@ class EqualsController {
 	public static boolean isAnyParameter(Node node) {
 		MethodTree methodPattern = (MethodTree)node.getNode();
 		
-		return methodPattern.getParameters().stream().anyMatch(x -> x.toString().startsWith(anyParameter));
+		return methodPattern.getParameters().stream().anyMatch(x -> x.toString().startsWith(any));
 	}
 	
 	/**
@@ -490,7 +475,7 @@ class EqualsController {
 	public static boolean isAnyThrows(Node node) {
 		MethodTree methodPattern = (MethodTree)node.getNode();
 		
-		return methodPattern.getThrows().stream().anyMatch(x -> x.toString().startsWith(anyException));
+		return methodPattern.getThrows().stream().anyMatch(x -> x.toString().startsWith(any));
 	}
 	
 	/**
@@ -503,7 +488,7 @@ class EqualsController {
 		
 		IdentifierTree identifier = (IdentifierTree)node.getNode();
 			
-		return identifier.getName().toString().startsWith(anyExpression);
+		return identifier.getName().toString().startsWith(any);
 	}
 	
 	/**
@@ -528,7 +513,7 @@ class EqualsController {
 				ModifiersTree modifierTree = (ModifiersTree) node.getNode();
 				List<? extends AnnotationTree> annotations = modifierTree.getAnnotations();
 				
-				return annotations.stream().anyMatch(a -> a.toString().startsWith(anyModifier));
+				return annotations.stream().anyMatch(a -> a.toString().startsWith("@"+any));
 				
 		}
 		
@@ -551,7 +536,7 @@ class EqualsController {
 			ExpressionTree argument = argumentsPattern.get(0);
 			
 			if(argument.getKind() == Kind.IDENTIFIER) {
-				if(((IdentifierTree) argument).getName().toString().startsWith(anyArgument)){
+				if(((IdentifierTree) argument).getName().toString().startsWith(any)){
 					
 					MethodInvocationTree invocantionCode = (MethodInvocationTree)a.getNode();
 					List<? extends ExpressionTree> argumentsCode = invocantionCode.getArguments();
