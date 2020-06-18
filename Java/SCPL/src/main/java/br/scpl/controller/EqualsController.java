@@ -6,7 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.lang.model.element.Modifier;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ClassTree;
@@ -363,7 +366,7 @@ class EqualsController {
 	 * @param b Node representing the pattern tree.
 	 * @return Boolean that indicates if two modifier nodes are equals.
 	 */
-	private static boolean equalsModifier(Node a, Node b) {
+	protected static boolean equalsModifier(Node a, Node b) {
 		
 		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
@@ -384,12 +387,45 @@ class EqualsController {
 			}
 			
 			if(notModifier.size()>0) {
+				Set<Modifier> notFlags = notModifier.stream().map(i -> Modifier.valueOf(i.toUpperCase())).collect(Collectors.toSet());
+				
 				ModifiersTree modifierCode = ((ModifiersTree) a.getNode());
 				
-				if(notModifier.stream().anyMatch(x-> modifierCode.toString().contains(x))) {
+				Set<Modifier> flagsCode = modifierCode.getFlags();
+				
+				//FIXME The default modifier is empty and needs special treatment
+				if(notDefaultCase(flagsCode, notFlags)) {
 					return false;
 				}
 				
+				if(notFlags.stream().anyMatch(x-> flagsCode.contains(x))) {
+					return false;
+				}
+				
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/***
+	 * 
+	 * Because it is empty, the default modifier is found by 
+	 * the non-occurrence of the other access modifiers.
+	 * And it needs special treatment.
+	 * 
+	 * @param flagsCode Modifiers used in the source code.
+	 * @param notFlags Modifiers used in the pattern.
+	 * @return true if notDefault is used and modifier access default occurs.
+	 */
+	private static boolean notDefaultCase(Set<Modifier> flagsCode, Set<Modifier> notFlags) {
+		
+		if(notFlags.stream().anyMatch(x-> x.equals(Modifier.valueOf("DEFAULT")))) {
+					
+			List<Modifier> acessModifiers = Arrays.asList(Modifier.valueOf("PRIVATE"), 	
+					Modifier.valueOf("PUBLIC"), Modifier.valueOf("PROTECTED"));
+			
+			if(!flagsCode.stream().anyMatch(x-> acessModifiers.contains(x))) {
 				return true;
 			}
 		}

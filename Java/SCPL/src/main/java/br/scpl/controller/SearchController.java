@@ -130,18 +130,36 @@ class SearchController {
 				anyIndex.addAll(aux);
 			}
 			
+			ModifiersTree modifierCodeTree = ((MethodTree)a.getNode()).getModifiers();
+			Node modifierCode = a.getChildrenbyTree(modifierCodeTree);
+			
+			ModifiersTree modifierPatternTree = ((MethodTree)b.getNode()).getModifiers();
+			Node modifierPattern = b.getChildrenbyTree(modifierPatternTree);
+			
+			if(!EqualsController.equalsModifier(modifierCode,modifierPattern)) {
+				return occurrences;
+			}
+			
 			if(EqualsController.isAnyModifier(b)) {
-				ModifiersTree modifierAux = ((MethodTree)b.getNode()).getModifiers();
 				
-				anyIndex.add(b.getChildren().indexOf(b.getChildrenbyTree(modifierAux)));
+				anyIndex.add(b.getChildren().indexOf(modifierPattern));
 			}
 		}
 		
 		if(b.getNode().getKind() == Kind.CLASS) {
+			ModifiersTree modifierCodeTree = ((ClassTree)a.getNode()).getModifiers();
+			Node modifierCode = a.getChildrenbyTree(modifierCodeTree);
+			
+			ModifiersTree modifierPatternTree = ((ClassTree)b.getNode()).getModifiers();
+			Node modifierPattern = b.getChildrenbyTree(modifierPatternTree);
+			
+			if(!EqualsController.equalsModifier(modifierCode,modifierPattern)) {
+				return occurrences;
+			}
+			
 			if(EqualsController.isAnyModifier(b)) {
-				ModifiersTree modifierAux = ((ClassTree)b.getNode()).getModifiers();
 				
-				anyIndex.add(b.getChildren().indexOf(b.getChildrenbyTree(modifierAux)));
+				anyIndex.add(b.getChildren().indexOf(modifierPattern));
 			}
 		}
 		
