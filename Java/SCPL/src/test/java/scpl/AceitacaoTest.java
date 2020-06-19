@@ -954,4 +954,58 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
+	@Test
+	public void tc79() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC79_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC79_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc80() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC80_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC80_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	@Test
+	public void tc81() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC81_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC81_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(4, retorno.get(0).getStartLine());
+		assertEquals(5, retorno.get(0).getStartColumn());
+		assertEquals(4, retorno.get(0).getEndLine());
+		assertEquals(24, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc82() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC82_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC82_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+		
+	}
+	
+	@Test
+	public void tc83() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC83_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC83_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(4, retorno.get(0).getStartLine());
+		assertEquals(5, retorno.get(0).getStartColumn());
+		assertEquals(4, retorno.get(0).getEndLine());
+		assertEquals(24, retorno.get(0).getEndColumn());
+	}
+	
 }

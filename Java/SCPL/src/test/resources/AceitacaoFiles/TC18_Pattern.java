@@ -3,7 +3,7 @@ class anyClass {
     @anyModifier
     any anyMethod(anyType any) {
         int someVariable;
-		not:{
+		not_exists:{
             someVariable = any;
         }
     }
