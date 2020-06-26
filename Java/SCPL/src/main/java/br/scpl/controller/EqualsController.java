@@ -139,27 +139,32 @@ class EqualsController {
 	 * @return Boolean that indicates if the trees roots are equals.
 	 */
 	
-	public static boolean basicComparation(Node a, Node b, Map<String, String> wildcardsMap) {		
-		//Se é um nó fake não realiza as verificações
+	public static boolean basicComparation(Node a, Node b, Map<String, String> wildcardsMap) {
+		
 			boolean flagAny = false;
+			boolean flagSome = false;
 			
-			if(b.getNode().getKind() == Kind.IDENTIFIER && 
-					(((IdentifierTree) b.getNode()).getName().toString()).startsWith(any)){
-				flagAny = true;
+			if(b.getNode().getKind() == Kind.IDENTIFIER) {
+				if((((IdentifierTree) b.getNode()).getName().toString()).startsWith(any)){
+					flagAny = true;
+				}
+				if((((IdentifierTree) b.getNode()).getName().toString()).startsWith(some)){
+					flagSome = true;
+				}
 			}
 			
 			//Compara se os tipos sao iguais.
 			if(a.getNode().getKind()!=b.getNode().getKind()) {
-				if(!flagAny) {
+				if(!flagAny && !flagSome) {
 					return false;
 				}
 			}
 			
-			if(!compareValue(a, b, flagAny, wildcardsMap)) {
+			if(!compareValue(a, b, flagAny, flagSome, wildcardsMap)) {
 				return false;
 			}
 			
-			if(!compareName(a, b, flagAny, wildcardsMap)) {
+			if(!compareName(a, b, flagAny, flagSome, wildcardsMap)) {
 				return false;
 			}
 		
@@ -178,7 +183,7 @@ class EqualsController {
 	 * @return Boolean that indicates if the name of nodes are equals.
 	 */
 	
-	private static boolean compareName(Node node1, Node node2, boolean flagAny, Map<String, String> wildcardsMap) {
+	private static boolean compareName(Node node1, Node node2, boolean flagAny, boolean flagSome, Map<String, String> wildcardsMap) {
 		
 		if(flagAny) {
 			return true;
@@ -319,11 +324,6 @@ class EqualsController {
 				name1 = ((IdentifierTree) node1.getNode()).getName().toString();
 				name2 = ((IdentifierTree) node2.getNode()).getName().toString();
 				
-				//TODO rever a necessidade
-				if(name2.startsWith(any)) {
-					return true;
-				}
-				
 				if(name2.startsWith(some)) {
 					
 					if(wildcardsMap.get(name2)==null) {
@@ -348,7 +348,19 @@ class EqualsController {
 				
 				name1 = ((PrimitiveTypeTree) node1.getNode()).toString();
 				
-				name2 = ((PrimitiveTypeTree) node2.getNode()).toString();
+				if(flagSome) {
+					name2 = ((IdentifierTree)node2.getNode()).toString();
+					
+					if(wildcardsMap.get(name2)==null) {
+						wildcardsMap.put(name2, name1);
+						return true;
+						
+					}else {
+						return wildcardsMap.get(name2).equals(name1);
+					}
+				}else {
+					name2 = ((PrimitiveTypeTree) node2.getNode()).toString();					
+				}
 				
 				return name1.equals(name2);
 				
@@ -611,25 +623,40 @@ class EqualsController {
 	 * 
 	 * @param node1 Node representing the source code tree.
 	 * @param node2 Node representing the pattern tree.
-	 * @param flagAny Flag that indicates if the any wildcard is being used. 
+	 * @param flagAny Flag that indicates if the any wildcard is being used.
+	 * @param flagSome Flag that indicates if the some wildcard is being used. 
 	 * @param wildcardsMap Map for wildcar mapping.
 	 * @return Boolean that indicates if the value of nodes are equals.
 	 */
 	
-	private static boolean compareValue(Node node1, Node node2, boolean flagAny, Map<String, String> wildcardsMap) {
+	private static boolean compareValue(Node node1, Node node2, boolean flagAny, boolean flagSome, Map<String, String> wildcardsMap) {
 		
 		if(flagAny) {
 			return true;
 		}
-		
+			
 		List<Kind> typesList = Arrays.asList(Kind.INT_LITERAL,Kind.LONG_LITERAL,Kind.FLOAT_LITERAL,Kind.DOUBLE_LITERAL,
 				Kind.BOOLEAN_LITERAL,Kind.CHAR_LITERAL,Kind.STRING_LITERAL);
 		
 		if(typesList.contains(node1.getNode().getKind())) {
 			Object value1 = ((LiteralTree)node1.getNode()).getValue();
-			Object value2 = ((LiteralTree)node2.getNode()).getValue();
 			
-			return value1.equals(value2);
+			if(flagSome) {
+				String value2 = ((IdentifierTree)node2.getNode()).toString();
+				
+				if(wildcardsMap.get(value2)==null) {
+					wildcardsMap.put(value2, value1.toString());
+					return true;
+					
+				}else {
+					return wildcardsMap.get(value2).equals(value1.toString());
+				}
+			}else {
+				Object value2 = ((LiteralTree)node2.getNode()).getValue();
+				
+				return value1.equals(value2);				
+			}
+			
 		}
 		
 		return true;
