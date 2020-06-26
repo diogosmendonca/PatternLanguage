@@ -6,7 +6,9 @@ class anyClass {
 		not_exists:{
             if(true){
                 exists:{
+                    //Alert: Teste
                     String someVariable = any;
+                    //Alert: Teste
                     someVariable.anyMethod();
                 }
             }

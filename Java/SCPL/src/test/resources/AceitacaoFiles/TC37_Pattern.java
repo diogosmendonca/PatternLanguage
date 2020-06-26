@@ -2,7 +2,8 @@
 class anyClass {
     
     @anyModifier
-    any someMethod(anyType any) {
-        someMethod2(2);
+    any anyMethod(anyType any) {
+        //Alert: Teste
+        anyMethod(2);
     }
 }

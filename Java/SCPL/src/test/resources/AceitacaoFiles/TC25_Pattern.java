@@ -2,7 +2,9 @@
 class anyClass {
     @anyModifier
     any anyMethod(anyType any) {
-       String someVariable;
-       someVariable.any();   
+        //Alert: Teste
+        String someVariable;
+        //Alert: Teste
+        someVariable.any();   
     }
 }

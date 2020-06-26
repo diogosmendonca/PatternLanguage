@@ -2,6 +2,7 @@
 class anyClass {
     @anyModifier
     any anyMethod(anyType any) {
-       any any = any(any);
+        //Alert: Teste
+        any any = any(any);
     }
 }

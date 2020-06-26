@@ -2,7 +2,7 @@
 class anyClass {
     @anyModifier
     any someMethod(anyType any) {
-        //alert:
+        //alert: Teste
         any someVariable;
     }
 }
