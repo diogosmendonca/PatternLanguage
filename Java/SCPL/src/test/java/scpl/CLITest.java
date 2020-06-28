@@ -3,6 +3,7 @@ package scpl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.RandomAccessFile;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -11,7 +12,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import br.scpl.view.Main;
-@Ignore
 public class CLITest {
 	
 	private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -98,5 +98,27 @@ public class CLITest {
         Assert.assertTrue(outContent.toString().contains("issues"));
 	}
 	
+	@Test
+	public void tc07() throws IOException {
+        
+        String[] args = { "search", "-c", "./src/test/resources/AceitacaoFiles/TC01_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC01_Pattern.java", "-f", "sonarqube" };
+		
+		Main.main(args);
+
+        Assert.assertTrue(outContent.toString().contains("issues"));
+	}
+	
+	@Test
+	public void tc08() throws IOException {
+        
+		final RandomAccessFile raFile = new RandomAccessFile("./target/classes/application.properties", "rw");
+		raFile.getChannel().lock();
+		
+        String[] args = { "--version"};
+		
+		Main.main(args);
+
+        Assert.assertTrue(outContent.toString().contains("issues"));
+	}
 
 }

@@ -30,12 +30,6 @@ public class CLIView {
 		
 		CLIOptions cli = new CLIOptions();
 		
-		//List<String> test = Arrays.asList("--verbose", "search", "-c", "C:\\opt\\Projects\\sisgee\\sisgee", "-p", "./src/test/resources/AceitacaoFiles/TC66_Pattern.java", "--charset", "UTF-8");
-		
-		//List<String> test = Arrays.asList("@C:\\opt\\Projects\\PatternLanguage\\Java\\SCPL\\target\\args.txt");
-		
-		//args = test.toArray(new String[0]);
-		
 		JCommander jc = JCommander.newBuilder()
 				  .addObject(cli)
 				  .build();
@@ -44,12 +38,7 @@ public class CLIView {
 			
 			String[] alias = Command.commandAlias.get(key);
 			
-			if(alias != null) {
-				jc.addCommand(key, value, alias);
-				
-			}else {
-				jc.addCommand(key,value);
-			}
+			jc.addCommand(key, value, alias);
 			
 		});
 		
@@ -72,7 +61,7 @@ public class CLIView {
 			  throw new ParameterException("Expected a command, got none");
 		  }
 		  
-		  Command command = (Command) jc.getCommands()
+		  Command<?> command = (Command<?>) jc.getCommands()
 				  .get(jc.getParsedCommand()).getObjects().get(0);
 		  
 		  command.execute(jc);

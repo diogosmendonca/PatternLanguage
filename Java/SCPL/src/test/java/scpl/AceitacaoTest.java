@@ -3,6 +3,7 @@ package scpl;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -172,13 +173,8 @@ public class AceitacaoTest {
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC13_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC13_Pattern.java");
 		
-		assertEquals(1, retorno.size());
-		assertEquals(3, retorno.get(0).getStartLine());
-		assertEquals(9, retorno.get(0).getStartColumn());
-		assertEquals(3, retorno.get(0).getEndLine());
-		assertEquals(22, retorno.get(0).getEndColumn());
+		assertEquals(0, retorno.size());
 	}
-	
 	
 	@Test
 	public void tc14() throws IOException {
@@ -928,7 +924,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc76() throws IOException {
 		
-		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/PatternFolder/test.txt"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC01_Code.java"
 				,"./src/test/resources/AceitacaoFiles/PatternFolder");
 		
 		assertEquals(0, retorno.size());
@@ -944,12 +940,16 @@ public class AceitacaoTest {
 	}
 	
 	
-	@Ignore
 	@Test
 	public void tc78() throws IOException {
 		
+		final RandomAccessFile raFile = new RandomAccessFile("./src/test/resources/AceitacaoFiles/TC78_Code.java", "rw");
+		raFile.getChannel().lock();
+		
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC78_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC78_Pattern.java");
+		
+		raFile.close();
 		
 		assertEquals(0, retorno.size());
 	}
@@ -1006,6 +1006,24 @@ public class AceitacaoTest {
 		assertEquals(5, retorno.get(0).getStartColumn());
 		assertEquals(4, retorno.get(0).getEndLine());
 		assertEquals(24, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc85() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC85_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC85_Pattern.java");
+		
+		assertEquals(2, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(5, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(17, retorno.get(0).getEndColumn());
+		assertEquals(6, retorno.get(1).getStartLine());
+		assertEquals(9, retorno.get(1).getStartColumn());
+		assertEquals(6, retorno.get(1).getEndLine());
+		assertEquals(20, retorno.get(1).getEndColumn());
+		
 	}
 	
 }
