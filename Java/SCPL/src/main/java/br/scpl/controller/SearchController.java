@@ -51,15 +51,13 @@ class SearchController {
 			if(EqualsController.isEquals(a, b, new LinkedHashMap<>())) {
 				if(!b.getChangeOperator()) {
 					occurrences.add(a);
-					if(b.getExists()) {
-						a.setFullVisited(true);
-						if(returnedNode.get(round) == null) {
-							Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
-							aux.put(b, a);
-							returnedNode.put(round, aux);
-						}else {
-							returnedNode.get(round).put(b, a);
-						}
+					a.setFullVisited(true);
+					if(returnedNode.get(round) == null) {
+						Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
+						aux.put(b, a);
+						returnedNode.put(round, aux);
+					}else {
+						returnedNode.get(round).put(b, a);
 					}
 					
 					occurrences = Utils.getReturnNode(occurrences);
@@ -188,10 +186,10 @@ class SearchController {
 		List<Node> subtreeAux;
 		
 		boolean searching = false;
-		int counter = path.get(a) != null ? path.get(a) : 0;
+		int counter = 0;
 		int i = 0;
 		int lastOcorrenceIndex = counter;
-		int maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
+		int maxIndexA = a.getChildren().size()-1;
 		
 		Map<String, String> wildcardsMapLastFail = new LinkedHashMap<>();
 		
@@ -232,7 +230,6 @@ class SearchController {
 								limitPath.putAll(limitPathOld);
 								maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
 							}else {
-								//FIXME
  								if(i == b.getChildren().size() - 1) {
 									return occurrences;
 								}
@@ -275,10 +272,10 @@ class SearchController {
 							wildcardsMap.putAll(wildcardsMapBefore);
 							path.clear();
 							path.putAll(pathOld);
-							counter = path.get(a) != null ? path.get(a) : 0;
+							counter = 0;
 							limitPath.clear();
 							limitPath.putAll(limitPathOld);
-							maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
+							maxIndexA = a.getChildren().size()-1;
 						}
 					}
 					
