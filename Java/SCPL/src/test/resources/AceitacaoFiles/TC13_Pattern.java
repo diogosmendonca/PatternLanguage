@@ -2,6 +2,7 @@
 class anyClass {
     @anyModifier
     any anyMethod() {
-        any any = any;
+        any someVariable = someMethod();
+        someVariable.someMethod(a);
     }
 }

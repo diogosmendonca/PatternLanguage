@@ -5,6 +5,7 @@ class anyClass {
         //not_exists
         any someVariable = null;
 
+        // Alert:
         someVariable.anyMethod();
     }
 }

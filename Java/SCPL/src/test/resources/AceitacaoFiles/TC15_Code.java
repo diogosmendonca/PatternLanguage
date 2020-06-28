@@ -1,7 +1,6 @@
 public class SourceCode{
     public static void run() {
-        Object someVariable = null;
-
-        someVariable.anyMethod();
+        Object o = metodo();
+        o.metodo(a,b,c);
     }
 }

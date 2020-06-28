@@ -1,5 +1,6 @@
 public class SourceCode{
     public static void run() {
-        int a,b = 10;
+        Object o = metodo();
+        o.metodo(b);
     }
 }

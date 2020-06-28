@@ -53,7 +53,7 @@ public class StringUtil {
 	    	
 	    	Integer line = getLineComment(content, matcher.end());
 	    	
-	    	if(alert!="") {
+	    	if(!alert.equals("")) {
 	    		retorno.put(line+1, alert);
 	    	}
 	    }
@@ -141,9 +141,9 @@ public class StringUtil {
 	    		alert = alert.replaceFirst(" ", "");
 	    	}
 	    	
-	    	if(alert.startsWith("(")) alert = alert.replaceFirst("\\(", "");
+	    	alert = alert.replaceFirst("\\(", "");
 	    	
-	    	if(alert.endsWith(")")) alert = alert.replaceAll("\\)$", "");
+	    	alert = alert.replaceAll("\\)$", "");
 	    	
 	    	List<String> attributes = Arrays.asList(alert.split(","));
 	    	
