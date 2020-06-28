@@ -43,6 +43,9 @@ public class CLIView {
 		});
 		
 		try {
+		  if(args==null) {
+			  args = new String[0];
+		  }
 		  
 		  jc.parse(args);
 		  

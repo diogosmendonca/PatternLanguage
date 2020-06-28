@@ -262,7 +262,7 @@ class EqualsController {
 					
 					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
 					wildcardsMapAux.putAll(wildcardsMap);
-					
+									
 					if(node1.getChildren().size()==node2.getChildren().size()) {
 						for(int i = 0;i<node1.getChildren().size();i++) {
 							if(!isEquals(node1.getChildren().get(i), node2.getChildren().get(i), wildcardsMapAux)) {
@@ -270,8 +270,32 @@ class EqualsController {
 							}
 						}
 					}else {
-						return false;
+						if(!anyArgument(node1,node2,wildcardsMapAux)) {
+							return false;							
+						}
 					}
+					
+					if(wildcardsMap.get(name2)==null) {
+						wildcardsMap.put(name2, name1);
+						return true;
+						
+					}else {
+						return wildcardsMap.get(name2).equals(name1);
+					}
+				}
+				
+				return name1.equals(name2);
+				
+			case MEMBER_SELECT: 
+				
+				name1 = ((MemberSelectTree) node1.getNode()).getIdentifier().toString();
+				name2 = ((MemberSelectTree) node2.getNode()).getIdentifier().toString();
+				
+				if(name2.startsWith(any)) {
+					return true;
+				}
+				
+				if(name2.startsWith(some)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -599,9 +623,9 @@ class EqualsController {
 					
 					if(childrenPattern.size() == childrenCode.size()) {
 						for(int i=0; i<childrenPattern.size(); i++) {
-							if(childrenCode.get(i).getFullVisited().booleanValue()) {
+							/*if(childrenCode.get(i).getFullVisited().booleanValue()) {
 								return false;
-							}
+							}*/
 							if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {
 								return false;
 							}
@@ -687,6 +711,7 @@ class EqualsController {
 				return anyMethod(a, b, wildcardsMap);
 			}
 			
+			/*
 			if(b.getNode().getKind() == Kind.METHOD_INVOCATION) {
 				return anyArgument(a, b, wildcardsMap);
 			}
@@ -694,6 +719,7 @@ class EqualsController {
 			if(b.getNode().getKind() == Kind.IDENTIFIER) {
 				return isAnyExpression(b);
 			}
+			*/
 			
 			if(b.getNode().getKind() == Kind.BLOCK && b.getChildren().size() == 0) {
 				return true;

@@ -120,5 +120,14 @@ public class CLITest {
 
         Assert.assertTrue(outContent.toString().contains("issues"));
 	}
+	
+	@Test
+	public void tc09() throws IOException {
+		
+        String[] args = null;
+		
+		Main.main(args);
+		
+	}
 
 }
