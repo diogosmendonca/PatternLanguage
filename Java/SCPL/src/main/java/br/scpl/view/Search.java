@@ -101,8 +101,6 @@ public class Search extends JCommander implements Command<List<Node>>{
 			
 			String currentFile = "";
 			
-			//FIXME Problema de retornar modifiers
-			retorno = retorno.stream().filter(x -> x.getNode().getKind() != Kind.MODIFIERS && x.getNode().getKind() != Kind.PRIMITIVE_TYPE).collect(Collectors.toList());
 			
 			log.debug("");
 			

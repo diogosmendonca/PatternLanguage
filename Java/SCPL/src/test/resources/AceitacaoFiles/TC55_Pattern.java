@@ -6,7 +6,9 @@ class anyClass {
 		not_exists:{
             if(true){
             	exists:{
+                    //Alert: Test
 	            	String someVariable;
+                    //Alert: Test
 	            	someVariable.any();	        		
 	        		
                 }
@@ -16,7 +18,9 @@ class anyClass {
     	not_exists:{
             while(true){
             	exists:{
+                    //Alert: Test
 	            	String someVariable2;
+                    //Alert: Test
 	            	someVariable2.any();	        		
 	        		
                 }
