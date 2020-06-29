@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.SourcePositions;
 
@@ -101,6 +102,8 @@ public class Search extends JCommander implements Command<List<Node>>{
 			
 			String currentFile = "";
 			
+			//removing empty default acess modifier, has no beginning and end
+			retorno = retorno.stream().filter(r -> !(r.getNode().getKind() == Kind.MODIFIERS && ((ModifiersTree) r.getNode()).getFlags().size() == 0)).collect(Collectors.toList());
 			
 			log.debug("");
 			

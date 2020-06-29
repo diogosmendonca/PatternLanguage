@@ -134,7 +134,7 @@ class SearchController {
 			ModifiersTree modifierPatternTree = ((MethodTree)b.getNode()).getModifiers();
 			Node modifierPattern = b.getChildrenbyTree(modifierPatternTree);
 			
-			if(!EqualsController.equalsModifier(modifierCode,modifierPattern)) {
+			if(!EqualsController.isEquals(modifierCode,modifierPattern, new LinkedHashMap<>())) {
 				return occurrences;
 			}
 			
@@ -151,7 +151,7 @@ class SearchController {
 			ModifiersTree modifierPatternTree = ((ClassTree)b.getNode()).getModifiers();
 			Node modifierPattern = b.getChildrenbyTree(modifierPatternTree);
 			
-			if(!EqualsController.equalsModifier(modifierCode,modifierPattern)) {
+			if(!EqualsController.isEquals(modifierCode,modifierPattern, new LinkedHashMap<>())) {
 				return occurrences;
 			}
 			
@@ -228,7 +228,7 @@ class SearchController {
 								lastOcorrenceIndex = counter;
 								limitPath.clear();
 								limitPath.putAll(limitPathOld);
-								maxIndexA = limitPath.get(a) != null ? limitPath.get(a) : a.getChildren().size()-1;
+								maxIndexA = a.getChildren().size()-1;
 							}else {
  								if(i == b.getChildren().size() - 1) {
 									return occurrences;
@@ -361,12 +361,10 @@ class SearchController {
 				occurrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap, path, limitPath));
 				if(occurrences.size() > 0) {
 					
-					if(!b.getChangeOperator()) {
-						if(b.getExists()) {
-							path.put(a, counter);
-						}else {
-							limitPath.put(a, counter);
-						}
+					if(b.getExists()) {
+						path.put(a, counter);
+					}else {
+						limitPath.put(a, counter);
 					}
 						
 					return occurrences;

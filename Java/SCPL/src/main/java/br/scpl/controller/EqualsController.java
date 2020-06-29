@@ -510,9 +510,9 @@ class EqualsController {
 		
 		if(childrenPattern.size() == childrenCode.size()) {
 			for(int i=0; i<childrenPattern.size(); i++) {
-				if(childrenCode.get(i).getFullVisited().booleanValue()) {
+				/*if(childrenCode.get(i).getFullVisited().booleanValue()) {
 					return false;
-				}
+				}*/
 				if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {
 					return false;
 				}
