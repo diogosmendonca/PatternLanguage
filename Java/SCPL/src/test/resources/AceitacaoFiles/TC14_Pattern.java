@@ -6,6 +6,6 @@ class anyClass {
         any someVariable = null;
 
         // Alert:
-        someVariable.anyMethod();
+        someVariable.anyMethod(any);
     }
 }

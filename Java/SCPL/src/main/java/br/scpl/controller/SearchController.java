@@ -258,7 +258,7 @@ class SearchController {
 			
 			if(i == b.getChildren().size() - 1) {
 				if(searching){
-					if(!b.getChildren().get(i).getExists() && !b.getChildren().get(i).getChangeOperator()) {
+					if(!b.getChildren().get(i).getExists()) {
 						occurrences.addAll(currentOccurrences);
 					}else {
 						//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado

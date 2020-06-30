@@ -1,7 +1,7 @@
 @anyModifier
 class anyClass {
     @anyModifier
-    any anyMethod(anyType any) {
+    any anyMethod(A a) {
         //Alert: Teste
         System.out.println("Hello");
     }

@@ -236,22 +236,14 @@ class EqualsController {
 					return false;
 				}
 				
-				switch (e1.getKind()) {
+				if(e1.getKind() == Kind.MEMBER_SELECT) {
+					name1 = ((MemberSelectTree) e1).getIdentifier().toString();
+					name2 = ((MemberSelectTree) e2).getIdentifier().toString();
+				}
 				
-					case MEMBER_SELECT: 
-						
-						name1 = ((MemberSelectTree) e1).getIdentifier().toString();
-						name2 = ((MemberSelectTree) e2).getIdentifier().toString();
-						
-						break;
-					
-					case IDENTIFIER :
-						
-						name1 = ((IdentifierTree) e1).getName().toString();
-						name2 = ((IdentifierTree) e2).getName().toString();
-						
-						break;
-					
+				if(e1.getKind() == Kind.IDENTIFIER) {
+					name1 = ((IdentifierTree) e1).getName().toString();
+					name2 = ((IdentifierTree) e2).getName().toString();
 				}
 				
 				if(name2.startsWith(any)) {
@@ -571,25 +563,30 @@ class EqualsController {
 	 */
 	public static boolean isAnyModifier(Node node) {
 		
+		boolean retorno = false;
+		
 		switch(node.getNode().getKind()) {
 			
 			case CLASS:
 				ClassTree classTree = (ClassTree) node.getNode();
-				return isAnyModifier(Node.getNodesMap().get(classTree.getModifiers()));
+				retorno = isAnyModifier(Node.getNodesMap().get(classTree.getModifiers()));
+				break;
 			
 			case METHOD:
 				MethodTree mehtodTree = (MethodTree) node.getNode();
-				return isAnyModifier(Node.getNodesMap().get(mehtodTree.getModifiers()));
+				retorno = isAnyModifier(Node.getNodesMap().get(mehtodTree.getModifiers()));
+				break;
 			
 			case MODIFIERS:
 				ModifiersTree modifierTree = (ModifiersTree) node.getNode();
 				List<? extends AnnotationTree> annotations = modifierTree.getAnnotations();
 				
-				return annotations.stream().anyMatch(a -> a.toString().startsWith("@"+any));
+				retorno = annotations.stream().anyMatch(a -> a.toString().startsWith("@"+any));
+				break;
 				
 		}
 		
-		return false;
+		return retorno;
 	}
 	
 	/**
@@ -736,7 +733,7 @@ class EqualsController {
 		
 		for(i =0;i<b.getChildren().size();i++) {
 			
-			if(searching || b.getChildren().size()-i > a.getChildren().size()-counter) {
+			if(searching) {
 				return false;
 			}
 			
