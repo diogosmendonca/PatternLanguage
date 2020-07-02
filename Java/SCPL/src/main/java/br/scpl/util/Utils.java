@@ -13,6 +13,8 @@ import br.scpl.model.Node;
 
 public class Utils {
 	
+	private Utils() {}
+	
 	private static List<Node> filterReturnNodes(List<Node> nodes) {
 		
 		List<Node> retorno = new ArrayList<>();

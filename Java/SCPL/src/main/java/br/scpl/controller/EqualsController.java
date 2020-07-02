@@ -34,6 +34,8 @@ import br.scpl.model.Node;
 
 class EqualsController {
 	
+	private EqualsController() {}
+	
 	private static final ResourceBundle config = ResourceBundle.getBundle("config");
 	private final static String any = config.getString("any");
 	private final static String some = config.getString("some");

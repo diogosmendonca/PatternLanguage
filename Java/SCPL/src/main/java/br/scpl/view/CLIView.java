@@ -21,6 +21,8 @@ public class CLIView {
 	
 	private static Logger log = Logger.getLogger(CLIView.class);
 	
+	private CLIView() {}
+	
 	/**
 	 * Do the parser of the CLI parameters and executes the respective command.
 	 * 

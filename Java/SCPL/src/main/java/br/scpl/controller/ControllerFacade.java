@@ -10,6 +10,8 @@ import br.scpl.model.Node;
 
 public class ControllerFacade {
 	
+	private ControllerFacade() {}
+	
 	/**
 	 * Searches for all occurrences of the pattern present in the source code.
 	 * 

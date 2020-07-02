@@ -26,6 +26,8 @@ import br.scpl.util.Utils;
 
 class SearchController {
 	
+	private SearchController() {}
+	
 	private static Logger log = Logger.getLogger(SearchController.class);
 	
 	private static final Map<Integer,Map<Node,Node>> returnedNode = new LinkedHashMap<>();

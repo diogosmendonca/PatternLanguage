@@ -30,6 +30,8 @@ import br.scpl.view.FileHandler;
 
 public class StringUtil {
 	
+	private StringUtil() {}
+	
 	private static final ResourceBundle config = ResourceBundle.getBundle("config");
 	private final static String not = config.getString("not");
 	private final static String exists = config.getString("exists");
