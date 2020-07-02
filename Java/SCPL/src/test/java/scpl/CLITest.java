@@ -8,39 +8,38 @@ import java.io.RandomAccessFile;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import br.scpl.view.Main;
 public class CLITest {
 	
-	private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-	private final PrintStream originalOut = System.out;
-	private final PrintStream originalErr = System.err;
+	private static ByteArrayOutputStream outContent;
+	private static ByteArrayOutputStream errContent;
+	private static PrintStream originalOut;
+	private static PrintStream originalErr;
 	
-	@Before
-	public void setUpStreams() {
+	@BeforeClass
+	public static void setUpStreams() {
+		originalOut = System.out;
+		originalErr = System.err;
+		
 		outContent = new ByteArrayOutputStream();
 		errContent = new ByteArrayOutputStream();
 		//true, autoFlush
-	    System.setOut(new PrintStream(outContent,true));
-	    System.setErr(new PrintStream(errContent,true));
+	    System.setOut(new PrintStream(outContent,false));
+	    System.setErr(new PrintStream(errContent,false));
+	    
 	}
 
-	@After
-	public void restoreStreams() {
-	    System.setOut(originalOut);
-	    System.setErr(originalErr);
-	}
-	
 	@Test
 	public void tc01() throws IOException {
 		
         String[] args = new String[0];
-		
+        
 		Main.main(args);
-		
+
         Assert.assertTrue(outContent.toString().contains("Error: Missing parameters"));
         Assert.assertTrue(outContent.toString().contains("Usage:"));
 	}
@@ -49,9 +48,12 @@ public class CLITest {
 	public void tc02() throws IOException {
 		
         String[] args = { "--help"};
+        
+        System.out.flush();
+		System.err.flush();
 		
 		Main.main(args);
-		
+//		System.out.println(outContent.toString());		
         Assert.assertTrue(outContent.toString().contains("Usage:"));
 	}
 	
@@ -60,8 +62,11 @@ public class CLITest {
 		
         String[] args = { "--version"};
 		
+        System.out.flush();
+		System.err.flush();
+        
 		Main.main(args);
-
+//		System.out.println(outContent.toString());
         Assert.assertTrue(outContent.toString().contains("Version:"));
 	}
 
@@ -71,7 +76,7 @@ public class CLITest {
         String[] args = { "--verbose"};
 		
 		Main.main(args);
-
+//		System.out.println(outContent.toString());
         Assert.assertTrue(outContent.toString().contains("Parameters: [--verbose]"));
 	}
 	
