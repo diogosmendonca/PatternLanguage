@@ -25,7 +25,7 @@ public class Version extends JCommander implements Command<String>{
 		properties.load(this.getClass().getClassLoader().getResourceAsStream("application.properties"));
 		String version = properties.getProperty("version");
 		
-		log.info(version);
+		log.info("Version: "+version);
 		
 		return version;
 	}

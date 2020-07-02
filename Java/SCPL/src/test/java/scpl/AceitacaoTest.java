@@ -816,6 +816,7 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
+	@Test
 	public void tc66() throws IOException {
 		
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC66_Code.java"
@@ -906,7 +907,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc74() throws IOException {
 		
-		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/PatternFolder/test.txt"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC71_Code.java"
 				,"./src/test/resources/AceitacaoFiles/PatternFolder/test.txt");
 		
 		assertEquals(0, retorno.size());

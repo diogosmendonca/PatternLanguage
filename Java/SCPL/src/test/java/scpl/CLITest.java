@@ -62,9 +62,9 @@ public class CLITest {
 		
 		Main.main(args);
 
-        Assert.assertTrue(outContent.toString().contains("1.0"));
+        Assert.assertTrue(outContent.toString().contains("Version:"));
 	}
-	
+
 	@Test
 	public void tc04() throws IOException {
 		
@@ -75,7 +75,6 @@ public class CLITest {
         Assert.assertTrue(outContent.toString().contains("Parameters: [--verbose]"));
 	}
 	
-	
 	@Test
 	public void tc05() throws IOException {
 		
@@ -85,8 +84,6 @@ public class CLITest {
         
         Assert.assertTrue(outContent.toString().contains("Error: Unknow format"));
 	}
-	
-	
 	
 	@Test
 	public void tc06() throws IOException {
@@ -105,7 +102,7 @@ public class CLITest {
 		
 		Main.main(args);
 
-        Assert.assertTrue(outContent.toString().contains("issues"));
+        Assert.assertTrue(outContent.toString().contains("An alert comment was not found for the node"));
 	}
 	
 	@Test
@@ -118,7 +115,7 @@ public class CLITest {
 		
 		Main.main(args);
 
-        Assert.assertTrue(outContent.toString().contains("issues"));
+        Assert.assertTrue(outContent.toString().contains("Error:"));
 	}
 	
 	@Test
@@ -128,6 +125,8 @@ public class CLITest {
 		
 		Main.main(args);
 		
+		Assert.assertTrue(outContent.toString().contains("Error: Missing parameters"));
+        Assert.assertTrue(outContent.toString().contains("Usage:"));
 	}
 
 }

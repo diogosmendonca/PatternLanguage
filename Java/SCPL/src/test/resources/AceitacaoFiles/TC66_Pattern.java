@@ -6,6 +6,7 @@ class anyClass {
 		not_exists:{
             if(true){
                     exists:{
+                        //Alert: Test
                         String any;
                     }
             }
