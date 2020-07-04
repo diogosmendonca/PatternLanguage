@@ -192,7 +192,7 @@ class EqualsController {
 		}
 		
 		String name1 = null;
-		String name2 = null;
+		String name2 = flagSome ? ((IdentifierTree)node2.getNode()).toString() : null ;
 		
 		switch(node1.getNode().getKind()) {
 		
@@ -283,7 +283,10 @@ class EqualsController {
 			case MEMBER_SELECT: 
 				
 				name1 = ((MemberSelectTree) node1.getNode()).getIdentifier().toString();
-				name2 = ((MemberSelectTree) node2.getNode()).getIdentifier().toString();
+				
+				if(!flagSome) {
+					name2 = ((MemberSelectTree) node2.getNode()).getIdentifier().toString();					
+				}
 				
 				if(name2.startsWith(any)) {
 					return true;
