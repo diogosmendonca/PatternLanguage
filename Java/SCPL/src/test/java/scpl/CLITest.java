@@ -53,7 +53,7 @@ public class CLITest {
 		System.err.flush();
 		
 		Main.main(args);
-//		System.out.println(outContent.toString());		
+		
         Assert.assertTrue(outContent.toString().contains("Usage:"));
 	}
 	
@@ -66,7 +66,7 @@ public class CLITest {
 		System.err.flush();
         
 		Main.main(args);
-//		System.out.println(outContent.toString());
+
         Assert.assertTrue(outContent.toString().contains("Version:"));
 	}
 
@@ -76,14 +76,14 @@ public class CLITest {
         String[] args = { "--verbose"};
 		
 		Main.main(args);
-//		System.out.println(outContent.toString());
+		
         Assert.assertTrue(outContent.toString().contains("Parameters: [--verbose]"));
 	}
 	
 	@Test
 	public void tc05() throws IOException {
 		
-        String[] args = { "--verbose","search", "-c", "./src/test/resources/AceitacaoFiles/TC40_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC40_Pattern.java", "--charset", "UTF-8", "-f", "eclipse" };
+        String[] args = { "--verbose","search", "-c", "./src/test/resources/AceitacaoFiles/TC01_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC01_Pattern.java", "--charset", "UTF-8", "-f", "eclipse" };
 		
 		Main.main(args);
         
