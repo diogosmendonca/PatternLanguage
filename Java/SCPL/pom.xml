@@ -52,6 +52,19 @@
 				</execution>
 			</executions>
 		</plugin>
+		<plugin>
+		   <groupId>org.pitest</groupId>
+		   <artifactId>pitest-maven</artifactId>
+		   <version>1.5.2</version>
+		   <configuration>
+   		   		<targetClasses>
+	            	<param>br.scpl.*</param>
+	        	</targetClasses>
+	        	<targetTests>
+	            	<param>scpl.JunitSuiteTest</param>
+        		</targetTests>
+    		</configuration>
+		</plugin>
 	</plugins>
 	<resources>
 		<resource>
