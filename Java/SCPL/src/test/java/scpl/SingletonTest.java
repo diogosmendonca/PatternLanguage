@@ -24,7 +24,7 @@ public class SingletonTest {
 	@Test
 	public void notPrivateConstructorSingletonTest() {
 		
-		List<Node> retorno = Search.searchOccurrences("./src/test/resources/Singleton/Examples/NotPrivateConstructorSingletonPattern.java", 
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/Singleton/Examples/NotPrivateConstructorSingleton.java", 
 				"./src/test/resources/Singleton/Patterns/NotPrivateConstructorSingletonPattern.java");
 		
 		assertEquals(1, retorno.size());

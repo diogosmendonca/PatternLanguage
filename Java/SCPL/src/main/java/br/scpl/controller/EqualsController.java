@@ -205,6 +205,17 @@ class EqualsController {
 					return true;
 				}
 				
+				if(name2.startsWith(some)) {
+					
+					if(wildcardsMap.get(name2)==null) {
+						wildcardsMap.put(name2, name1);
+						return true;
+						
+					}else {
+						return wildcardsMap.get(name2).equals(name1);
+					}
+				}
+				
 				return name1.equals(name2);
 				
 			case METHOD:
@@ -414,8 +425,8 @@ class EqualsController {
 			List<String> notModifier = new ArrayList<String>();
 			
 			for(AnnotationTree annotation: annotations) {
-				if(annotation.toString().startsWith("@not")) {
-					notModifier.add(annotation.toString().split("@not")[1].toLowerCase());
+				if(annotation.toString().toUpperCase().startsWith("@NOT")) {
+					notModifier.add(annotation.toString().toUpperCase().split("@NOT")[1].toLowerCase());
 				}
 			}
 			

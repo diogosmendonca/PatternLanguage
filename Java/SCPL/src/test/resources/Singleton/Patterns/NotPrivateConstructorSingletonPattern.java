@@ -6,7 +6,7 @@ public class someSingleton {
 	
 	//Alert: A singleton constructor should be private 
 	@NotPrivate
-	any someSingleton() {}
+	someSingleton() {}
 	
 	public static someSingleton getInstance() {
 		
