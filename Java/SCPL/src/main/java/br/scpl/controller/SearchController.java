@@ -30,9 +30,6 @@ class SearchController {
 	
 	private static Logger log = Logger.getLogger(SearchController.class);
 	
-	private static final Map<Integer,Map<Node,Node>> returnedNode = new LinkedHashMap<>();
-	private static Integer round = 0;
-	
 	/**
 	 * Checks whether a tree is subtree of another and returns all occurrences.
 	 * 
@@ -54,14 +51,6 @@ class SearchController {
 				if(!b.getChangeOperator()) {
 					occurrences.add(a);
 					a.setFullVisited(true);
-					if(returnedNode.get(round) == null) {
-						Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
-						aux.put(b, a);
-						returnedNode.put(round, aux);
-					}else {
-						returnedNode.get(round).put(b, a);
-					}
-					
 					occurrences = Utils.getReturnNode(occurrences);
 					return occurrences;
 				}
@@ -76,7 +65,6 @@ class SearchController {
 					break;
 				}else {
 					occurrences.addAll(childrenNodesAux);
-					round++;
 				}
 			}while(childrenNodesAux.size() > 0);
 		log.debug("Occurrences found in the file: " +occurrences.size());
@@ -164,7 +152,7 @@ class SearchController {
 		}
 		
 		if(b.getNode().getKind() == Kind.BLOCK) {
-			if(!a.getParent().equals(returnedNode.get(round).get(b.getParent()))){
+			if(!b.getParent().equals(a.getParent().getMatchingNode())){
 				return occurrences;
 			}
 		}
@@ -174,13 +162,7 @@ class SearchController {
 			return occurrences;
 		}
 		
-		if(returnedNode.get(round) == null) {
-			Map<Node,Node> aux = new LinkedHashMap<Node, Node>();
-			aux.put(b, a);
-			returnedNode.put(round, aux);
-		}else {
-			returnedNode.get(round).put(b, a);
-		}
+		a.setMatchingNode(b);
 		
 		//Lista auxiliar que guarda as ocorrências da busca atual
 		List<Node> currentOccurrences = new ArrayList<>();
@@ -322,7 +304,6 @@ class SearchController {
 					occurrences.add(a);
 					if(b.getExists()) {
 						a.setFullVisited(true);
-						returnedNode.get(round).put(b, a);
 					}
 				}else {
 					wildcardsMap.clear();

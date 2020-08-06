@@ -120,11 +120,11 @@ class EqualsController {
 		}
 		finally {
 			if(retorno) {
+				a.setMatchingNode(b);
 				if(b.getIsToReturn()) {
 					a.setIsToReturn(true);
 					a.setReturnMessage(b.getReturnMessage());
 					a.setIssue(b.getIssue());
-					a.setMatchingNode(b);
 				}
 			}
 	    }
