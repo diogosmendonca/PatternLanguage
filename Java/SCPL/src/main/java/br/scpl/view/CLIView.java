@@ -3,6 +3,7 @@ package br.scpl.view;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.log4j.AppenderSkeleton;
@@ -11,6 +12,8 @@ import org.apache.log4j.Logger;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+
+import br.scpl.util.ConfigUtils;
 
 /**
  * 
@@ -30,6 +33,8 @@ public class CLIView {
 	 */
 	public static void parserCLI(String[] args) {
 		
+		//args = Arrays.asList( "--debug", "search","-c","C:\\opt\\projects\\PatternLanguage\\Java\\SCPL\\src\\test\\resources\\ExperimentTemplate\\Ctx01_Exclude.java","-p","C:\\opt\\projects\\PatternLanguage\\Java\\SCPL\\src\\test\\resources\\ExperimentTemplate\\Ctx01_Exclude.java").toArray(new String[0]);
+				
 		CLIOptions cli = new CLIOptions();
 		
 		JCommander jc = JCommander.newBuilder()
@@ -51,9 +56,15 @@ public class CLIView {
 		  
 		  jc.parse(args);
 		  
+		  if(cli.isDebug()) {
+			  ConfigUtils.getProperties().setProperty("debug", "on");
+		  }
+		  
 		  if(cli.isVerbose()) {
 			  ((AppenderSkeleton)Logger.getRootLogger().getAppender("stdout"))
 			   .setThreshold(Level.DEBUG);
+			  
+			  ConfigUtils.getProperties().setProperty("verbose", "on");
 		  }
 		  
 		  log.debug("Parameters: " +Arrays.toString(args));

@@ -1,11 +1,9 @@
 package br.scpl.controller;
 
 import java.util.ArrayList;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -18,6 +16,7 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.VariableTree;
 
 import br.scpl.model.Node;
+import br.scpl.util.ConfigUtils;
 import br.scpl.util.Utils;
 
 /**
@@ -45,7 +44,7 @@ class SearchController {
 		log.debug(" in source code file " +(a.getCompilatioUnitTree()).getSourceFile().getName());
 		
 		List<Node> occurrences = new ArrayList<>();
-		
+		try {
 			//Se os nós são iguais, a sub-árvore é toda a ávore
 			if(EqualsController.isEquals(a, b, new LinkedHashMap<>())) {
 				if(!b.getChangeOperator()) {
@@ -67,7 +66,14 @@ class SearchController {
 					occurrences.addAll(childrenNodesAux);
 				}
 			}while(childrenNodesAux.size() > 0);
-		log.debug("Occurrences found in the file: " +occurrences.size());
+		}finally {
+			log.debug("Occurrences found in the file: " +occurrences.size());
+			
+			if(ConfigUtils.getProperties().getProperty("debug").equals("on")){
+				System.out.println("DFHSLFHSDKLHFSKDH");
+			}			
+		}
+		
 		return occurrences;
 	}
 	
