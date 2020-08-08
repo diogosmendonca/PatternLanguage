@@ -137,10 +137,10 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 				nodes.get(nodeParent).add(node);
 			}
 	        
-	        if(isPattern) {
+        	node.setStartPosition(sourcePos.getStartPosition(node.getCompilatioUnitTree(), node.getNode()));
+        	node.setEndPosition(sourcePos.getEndPosition(node.getCompilatioUnitTree(), node.getNode()));
 	        
-	        	node.setStartPosition(sourcePos.getStartPosition(node.getCompilatioUnitTree(), node.getNode()));
-	        	node.setEndPosition(sourcePos.getEndPosition(node.getCompilatioUnitTree(), node.getNode()));
+	        if(isPattern) {
 	        	
 		        if(!alertMessagesMap.isEmpty() || !existsModifierMap.isEmpty() || !issuesMap.isEmpty()) {
 					

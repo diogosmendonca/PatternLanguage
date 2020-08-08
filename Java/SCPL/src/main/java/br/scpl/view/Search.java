@@ -96,7 +96,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 				
 				CompilationUnitTree treeCode = compilationUnitsCode.next();
 				
-				retorno.addAll(searchOccurrencesFolder(treeCode,patternFolder, charset));
+				retorno.addAll(searchOccurrencesFolder(treeCode, posCode, patternFolder, charset));
 			}
 			
 			String currentFile = "";
@@ -105,11 +105,6 @@ public class Search extends JCommander implements Command<List<Node>>{
 			retorno = retorno.stream().filter(r -> !(r.getNode().getKind() == Kind.MODIFIERS && ((ModifiersTree) r.getNode()).getFlags().size() == 0)).collect(Collectors.toList());
 			
 			log.debug("");
-			
-			for(Node r : retorno) {
-				r.setStartPosition(posCode.getStartPosition(r.getCompilatioUnitTree(), r.getNode()));
-				r.setEndPosition(posCode.getEndPosition(r.getCompilatioUnitTree(), r.getNode()));
-			}
 			
 			if(format != null) {
 				format = format.toLowerCase();
@@ -178,22 +173,22 @@ public class Search extends JCommander implements Command<List<Node>>{
 	 * @return List o Node representing the occurrences of the pattern in the source code.
 	 * @throws IOException
 	 */
-	private static List<Node> searchOccurrencesFolder(CompilationUnitTree treeCode, PatternFolder pattern, Charset charset) throws IOException{
+	private static List<Node> searchOccurrencesFolder(CompilationUnitTree treeCode, SourcePositions posCode, PatternFolder pattern, Charset charset) throws IOException{
 		List<Node> retorno = new ArrayList<>();
 		
 		for(PatternFolder folder : pattern.getFolders()) {
-			retorno.addAll(searchOccurrencesFolder(treeCode, folder, charset));
+			retorno.addAll(searchOccurrencesFolder(treeCode, posCode, folder, charset));
 		}
 		
 		if(pattern.getFiles().size() > 0) {
 			
 			File[] filesPatterns = pattern.getFiles().toArray(new File[0]);
 			
-			CompilationUnit compilationUnitStructPattern = FileHandler.parserFileToCompilationUnit(filesPatterns, charset);
+			CompilationUnit compilationUnitPattern = FileHandler.parserFileToCompilationUnit(filesPatterns, charset);
 			
-			Iterator<? extends CompilationUnitTree> compilationUnitsPattern = compilationUnitStructPattern.getCompilationUnitTree();
+			Iterator<? extends CompilationUnitTree> compilationUnitsPattern = compilationUnitPattern.getCompilationUnitTree();
 			
-			SourcePositions posPattern = compilationUnitStructPattern.getPos();
+			SourcePositions posPattern = compilationUnitPattern.getPos();
 			
 			List<Node> listToRemove = new ArrayList<>();
 			
@@ -204,9 +199,9 @@ public class Search extends JCommander implements Command<List<Node>>{
 				String fileName = treePattern.getSourceFile().getName().toUpperCase();
 				
 				if(fileName.endsWith("EXCLUDE.JAVA")){
-					listToRemove.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posPattern));
+					listToRemove.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posCode, posPattern));
 				}else {
-					retorno.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posPattern));					
+					retorno.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posCode, posPattern));					
 				}
 				
 			}

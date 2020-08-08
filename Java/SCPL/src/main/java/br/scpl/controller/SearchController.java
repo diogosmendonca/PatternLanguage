@@ -70,7 +70,9 @@ class SearchController {
 			log.debug("Occurrences found in the file: " +occurrences.size());
 			
 			if(ConfigUtils.getProperties().getProperty("debug").equals("on")){
-				System.out.println("DFHSLFHSDKLHFSKDH");
+				Debug debug = new Debug();
+				debug.print(a);
+				System.out.println(debug.getSb().toString());
 			}			
 		}
 		

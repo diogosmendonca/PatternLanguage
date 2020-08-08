@@ -156,7 +156,7 @@ class EqualsController {
 			
 			//Compara se os tipos sao iguais.
 			if(a.getNode().getKind()!=b.getNode().getKind()) {
-				if(!flagAny && !flagSome) {
+				if(a.getNode().getKind() == Kind.MODIFIERS || (!flagAny && !flagSome)) {
 					return false;
 				}
 			}
