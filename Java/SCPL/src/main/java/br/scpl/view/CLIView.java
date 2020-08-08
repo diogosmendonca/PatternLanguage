@@ -2,9 +2,6 @@ package br.scpl.view;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import java.util.ResourceBundle;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
