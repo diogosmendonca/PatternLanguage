@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,6 +19,7 @@ import com.sun.source.util.TreePathScanner;
 
 import br.scpl.model.Node;
 import br.scpl.model.sonarqube.Issue;
+import br.scpl.util.ConfigUtils;
 import br.scpl.util.StringUtil;
 
 /**
@@ -29,9 +29,8 @@ import br.scpl.util.StringUtil;
  */
 class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 
-	  private static final ResourceBundle config = ResourceBundle.getBundle("config");
-	  private final static String not = config.getString("not");
-	  private final static String exists = config.getString("exists");  	
+	  private final static String not = ConfigUtils.getProperties().getProperty("not");
+	  private final static String exists = ConfigUtils.getProperties().getProperty("exists");  	
 
 	  private static final int INDENT_SPACES = 2;
 		

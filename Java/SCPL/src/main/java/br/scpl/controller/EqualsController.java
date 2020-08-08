@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +26,7 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.VariableTree;
 
 import br.scpl.model.Node;
+import br.scpl.util.ConfigUtils;
 
  /**
  * @author Denis
@@ -36,9 +36,8 @@ class EqualsController {
 	
 	private EqualsController() {}
 	
-	private static final ResourceBundle config = ResourceBundle.getBundle("config");
-	private final static String any = config.getString("any");
-	private final static String some = config.getString("some");
+	private final static String any = ConfigUtils.getProperties().getProperty("any");
+	private final static String some = ConfigUtils.getProperties().getProperty("some");
 	
 	/***
 	 * Gets two trees and says if the both are equals.

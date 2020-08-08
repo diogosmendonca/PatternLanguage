@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,10 +14,8 @@ import javax.tools.JavaFileObject;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
 
-import br.scpl.model.Node;
 import br.scpl.model.sonarqube.Issue;
 import br.scpl.model.sonarqube.Location;
-import br.scpl.model.sonarqube.SonarQubeFormat;
 import br.scpl.model.sonarqube.TextRange;
 import br.scpl.view.FileHandler;
 
@@ -32,9 +29,8 @@ public class StringUtil {
 	
 	private StringUtil() {}
 	
-	private static final ResourceBundle config = ResourceBundle.getBundle("config");
-	private final static String not = config.getString("not");
-	private final static String exists = config.getString("exists");
+	private final static String not = ConfigUtils.getProperties().getProperty("not");
+	private final static String exists = ConfigUtils.getProperties().getProperty("exists");
 	
 	public static Map<Integer,String> extractAlertMessages(Tree tree) throws IOException{
 		Map<Integer,String> retorno = new LinkedHashMap<>();
