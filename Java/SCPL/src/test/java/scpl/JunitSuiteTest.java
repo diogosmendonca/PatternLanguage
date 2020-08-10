@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
 
 @Suite.SuiteClasses({
         CLITest.class,
-        AceitacaoTest.class
+        AceitacaoTest.class,
+        SingletonTest.class
 })
 public class JunitSuiteTest {
 	private JunitSuiteTest() {}
