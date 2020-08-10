@@ -26,6 +26,7 @@ public class Debug {
 		
 		String toString = node.toString();
 		String close = null;
+		String position = "";
 		
 		switch(node.getNode().getKind()) {
 		
@@ -35,7 +36,10 @@ public class Debug {
 				
 			case CLASS:
 				toString = toString.substring(0, toString.indexOf("{")+1);
-				toString = toString.replaceFirst("\r\n", "");
+				if(toString.startsWith("\r\n")) {
+					toString = toString.replaceFirst("\r\n", "");
+				}
+				position = "L: " +node.getStartLine() +" C: " +node.getStartColumn() +" -> L: " +node.getEndLine() +" C: " +node.getEndColumn() ;
 				close = "} L: "+node.getEndLine() +" C: " +node.getEndColumn();
 				break;
 				
@@ -43,32 +47,28 @@ public class Debug {
 				if(toString.contains("{")) {
 					toString = toString.substring(0, toString.indexOf("{"));					
 				}
-				toString = toString.replaceFirst("\r\n", "");
+				if(toString.startsWith("\r\n")) {
+					toString = toString.replaceFirst("\r\n", "");
+				}
 				break;
 				
 			case BLOCK:
 				toString = "{";
+				position = "L: " +node.getStartLine() +" C: " +node.getStartColumn() ;
 				close = "} L: "+node.getEndLine() +" C: " +node.getEndColumn();
 				break;
 				
 			default:
 				toString = node.toString();
+				if(!toString.equals("")) {
+					position = "L: " +node.getStartLine() +" C: " +node.getStartColumn() +" -> L: " +node.getEndLine() +" C: " +node.getEndColumn() ;			
+				}
 				break;
 		}
 		
 		toString = toString.replaceAll("\r\n", " ");
 		
-		String position = "";
-		
-		if(!Arrays.asList(Kind.COMPILATION_UNIT, Kind.BLOCK).contains(node.getNode().getKind())) {
-			position = "L: " +node.getStartLine() +" C: " +node.getStartColumn() +" -> L: " +node.getEndLine() +" C: " +node.getEndColumn() ;			
-		}
-		
-		if(Arrays.asList(Kind.BLOCK).contains(node.getNode().getKind())) {
-			position = "L: " +node.getStartLine() +" C: " +node.getStartColumn() ;
-		}
-		
-		String matching = node.getMatchingNode() == null ? "" : "###" ;
+		String matching = node.getNode().getKind() == Kind.COMPILATION_UNIT || node.getMatchingNode() == null ? "" : "##" ;
 		
 		
 		String line = matching +toString +" (" +getSimpleName(node) +") " +position +"\n"; 
