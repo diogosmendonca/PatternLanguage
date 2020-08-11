@@ -226,7 +226,7 @@ public class Node {
 	}
 	
 	public Node getBlockChild() {
-		return this.children.stream().filter(n -> n.getNode().getKind() == Kind.BLOCK).findFirst().get();
+		return this.children.stream().filter(n -> n.getNode().getKind() == Kind.BLOCK).findFirst().orElse(null);
 	}
 	
 }
