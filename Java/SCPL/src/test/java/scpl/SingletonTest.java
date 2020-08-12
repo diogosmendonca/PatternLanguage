@@ -31,4 +31,15 @@ public class SingletonTest {
 	}
 
 	
+
+	@Test
+	public void notPrivateInstanceSingletonTest() {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/Singleton/Examples/NotPrivateInstanceSingleton.java", 
+				"./src/test/resources/Singleton/Patterns/NotPrivateInstanceSingletonPattern.java");
+		
+		assertEquals(1, retorno.size());
+	}
+
+	
 }
