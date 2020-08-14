@@ -10,6 +10,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import br.scpl.model.Node;
+import br.scpl.util.ConfigUtils;
 import br.scpl.view.Search;
 
 public class AceitacaoTest {
@@ -680,6 +681,8 @@ public class AceitacaoTest {
 	@Test
 	public void tc55() throws IOException {
 		
+		ConfigUtils.getProperties().setProperty("debug", "on");
+		
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC55_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC55_Pattern.java");
 		
@@ -700,6 +703,7 @@ public class AceitacaoTest {
 		assertEquals(9, retorno.get(3).getStartColumn());
 		assertEquals(7, retorno.get(3).getEndLine());
 		assertEquals(22, retorno.get(3).getEndColumn());
+		
 	}
 	
 	@Test

@@ -12,7 +12,7 @@ import br.scpl.util.ConfigUtils;
  */
 public class CLIOptions extends JCommander {
 	
-	@Parameter(names = {"-V", "--verbose"}, description = "Activate the mode that displays extended information", arity = 1)
+	@Parameter(names = {"-V", "--verbose"}, description = "Activate the mode that displays extended information")
 	private boolean verbose = false;
 
 	//Put CLI options here

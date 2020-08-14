@@ -88,10 +88,6 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	    return Node.getNodesMap().get(nv.root);
 	  }
 	  
-	  public static Node build(CompilationUnitTree tree) throws IOException {
-		  return build(tree, null, false);
-	  }
-
 	  private StringBuilder indent() {
 	    return sb.append(StringUtils.leftPad("", INDENT_SPACES * indentLevel));
 	  }	  
