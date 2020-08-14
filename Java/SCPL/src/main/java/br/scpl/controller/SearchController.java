@@ -17,6 +17,7 @@ import com.sun.source.tree.VariableTree;
 
 import br.scpl.model.Node;
 import br.scpl.util.ConfigUtils;
+import br.scpl.util.Debug;
 import br.scpl.util.Utils;
 
 /**
@@ -69,11 +70,7 @@ class SearchController {
 		}finally {
 			log.debug("Occurrences found in the file: " +occurrences.size());
 			
-			if(ConfigUtils.getProperties().getProperty("debug").equals("on")){
-				Debug debug = new Debug();
-				debug.print(a);
-				System.out.println(debug.getSb().toString());
-			}			
+			new Debug().run(a, b);
 		}
 		
 		return occurrences;

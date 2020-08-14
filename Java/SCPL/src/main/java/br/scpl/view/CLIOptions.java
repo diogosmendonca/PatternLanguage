@@ -12,12 +12,9 @@ import br.scpl.util.ConfigUtils;
  */
 public class CLIOptions extends JCommander {
 	
-	@Parameter(names = {"-V", "--verbose"}, description = "Activate the mode that displays extended information")
+	@Parameter(names = {"-V", "--verbose"}, description = "Activate the mode that displays extended information", arity = 1)
 	private boolean verbose = false;
 
-	@Parameter(names = {"--debug"}, description = "Activate the debug mode")
-	private boolean debug = false;
-	
 	//Put CLI options here
 	
 	/**
@@ -30,18 +27,6 @@ public class CLIOptions extends JCommander {
 		}
 		
 		return verbose;
-	}
-
-	/**
-	 * 
-	 * @return Boolean that indicates if the debug mode is activated.
-	 */
-	public boolean isDebug() {
-		if(ConfigUtils.getProperties().getProperty("debug").equals("on")) {
-			debug = true;
-		}
-		
-		return debug ;
 	}
 	
 }

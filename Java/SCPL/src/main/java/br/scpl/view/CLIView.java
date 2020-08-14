@@ -11,6 +11,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
 import br.scpl.util.ConfigUtils;
+import br.scpl.util.Debug;
 
 /**
  * 
@@ -30,12 +31,17 @@ public class CLIView {
 	 */
 	public static void parserCLI(String[] args) {
 		
-		//args = Arrays.asList( "--debug", "search","-c","C:\\opt\\projects\\PatternLanguage\\Java\\SCPL\\src\\test\\resources\\ExperimentTemplate\\Ctx01_Exclude.java","-p","C:\\opt\\projects\\PatternLanguage\\Java\\SCPL\\src\\test\\resources\\ExperimentTemplate\\Ctx01_Exclude.java").toArray(new String[0]);
-				
+		//args = Arrays.asList( "--debug", "--beginLine", "2", "--endLine=5", "--showLocation", "false", "search","-c","C:\\opt\\projects\\PatternLanguage\\Java\\SCPL\\src\\test\\resources\\ExperimentTemplate\\Ctx01_Exclude.java","-p","C:\\opt\\projects\\PatternLanguage\\Java\\SCPL\\src\\test\\resources\\ExperimentTemplate\\Ctx01_Exclude.java").toArray(new String[0]);
+		
+		//args = Arrays.asList("--help").toArray(new String[0]);
+		
 		CLIOptions cli = new CLIOptions();
+		
+		Debug debug = new Debug();
 		
 		JCommander jc = JCommander.newBuilder()
 				  .addObject(cli)
+				  .addObject(debug)
 				  .build();
 		
 		Command.command.forEach((key,value) ->{
@@ -52,11 +58,7 @@ public class CLIView {
 		  }
 		  
 		  jc.parse(args);
-		  
-		  if(cli.isDebug()) {
-			  ConfigUtils.getProperties().setProperty("debug", "on");
-		  }
-		  
+		  		  
 		  if(cli.isVerbose()) {
 			  ((AppenderSkeleton)Logger.getRootLogger().getAppender("stdout"))
 			   .setThreshold(Level.DEBUG);
