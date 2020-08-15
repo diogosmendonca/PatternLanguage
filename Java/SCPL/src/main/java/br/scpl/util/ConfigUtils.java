@@ -20,6 +20,8 @@ public class ConfigUtils {
 			p.setProperty("exists", config.getString("exists"));
 			p.setProperty("verbose", config.getString("verbose"));
 			p.setProperty("debug", config.getString("debug"));
+			p.setProperty("notAnnotation", config.getString("notAnnotation"));
+			p.setProperty("alertIfNotAnnotation", config.getString("alertIfNotAnnotation"));
 			
 			properties = p;
 		}

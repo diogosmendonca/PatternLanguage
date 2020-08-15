@@ -2,10 +2,12 @@ package br.scpl.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
@@ -38,6 +40,9 @@ class EqualsController {
 	
 	private final static String any = ConfigUtils.getProperties().getProperty("any");
 	private final static String some = ConfigUtils.getProperties().getProperty("some");
+	private final static String notAnnotation = ConfigUtils.getProperties().getProperty("notAnnotation");
+	private final static String alertIfNotAnnotation = ConfigUtils.getProperties().getProperty("alertIfNotAnnotation");
+	private final static String defaultAccess = "DefaultAccess";
 	
 	/***
 	 * Gets two trees and says if the both are equals.
@@ -422,48 +427,125 @@ class EqualsController {
 			List<? extends AnnotationTree> annotations = modifierPattern.getAnnotations();
 			
 			List<String> notModifier = new ArrayList<String>();
+			HashMap<String, String> alertIfNot = new LinkedHashMap<String, String>();
+			
+			boolean defaultAcessNot = false;
+			boolean defaultAcessAlertIfNot = false;
 			
 			for(AnnotationTree annotation: annotations) {
-				if(annotation.toString().toUpperCase().startsWith("@NOT")) {
-					notModifier.add(annotation.toString().toUpperCase().split("@NOT")[1].toLowerCase());
+				
+				if(annotation.toString().toUpperCase().startsWith(notAnnotation.toUpperCase())) {
+					
+					String modifier = annotation.toString().toUpperCase().split(notAnnotation.toUpperCase())[1].toLowerCase();
+					
+					if(modifier.equalsIgnoreCase(defaultAccess)) {
+						defaultAcessNot = true;
+						modifier = defaultAccess;
+					}
+					
+					notModifier.add(modifier);
+				}else if(annotation.toString().toUpperCase().startsWith(alertIfNotAnnotation.toUpperCase())) {
+					
+					List<? extends ExpressionTree> arguments =  annotation.getArguments();
+					
+					String message = null;
+					String modifier = annotation.toString().toUpperCase().split(alertIfNotAnnotation.toUpperCase())[1].toLowerCase();
+					
+					message = arguments.toString();
+					modifier = modifier.replace(message, "");
+					modifier = modifier.replaceAll("\\(", "");
+					modifier = modifier.replaceAll("\\)", "");
+					
+					if(arguments.size() == 0) {
+						message = "The modifier cannot be " +modifier;
+					}else {
+						if(message.startsWith("\"") && message.endsWith("\"")) {
+							message = message.replaceFirst("\"", "");
+							message = message.replaceAll("\"$", "");
+						}
+					}
+					
+					alertIfNot.put(modifier, message);
 				}
 			}
 			
-			if(notModifier.size()>0) {
+			ModifiersTree modifierCode = ((ModifiersTree) a.getNode());
+			
+			Set<Modifier> flagsCode = modifierCode.getFlags();
+			
+			Boolean notBoolean = null;
+			
+			if(!notModifier.isEmpty()) {
+				
+				notModifier.remove(defaultAccess);
+				
+				notBoolean = true;
+				
 				Set<Modifier> notFlags = notModifier.stream().map(i -> Modifier.valueOf(i.toUpperCase())).collect(Collectors.toSet());
 				
-				ModifiersTree modifierCode = ((ModifiersTree) a.getNode());
-				
-				Set<Modifier> flagsCode = modifierCode.getFlags();
-				
 				//FIXME The default modifier is empty and needs special treatment
-				if(notDefaultCase(flagsCode, notFlags)) {
-					return false;
+				if(notDefaultCase(flagsCode, defaultAcessNot)) {
+					notBoolean = false;
 				}
 				
 				if(notFlags.stream().anyMatch(x-> flagsCode.contains(x))) {
-					return false;
+					notBoolean = false;
 				}
 				
-				return true;
 			}
+			
+			if(!alertIfNot.isEmpty()) {
+				
+				alertIfNot.remove(defaultAccess);
+				
+				Set<Modifier> alertIfNotFlags = alertIfNot.keySet().stream().map(i -> Modifier.valueOf(i.toUpperCase())).collect(Collectors.toSet());
+				
+				String returnMessage = a.getReturnMessage();
+				
+				if(returnMessage == null) {
+					returnMessage = "";
+				}
+				
+				//FIXME The default modifier is empty and needs special treatment
+				if(notDefaultCase(flagsCode, defaultAcessAlertIfNot)) {
+					returnMessage += " " +alertIfNot.get(defaultAccess);
+				}
+				
+				List<String> matches = alertIfNot.keySet().stream().filter(x-> !flagsCode.contains(x)).collect(Collectors.toList());
+				
+				for(String m : matches) {
+					returnMessage += " " +alertIfNot.get(m);
+				}
+				
+				if((notBoolean == null || notBoolean) && !returnMessage.equals("")){
+					a.setIsToReturn(true);
+					a.setReturnMessage(returnMessage);
+					return true;
+				}
+				
+			}
+			
+			if(notBoolean != null) {
+				return notBoolean;
+			}
+			
 		}
 		return false;
 	}
 	
 	/***
 	 * 
-	 * Because it is empty, the default modifier is found by 
+	 * Because it is empty, the default modifier access is found by 
 	 * the non-occurrence of the other access modifiers.
 	 * And it needs special treatment.
 	 * 
 	 * @param flagsCode Modifiers used in the source code.
-	 * @param notFlags Modifiers used in the pattern.
-	 * @return true if notDefault is used and modifier access default occurs.
+	 * @param boolean that indicates if the modifier access will be verified.
+	 * @return true if notDefaultAccess is used and modifier access default occurs.
 	 */
-	private static boolean notDefaultCase(Set<Modifier> flagsCode, Set<Modifier> notFlags) {
+	private static boolean notDefaultCase(Set<Modifier> flagsCode, boolean verifyDefault) {
 		
-		if(notFlags.stream().anyMatch(x-> x.equals(Modifier.valueOf("DEFAULT")))) {
+		if(verifyDefault) {
 					
 			List<Modifier> acessModifiers = Arrays.asList(Modifier.valueOf("PRIVATE"), 	
 					Modifier.valueOf("PUBLIC"), Modifier.valueOf("PROTECTED"));
@@ -596,7 +678,7 @@ class EqualsController {
 				ModifiersTree modifierTree = (ModifiersTree) node.getNode();
 				List<? extends AnnotationTree> annotations = modifierTree.getAnnotations();
 				
-				retorno = annotations.stream().anyMatch(a -> a.toString().startsWith("@"+any));
+				retorno = annotations.stream().anyMatch(a -> a.toString().toUpperCase().startsWith("@"+any.toUpperCase()));
 				break;
 				
 		}
