@@ -29,8 +29,8 @@ public class StringUtil {
 	
 	private StringUtil() {}
 	
-	private final static String not = ConfigUtils.getProperties().getProperty("not");
-	private final static String exists = ConfigUtils.getProperties().getProperty("exists");
+	private final static String NOT = ConfigUtils.getProperties().getProperty("not");
+	private final static String EXISTS = ConfigUtils.getProperties().getProperty("exists");
 	
 	public static Map<Integer,String> extractAlertMessages(Tree tree) throws IOException{
 		Map<Integer,String> retorno = new LinkedHashMap<>();
@@ -180,7 +180,7 @@ public class StringUtil {
 		
 		String content = FileHandler.getStringContent(sourceFile);
 			
-		Pattern pattern = Pattern.compile("(?s)(/\\*("+not+"|"+exists+")\\*/|//("+not+"|"+exists+")(\\n|\\r))",
+		Pattern pattern = Pattern.compile("(?s)(/\\*("+NOT+"|"+EXISTS+")\\*/|//("+NOT+"|"+EXISTS+")(\\n|\\r))",
 				Pattern.CASE_INSENSITIVE);
 		
 	    Matcher matcher = pattern.matcher(content);
@@ -189,7 +189,7 @@ public class StringUtil {
 	    	
 	    	Boolean exists = null;
 	    	
-	    	if(existsText.contains(not)) {
+	    	if(existsText.contains(NOT)) {
 	    		exists = false;
 	    	}else {
 	    		exists = true;

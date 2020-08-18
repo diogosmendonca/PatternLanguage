@@ -38,11 +38,11 @@ class EqualsController {
 	
 	private EqualsController() {}
 	
-	private final static String any = ConfigUtils.getProperties().getProperty("any");
-	private final static String some = ConfigUtils.getProperties().getProperty("some");
-	private final static String notAnnotation = ConfigUtils.getProperties().getProperty("notAnnotation");
-	private final static String alertIfNotAnnotation = ConfigUtils.getProperties().getProperty("alertIfNotAnnotation");
-	private final static String defaultAccess = "DefaultAccess";
+	private final static String ANY = ConfigUtils.getProperties().getProperty("any");
+	private final static String SOME = ConfigUtils.getProperties().getProperty("some");
+	private final static String NOT_ANNOTATION = ConfigUtils.getProperties().getProperty("notAnnotation");
+	private final static String ALERT_IF_NOT_ANNOTATION = ConfigUtils.getProperties().getProperty("alertIfNotAnnotation");
+	private final static String DEFAULT_ACCESS = "DefaultAccess";
 	
 	/***
 	 * Gets two trees and says if the both are equals.
@@ -151,10 +151,10 @@ class EqualsController {
 			boolean flagSome = false;
 			
 			if(b.getNode().getKind() == Kind.IDENTIFIER) {
-				if((((IdentifierTree) b.getNode()).getName().toString()).startsWith(any)){
+				if((((IdentifierTree) b.getNode()).getName().toString()).startsWith(ANY)){
 					flagAny = true;
 				}
-				if((((IdentifierTree) b.getNode()).getName().toString()).startsWith(some)){
+				if((((IdentifierTree) b.getNode()).getName().toString()).startsWith(SOME)){
 					flagSome = true;
 				}
 			}
@@ -205,11 +205,11 @@ class EqualsController {
 				name1 = ((ClassTree) node1.getNode()).getSimpleName().toString();
 				name2 = ((ClassTree) node2.getNode()).getSimpleName().toString();
 				
-				if(name2.startsWith(any)) {
+				if(name2.startsWith(ANY)) {
 					return true;
 				}
 				
-				if(name2.startsWith(some)) {
+				if(name2.startsWith(SOME)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -227,11 +227,11 @@ class EqualsController {
 				name1 = ((MethodTree) node1.getNode()).getName().toString();
 				name2 = ((MethodTree) node2.getNode()).getName().toString();
 				
-				if(name2.startsWith(any)) {
+				if(name2.startsWith(ANY)) {
 					return true;
 				}
 				
-				if(name2.startsWith(some)) {
+				if(name2.startsWith(SOME)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -263,11 +263,11 @@ class EqualsController {
 					name2 = ((IdentifierTree) e2).getName().toString();
 				}
 				
-				if(name2.startsWith(any)) {
+				if(name2.startsWith(ANY)) {
 					return true;
 				}
 				
-				if(name2.startsWith(some)) {
+				if(name2.startsWith(SOME)) {
 					
 					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
 					wildcardsMapAux.putAll(wildcardsMap);
@@ -303,11 +303,11 @@ class EqualsController {
 					name2 = ((MemberSelectTree) node2.getNode()).getIdentifier().toString();					
 				}
 				
-				if(name2.startsWith(any)) {
+				if(name2.startsWith(ANY)) {
 					return true;
 				}
 				
-				if(name2.startsWith(some)) {
+				if(name2.startsWith(SOME)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -325,11 +325,11 @@ class EqualsController {
 				name1 = ((VariableTree) node1.getNode()).getName().toString();
 				name2 = ((VariableTree) node2.getNode()).getName().toString();
 				
-				if(name2.startsWith(any)) {
+				if(name2.startsWith(ANY)) {
 					return true;
 				}
 				
-				if(name2.startsWith(some)) {
+				if(name2.startsWith(SOME)) {
 					
 					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
 					wildcardsMapAux.putAll(wildcardsMap);
@@ -360,7 +360,7 @@ class EqualsController {
 				name1 = ((IdentifierTree) node1.getNode()).getName().toString();
 				name2 = ((IdentifierTree) node2.getNode()).getName().toString();
 				
-				if(name2.startsWith(some)) {
+				if(name2.startsWith(SOME)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -434,22 +434,22 @@ class EqualsController {
 			
 			for(AnnotationTree annotation: annotations) {
 				
-				if(annotation.toString().toUpperCase().startsWith(notAnnotation.toUpperCase())) {
+				if(annotation.toString().toUpperCase().startsWith(NOT_ANNOTATION.toUpperCase())) {
 					
-					String modifier = annotation.toString().toUpperCase().split(notAnnotation.toUpperCase())[1].toLowerCase();
+					String modifier = annotation.toString().toUpperCase().split(NOT_ANNOTATION.toUpperCase())[1].toLowerCase();
 					
-					if(modifier.equalsIgnoreCase(defaultAccess)) {
+					if(modifier.equalsIgnoreCase(DEFAULT_ACCESS)) {
 						defaultAcessNot = true;
-						modifier = defaultAccess;
+						modifier = DEFAULT_ACCESS;
 					}
 					
 					notModifier.add(modifier);
-				}else if(annotation.toString().toUpperCase().startsWith(alertIfNotAnnotation.toUpperCase())) {
+				}else if(annotation.toString().toUpperCase().startsWith(ALERT_IF_NOT_ANNOTATION.toUpperCase())) {
 					
 					List<? extends ExpressionTree> arguments =  annotation.getArguments();
 					
 					String message = null;
-					String modifier = annotation.toString().toUpperCase().split(alertIfNotAnnotation.toUpperCase())[1].toLowerCase();
+					String modifier = annotation.toString().toUpperCase().split(ALERT_IF_NOT_ANNOTATION.toUpperCase())[1].toLowerCase();
 					
 					message = arguments.toString();
 					modifier = modifier.replace(message, "");
@@ -477,7 +477,7 @@ class EqualsController {
 			
 			if(!notModifier.isEmpty()) {
 				
-				notModifier.remove(defaultAccess);
+				notModifier.remove(DEFAULT_ACCESS);
 				
 				notBoolean = true;
 				
@@ -496,7 +496,7 @@ class EqualsController {
 			
 			if(!alertIfNot.isEmpty()) {
 				
-				alertIfNot.remove(defaultAccess);
+				alertIfNot.remove(DEFAULT_ACCESS);
 				
 				Set<Modifier> alertIfNotFlags = alertIfNot.keySet().stream().map(i -> Modifier.valueOf(i.toUpperCase())).collect(Collectors.toSet());
 				
@@ -508,7 +508,7 @@ class EqualsController {
 				
 				//FIXME The default modifier is empty and needs special treatment
 				if(notDefaultCase(flagsCode, defaultAcessAlertIfNot)) {
-					returnMessage += " " +alertIfNot.get(defaultAccess);
+					returnMessage += " " +alertIfNot.get(DEFAULT_ACCESS);
 				}
 				
 				List<String> matches = alertIfNot.keySet().stream().filter(x-> !flagsCode.contains(x)).collect(Collectors.toList());
@@ -623,7 +623,7 @@ class EqualsController {
 	public static boolean isAnyParameter(Node node) {
 		MethodTree methodPattern = (MethodTree)node.getNode();
 		
-		return methodPattern.getParameters().stream().anyMatch(x -> x.toString().startsWith(any));
+		return methodPattern.getParameters().stream().anyMatch(x -> x.toString().startsWith(ANY));
 	}
 	
 	/**
@@ -636,7 +636,7 @@ class EqualsController {
 	public static boolean isAnyThrows(Node node) {
 		MethodTree methodPattern = (MethodTree)node.getNode();
 		
-		return methodPattern.getThrows().stream().anyMatch(x -> x.toString().startsWith(any));
+		return methodPattern.getThrows().stream().anyMatch(x -> x.toString().startsWith(ANY));
 	}
 	
 	/**
@@ -649,7 +649,7 @@ class EqualsController {
 		
 		IdentifierTree identifier = (IdentifierTree)node.getNode();
 			
-		return identifier.getName().toString().startsWith(any);
+		return identifier.getName().toString().startsWith(ANY);
 	}
 	
 	/**
@@ -678,7 +678,7 @@ class EqualsController {
 				ModifiersTree modifierTree = (ModifiersTree) node.getNode();
 				List<? extends AnnotationTree> annotations = modifierTree.getAnnotations();
 				
-				retorno = annotations.stream().anyMatch(a -> a.toString().toUpperCase().startsWith("@"+any.toUpperCase()));
+				retorno = annotations.stream().anyMatch(a -> a.toString().toUpperCase().startsWith("@"+ANY.toUpperCase()));
 				break;
 				
 		}
@@ -702,7 +702,7 @@ class EqualsController {
 			ExpressionTree argument = argumentsPattern.get(0);
 			
 			if(argument.getKind() == Kind.IDENTIFIER) {
-				if(((IdentifierTree) argument).getName().toString().startsWith(any)){
+				if(((IdentifierTree) argument).getName().toString().startsWith(ANY)){
 					
 					MethodInvocationTree invocantionCode = (MethodInvocationTree)a.getNode();
 					List<? extends ExpressionTree> argumentsCode = invocantionCode.getArguments();

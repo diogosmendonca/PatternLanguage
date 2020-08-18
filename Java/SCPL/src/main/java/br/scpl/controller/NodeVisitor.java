@@ -29,8 +29,8 @@ import br.scpl.util.StringUtil;
  */
 class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 
-	  private final static String not = ConfigUtils.getProperties().getProperty("not");
-	  private final static String exists = ConfigUtils.getProperties().getProperty("exists");  	
+	  private final static String NOT = ConfigUtils.getProperties().getProperty("not");
+	  private final static String EXISTS = ConfigUtils.getProperties().getProperty("exists");  	
 
 	  private static final int INDENT_SPACES = 2;
 		
@@ -215,11 +215,11 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 				  if(key != null) {
 					  
 					  if(key.getNode().getKind() != Kind.BLOCK && key.getParent() != null && key.getParent().getNode().getKind() == Kind.LABELED_STATEMENT) {
-						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(not)) {
+						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(NOT)) {
 							  booleanExists = false;
 						  }
 						  
-						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(exists)) {
+						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(EXISTS)) {
 							  booleanExists = true;
 						  }
 						  
@@ -261,11 +261,11 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 					  } 
 					  
 					  if(key.getNode().getKind() == Kind.BLOCK && key.getParent().getNode().getKind() == Kind.LABELED_STATEMENT) {
-						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(not)) {
+						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(NOT)) {
 							  booleanExists = false;
 						  }
 						  
-						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(exists)) {
+						  if(((LabeledStatementTree) key.getParent().getNode()).getLabel().toString().equalsIgnoreCase(EXISTS)) {
 							  booleanExists = true;
 						  }
 						  
