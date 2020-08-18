@@ -3,11 +3,13 @@ package br.scpl.view;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,6 +39,9 @@ import br.scpl.model.PatternFolder;
 public class FileHandler {
 	
 	private static Logger log = Logger.getLogger(FileHandler.class);
+	
+	private static final String beginOR = "//#BEGIN";
+	private static final String endOR = "//#END";
 	
 	private FileHandler() {}
 	
@@ -73,8 +78,9 @@ public class FileHandler {
 	 * 
 	 * @param file File to be browsed
 	 * folder folder PatternFolder object that stores all the Java files already browsed, respecting the folder structure.
+	 * @throws IOException 
 	 */
-	public static void browseFiles(File file, PatternFolder folder) {
+	public static void browseFiles(File file, PatternFolder folder) throws IOException {
 		// Testa se o arquivo é uma pasta
 		if (file.isDirectory()) {
 			// lista os arquivos da pasta
@@ -103,8 +109,79 @@ public class FileHandler {
 			// Testa se o arquivo é um código fonte Java (termina com .java) e adiciona na
 			// lista de arquivos da classe
 		} else if (file.getName().endsWith(".java")) {
-			folder.getFiles().add(file);
+			
+			folder.getFiles().addAll(preProcessing(file));
 		}
+	}
+	
+	public static List<File> preProcessing(File file) throws IOException{
+		List<File> files = new ArrayList<>();
+		
+		String name = file.getName();
+		
+		String content = getStringContent(file);
+		
+		if(content.contains("//InAnyMethod")) {
+			
+			String anyMeThod = "@anyModifier\r\n" + 
+					"class anyClass {\r\n" + 
+					"    @anyModifier\r\n" + 
+					"    anyReturn anyMethod(anyType anyParameter) {";
+			String anyMethodClose = "}\r\n" +"}";
+			
+			content = content.replaceAll("(\r\n)+", "\r\n        ");
+			
+			content = content.replace("//InAnyMethod", anyMeThod);
+			
+			content = content.replaceAll("\\s+$", "");
+			
+			content = content.concat(anyMethodClose);
+		}
+		
+		if(content.contains(beginOR) && content.contains(endOR)) {
+			
+			String begin = content.substring (0, content.indexOf(beginOR));
+			
+			String end = content.substring(content.indexOf(endOR), content.length());
+			
+			content = content.replace(begin, "");
+			content = content.replace(end, "");
+			content = content.replace(beginOR, "");
+			end = end.replace(endOR, "");
+			
+			List<String> options = Arrays.asList(content.split("//#OR"));
+			
+			int n = 1;
+			
+			for(String o : options) {
+				
+				o = concatBeginAndEnd(o,begin,end);
+				
+				String currentName = String.format("_Option%d.java", n);
+				
+				File currentFile = new File(file.getAbsolutePath().replace(name, name.replace(".java", currentName)));
+				
+				FileWriter writer = new FileWriter(currentFile);
+				
+				writer.write(o);
+				writer.close();
+				
+				files.add(currentFile);
+				
+				n++;
+			}
+			
+		}
+		
+		if(files.isEmpty()) {
+			files.add(file);
+		}
+				
+		return files;
+	}
+	
+	private static String concatBeginAndEnd(String str, String begin, String end) {
+		return begin.concat(str).concat(end);
 	}
 	
 	/**
@@ -112,10 +189,10 @@ public class FileHandler {
 	 * 
 	 * @param rootPath Path of pattern. 
 	 * @return PatternFolder object that contains all patterns.
-	 * @throws FileNotFoundException
 	 * @throws NoValidFilesFoundException
+	 * @throws IOException 
 	 */
-	public static PatternFolder getPatternFolder(String rootPath) throws FileNotFoundException, NoValidFilesFoundException{
+	public static PatternFolder getPatternFolder(String rootPath) throws NoValidFilesFoundException, IOException{
 		PatternFolder folder = new PatternFolder();
 		log.debug("");
 		log.debug("Searching patterns files.");
@@ -211,4 +288,7 @@ public class FileHandler {
 		return new String(Files.readAllBytes(Paths.get(sourceFile.getName())));
 	}
 	
+	public static String getStringContent(File file) throws IOException {
+		return new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+	}
 }

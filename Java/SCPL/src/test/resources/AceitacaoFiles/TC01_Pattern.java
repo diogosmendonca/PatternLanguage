@@ -1,8 +1,19 @@
-@anyModifier
-class anyClass {
-    @anyModifier
-    any anyMethod(anyType any) {
-        /*Alert: Mensagem de teste*/        
-        System.out.println("Hello Nico");
-    }
-}
+//InAnyMethod
+//#BEGIN
+
+/*Alert: Mensagem de teste*/        
+System.out.println("Hello Nico");
+
+//#OR
+
+//Alert: Instance must be instantiated)
+instance = null;
+
+//#OR
+
+/*Alert: Mensagem de teste*/        
+System.out.println("Hello Nico");
+
+//#END
+
+
