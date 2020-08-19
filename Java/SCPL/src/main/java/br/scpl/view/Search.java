@@ -23,6 +23,7 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.SourcePositions;
 
 import br.scpl.controller.ControllerFacade;
+import br.scpl.exception.CompilationErrorException;
 import br.scpl.exception.NoAlertFoundException;
 import br.scpl.exception.NoValidFilesFoundException;
 import br.scpl.model.CompilationUnit;
@@ -158,6 +159,8 @@ public class Search extends JCommander implements Command<List<Node>>{
 			log.error(e.getLocalizedMessage());
 		} catch (NoAlertFoundException e) {
 			log.error(e.getLocalizedMessage());
+		} catch (CompilationErrorException e) {
+			log.error(e.getLocalizedMessage());
 		}
 		
 		return retorno;
@@ -172,8 +175,9 @@ public class Search extends JCommander implements Command<List<Node>>{
 	 * @param charset Specifies the charset tha will be used.
 	 * @return List o Node representing the occurrences of the pattern in the source code.
 	 * @throws IOException
+	 * @throws CompilationErrorException 
 	 */
-	private static List<Node> searchOccurrencesFolder(CompilationUnitTree treeCode, SourcePositions posCode, PatternFolder pattern, Charset charset) throws IOException{
+	private static List<Node> searchOccurrencesFolder(CompilationUnitTree treeCode, SourcePositions posCode, PatternFolder pattern, Charset charset) throws IOException, CompilationErrorException{
 		List<Node> retorno = new ArrayList<>();
 		
 		for(PatternFolder folder : pattern.getFolders()) {

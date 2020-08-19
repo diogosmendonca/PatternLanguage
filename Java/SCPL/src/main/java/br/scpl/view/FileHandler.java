@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -27,6 +29,7 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
+import br.scpl.exception.CompilationErrorException;
 import br.scpl.exception.NoValidFilesFoundException;
 import br.scpl.model.CompilationUnit;
 import br.scpl.model.PatternFolder;
@@ -40,8 +43,9 @@ public class FileHandler {
 	
 	private static Logger log = Logger.getLogger(FileHandler.class);
 	
-	private static final String beginOR = "//#BEGIN";
-	private static final String endOR = "//#END";
+	private static final String BEGIN_OR = "//#BEGIN";
+	private static final String END_OR = "//#END";
+	private static final String OR = "//#OR";
 	
 	private FileHandler() {}
 	
@@ -138,18 +142,18 @@ public class FileHandler {
 			content = content.concat(anyMethodClose);
 		}
 		
-		if(content.contains(beginOR) && content.contains(endOR)) {
+		if(content.contains(BEGIN_OR) && content.contains(END_OR)) {
 			
-			String begin = content.substring (0, content.indexOf(beginOR));
+			String begin = content.substring (0, content.indexOf(BEGIN_OR));
 			
-			String end = content.substring(content.indexOf(endOR), content.length());
+			String end = content.substring(content.indexOf(END_OR), content.length());
 			
 			content = content.replace(begin, "");
 			content = content.replace(end, "");
-			content = content.replace(beginOR, "");
-			end = end.replace(endOR, "");
+			content = content.replace(BEGIN_OR, "");
+			end = end.replace(END_OR, "");
 			
-			List<String> options = Arrays.asList(content.split("//#OR"));
+			List<String> options = Arrays.asList(content.split(OR));
 			
 			int n = 1;
 			
@@ -160,6 +164,7 @@ public class FileHandler {
 				String currentName = String.format("_Option%d.java", n);
 				
 				File currentFile = new File(file.getAbsolutePath().replace(name, name.replace(".java", currentName)));
+				currentFile.deleteOnExit();
 				
 				FileWriter writer = new FileWriter(currentFile);
 				
@@ -239,8 +244,9 @@ public class FileHandler {
 	 * @return The compilationUnit object corresponding to the passed files, which contains a 
 	 * CompilationUnitTree iterator and a SourcePositions object (stores the node positions)  
 	 * @throws IOException
+	 * @throws CompilationErrorException 
 	 */
-	public static CompilationUnit parserFileToCompilationUnit(File[] files, Charset charset) throws IOException{
+	public static CompilationUnit parserFileToCompilationUnit(File[] files, Charset charset) throws IOException, CompilationErrorException{
 		
 		if(charset==null) {
 			
@@ -266,12 +272,18 @@ public class FileHandler {
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, charset);
 
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(files);
-		JavacTask javacTask = (JavacTask) compiler.getTask(null, fileManager, null, null, null, compilationUnits);
+		
+		Writer errorWriter = new StringWriter();
+		JavacTask javacTask = (JavacTask) compiler.getTask(errorWriter, fileManager, null, null, null, compilationUnits);
 		SourcePositions pos = Trees.instance(javacTask).getSourcePositions();
 		
 		DocTrees docTrees = DocTrees.instance(javacTask);
 		
 		Iterable<? extends CompilationUnitTree> compilationUnitTrees = javacTask.parse();
+		
+		if(!errorWriter.toString().equals("")) {
+			throw new CompilationErrorException(errorWriter.toString());
+		}
 		Iterator<? extends CompilationUnitTree> iter = compilationUnitTrees.iterator();
 			
 		return new CompilationUnit(iter,pos,docTrees);

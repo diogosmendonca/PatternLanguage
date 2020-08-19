@@ -532,7 +532,7 @@ public class AceitacaoTest {
 	@Test
 	public void tc42() throws IOException {
 		
-		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles"
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/PatternFolder"
 				,"./src/test/resources/AceitacaoFiles/TC42_Pattern.java");
 		
 		assertEquals(1, retorno.size());

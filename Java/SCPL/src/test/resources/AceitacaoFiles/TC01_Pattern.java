@@ -12,7 +12,7 @@ instance = null;
 //#OR
 
 /*Alert: Mensagem de teste*/        
-System.out.println("Hello Nico");
+System.out.println("Hello");
 
 //#END
 
