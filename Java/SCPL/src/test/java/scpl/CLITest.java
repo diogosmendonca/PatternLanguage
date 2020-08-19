@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import br.scpl.util.ConfigUtils;
 import br.scpl.view.Main;
 public class CLITest {
 	
@@ -92,6 +93,8 @@ public class CLITest {
 	
 	@Test
 	public void tc06() throws IOException {
+		
+		ConfigUtils.getProperties().setProperty("debug", "on");
         
         String[] args = { "search", "-c", "./src/test/resources/AceitacaoFiles/TC40_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC40_Pattern.java", "--charset", "UTF-8", "-f", "sonarqube" };
 		
