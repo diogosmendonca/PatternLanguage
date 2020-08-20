@@ -61,8 +61,10 @@ class EqualsController {
 		wildcardsMapBefore.putAll(wildcardsMap);
 		
 		try {
-			if(equalsModifier(a,b)) {
-				retorno = true;
+			
+			Boolean equalsModifier = equalsModifier(a,b);
+			if(equalsModifier != null) {
+				retorno = equalsModifier;
 				return retorno;
 			}
 			
@@ -373,13 +375,6 @@ class EqualsController {
 				
 				return name1.equals(name2);
 				
-			case MODIFIERS:
-				name1 = ((ModifiersTree) node1.getNode()).toString();
-				
-				name2 = ((ModifiersTree) node2.getNode()).toString();
-				
-				return name1.equals(name2);
-				
 			case PRIMITIVE_TYPE:
 				
 				name1 = ((PrimitiveTypeTree) node1.getNode()).toString();
@@ -414,7 +409,7 @@ class EqualsController {
 	 * @param b Node representing the pattern tree.
 	 * @return Boolean that indicates if two modifier nodes are equals.
 	 */
-	protected static boolean equalsModifier(Node a, Node b) {
+	protected static Boolean equalsModifier(Node a, Node b) {
 		
 		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
@@ -423,16 +418,18 @@ class EqualsController {
 			}
 			
 			ModifiersTree modifierPattern = ((ModifiersTree) b.getNode());
+			List<? extends AnnotationTree> annotationsPattern = modifierPattern.getAnnotations();
+			Set<Modifier> flagsPattern = modifierPattern.getFlags();
 			
-			List<? extends AnnotationTree> annotations = modifierPattern.getAnnotations();
-			
+			List<String> annotationsToRemove = new ArrayList<>();
+					
 			List<String> notModifier = new ArrayList<String>();
 			HashMap<String, String> alertIfNot = new LinkedHashMap<String, String>();
 			
 			boolean defaultAcessNot = false;
 			boolean defaultAcessAlertIfNot = false;
 			
-			for(AnnotationTree annotation: annotations) {
+			for(AnnotationTree annotation: annotationsPattern) {
 				
 				if(annotation.toString().toUpperCase().startsWith(NOT_ANNOTATION.toUpperCase())) {
 					
@@ -444,6 +441,7 @@ class EqualsController {
 					}
 					
 					notModifier.add(modifier);
+					annotationsToRemove.add(annotation.toString());
 				}else if(annotation.toString().toUpperCase().startsWith(ALERT_IF_NOT_ANNOTATION.toUpperCase())) {
 					
 					List<? extends ExpressionTree> arguments =  annotation.getArguments();
@@ -452,12 +450,12 @@ class EqualsController {
 					String modifier = annotation.toString().toUpperCase().split(ALERT_IF_NOT_ANNOTATION.toUpperCase())[1].toLowerCase();
 					
 					message = arguments.toString();
-					modifier = modifier.replace(message, "");
+					modifier = modifier.replaceAll("(?i)"+message, "");
 					modifier = modifier.replaceAll("\\(", "");
 					modifier = modifier.replaceAll("\\)", "");
 					
 					if(arguments.size() == 0) {
-						message = "The modifier cannot be " +modifier;
+						message = "The modifier must be " +modifier;
 					}else {
 						if(message.startsWith("\"") && message.endsWith("\"")) {
 							message = message.replaceFirst("\"", "");
@@ -466,11 +464,14 @@ class EqualsController {
 					}
 					
 					alertIfNot.put(modifier, message);
+					annotationsToRemove.add(annotation.toString());
 				}
 			}
 			
-			ModifiersTree modifierCode = ((ModifiersTree) a.getNode());
+			annotationsPattern = annotationsPattern.stream().filter(x -> !annotationsToRemove.contains(x.toString())).collect(Collectors.toList());
 			
+			ModifiersTree modifierCode = ((ModifiersTree) a.getNode());
+			List<? extends AnnotationTree> annotationsCode = modifierCode.getAnnotations();
 			Set<Modifier> flagsCode = modifierCode.getFlags();
 			
 			Boolean notBoolean = null;
@@ -494,7 +495,7 @@ class EqualsController {
 				
 			}
 			
-			if(!alertIfNot.isEmpty()) {
+			if((notBoolean == null || notBoolean) && !alertIfNot.isEmpty()) {
 				
 				alertIfNot.remove(DEFAULT_ACCESS);
 				
@@ -511,13 +512,13 @@ class EqualsController {
 					returnMessage += " " +alertIfNot.get(DEFAULT_ACCESS);
 				}
 				
-				List<String> matches = alertIfNot.keySet().stream().filter(x-> !flagsCode.contains(x)).collect(Collectors.toList());
+				List<Modifier> matches = alertIfNotFlags.stream().filter(x-> !flagsCode.contains(x)).collect(Collectors.toList());
 				
-				for(String m : matches) {
-					returnMessage += " " +alertIfNot.get(m);
+				for(Modifier m : matches) {
+					returnMessage += " " +alertIfNot.get(m.toString());
 				}
 				
-				if((notBoolean == null || notBoolean) && !returnMessage.equals("")){
+				if(!returnMessage.equals("")){
 					a.setIsToReturn(true);
 					a.setReturnMessage(returnMessage);
 					return true;
@@ -525,12 +526,14 @@ class EqualsController {
 				
 			}
 			
-			if(notBoolean != null) {
+			if(notBoolean != null && !notBoolean) {
 				return notBoolean;
 			}
 			
+			return flagsCode.containsAll(flagsPattern) && annotationsCode.containsAll(annotationsPattern);
+			
 		}
-		return false;
+		return null;
 	}
 	
 	/***
@@ -790,9 +793,11 @@ class EqualsController {
 	 */
 	
 	public static boolean partialEquals(Node a, Node b, Map<String, String> wildcardsMap) {
-			
-		if(equalsModifier(a,b)) {
-			return true;
+		
+		Boolean equalsModifier = equalsModifier(a,b); 
+		
+		if(equalsModifier != null) {
+			return equalsModifier;
 		}
 		
 		if(!basicComparation(a, b, wildcardsMap)) {

@@ -2,8 +2,7 @@
 
 public class someSingleton {
 	
-	//Alert: Instance should be private
-	@NotPrivate
+	@AlertIfNotPrivate("Instance should be private")
 	private static someSingleton instance;
 	
 	private someSingleton() {}
