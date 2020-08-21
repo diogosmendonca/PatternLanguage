@@ -74,9 +74,8 @@ public class Debug {
 			case CLASS:
 				int index = toString.indexOf("{");
 				toString = toString.substring(0, index+1);
-				if(toString.startsWith("\r\n")) {
-					toString = toString.replaceFirst("\r\n", "");
-				}
+				toString = toString.replaceFirst("\r\n", "");
+				
 				position = "L: " +node.getStartLine() +" C: " +node.getStartColumn() +" -> L: " +node.getEndLine() +" C: " +node.getEndColumn() ;
 				close = "} L: "+node.getEndLine() +" C: " +node.getEndColumn();
 				break;

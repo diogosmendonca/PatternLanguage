@@ -1111,4 +1111,74 @@ public class AceitacaoTest {
 		
 	}
 	
+	@Test
+	public void tc91() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC91_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC91_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(5, retorno.get(0).getEndLine());
+		assertEquals(2, retorno.get(0).getEndColumn());
+		
+	}
+	
+	@Test
+	public void tc92() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC92_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC92_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(1, retorno.get(0).getEndLine());
+		assertEquals(7, retorno.get(0).getEndColumn());
+		
+	}
+	
+	@Test
+	public void tc93() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC93_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC93_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(5, retorno.get(0).getEndLine());
+		assertEquals(2, retorno.get(0).getEndColumn());
+		
+	}
+	
+	@Test
+	public void tc94() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC94_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC94_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(1, retorno.get(0).getEndLine());
+		assertEquals(8, retorno.get(0).getEndColumn());
+		
+	}
+	
+	@Test
+	public void tc95() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC95_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC95_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(8, retorno.get(0).getEndLine());
+		assertEquals(2, retorno.get(0).getEndColumn());
+		
+	}
+	
 }

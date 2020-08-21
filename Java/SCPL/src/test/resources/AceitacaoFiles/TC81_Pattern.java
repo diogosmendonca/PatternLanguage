@@ -1,7 +1,7 @@
 @notDefaultAccess
 class anyClass {
 
-	@notDefault
+	@notDefaultAccess
 	someType anyVar = anyValue;
 
 	/*Alert: Test*/

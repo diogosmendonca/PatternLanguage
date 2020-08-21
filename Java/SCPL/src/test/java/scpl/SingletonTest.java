@@ -40,6 +40,15 @@ public class SingletonTest {
 		
 		assertEquals(1, retorno.size());
 	}
+	
+	@Test
+	public void singletonTest() {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/Singleton/Examples", 
+				"./src/test/resources/Singleton/Patterns/Singleton_Option1.java");
+		
+		assertEquals(1, retorno.size());
+	}
 
 	
 }
