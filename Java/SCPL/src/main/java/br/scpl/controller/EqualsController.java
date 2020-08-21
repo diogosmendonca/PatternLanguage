@@ -153,10 +153,10 @@ class EqualsController {
 			boolean flagSome = false;
 			
 			if(b.getNode().getKind() == Kind.IDENTIFIER) {
-				if((((IdentifierTree) b.getNode()).getName().toString()).startsWith(ANY)){
+				if(startsWithAnyCaseInsentive(((IdentifierTree) b.getNode()).getName().toString())){
 					flagAny = true;
 				}
-				if((((IdentifierTree) b.getNode()).getName().toString()).startsWith(SOME)){
+				if(startsWithSomeCaseInsentive(((IdentifierTree) b.getNode()).getName().toString())){
 					flagSome = true;
 				}
 			}
@@ -177,6 +177,30 @@ class EqualsController {
 			}
 		
 		return true;		
+	}
+	/***
+	 * 
+	 * Verify if a name starts with the wildcard any ignoring case (lower/upper case)
+	 * 
+	 * @param name
+	 * @return Boolean that indicates if the name starts with the wildcard any.
+	 */
+	private static boolean startsWithAnyCaseInsentive(String name) {
+		
+		return name.toUpperCase().startsWith(ANY.toUpperCase());
+	}
+	
+	
+	/***
+	 * 
+	 * Verify if a name starts with the wildcard some ignoring case (lower/upper case)
+	 * 
+	 * @param name
+	 * @return Boolean that indicates if the name starts with the wildcard some.
+	 */
+	private static boolean startsWithSomeCaseInsentive(String name) {
+		
+		return name.toUpperCase().startsWith(SOME.toUpperCase());
 	}
 	
 	/**
@@ -207,11 +231,11 @@ class EqualsController {
 				name1 = ((ClassTree) node1.getNode()).getSimpleName().toString();
 				name2 = ((ClassTree) node2.getNode()).getSimpleName().toString();
 				
-				if(name2.startsWith(ANY)) {
+				if(startsWithAnyCaseInsentive(name2)) {
 					return true;
 				}
 				
-				if(name2.startsWith(SOME)) {
+				if(startsWithSomeCaseInsentive(name2)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -229,11 +253,11 @@ class EqualsController {
 				name1 = ((MethodTree) node1.getNode()).getName().toString();
 				name2 = ((MethodTree) node2.getNode()).getName().toString();
 				
-				if(name2.startsWith(ANY)) {
+				if(startsWithAnyCaseInsentive(name2)) {
 					return true;
 				}
 				
-				if(name2.startsWith(SOME)) {
+				if(startsWithSomeCaseInsentive(name2)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -265,11 +289,11 @@ class EqualsController {
 					name2 = ((IdentifierTree) e2).getName().toString();
 				}
 				
-				if(name2.startsWith(ANY)) {
+				if(startsWithAnyCaseInsentive(name2)) {
 					return true;
 				}
 				
-				if(name2.startsWith(SOME)) {
+				if(startsWithSomeCaseInsentive(name2)) {
 					
 					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
 					wildcardsMapAux.putAll(wildcardsMap);
@@ -305,11 +329,11 @@ class EqualsController {
 					name2 = ((MemberSelectTree) node2.getNode()).getIdentifier().toString();					
 				}
 				
-				if(name2.startsWith(ANY)) {
+				if(startsWithAnyCaseInsentive(name2)) {
 					return true;
 				}
 				
-				if(name2.startsWith(SOME)) {
+				if(startsWithSomeCaseInsentive(name2)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -327,11 +351,11 @@ class EqualsController {
 				name1 = ((VariableTree) node1.getNode()).getName().toString();
 				name2 = ((VariableTree) node2.getNode()).getName().toString();
 				
-				if(name2.startsWith(ANY)) {
+				if(startsWithAnyCaseInsentive(name2)) {
 					return true;
 				}
 				
-				if(name2.startsWith(SOME)) {
+				if(startsWithSomeCaseInsentive(name2)) {
 					
 					Map<String, String> wildcardsMapAux = new LinkedHashMap<>();
 					wildcardsMapAux.putAll(wildcardsMap);
@@ -362,7 +386,7 @@ class EqualsController {
 				name1 = ((IdentifierTree) node1.getNode()).getName().toString();
 				name2 = ((IdentifierTree) node2.getNode()).getName().toString();
 				
-				if(name2.startsWith(SOME)) {
+				if(startsWithSomeCaseInsentive(name2)) {
 					
 					if(wildcardsMap.get(name2)==null) {
 						wildcardsMap.put(name2, name1);
@@ -449,6 +473,11 @@ class EqualsController {
 					String message = null;
 					String modifier = annotation.toString().toUpperCase().split(ALERT_IF_NOT_ANNOTATION.toUpperCase())[1].toLowerCase();
 					
+					if(modifier.equalsIgnoreCase(DEFAULT_ACCESS)) {
+						defaultAcessAlertIfNot = true;
+						modifier = DEFAULT_ACCESS;
+					}
+					
 					message = arguments.toString();
 					modifier = modifier.replaceAll("(?i)"+message, "");
 					modifier = modifier.replaceAll("\\(", "");
@@ -485,7 +514,7 @@ class EqualsController {
 				Set<Modifier> notFlags = notModifier.stream().map(i -> Modifier.valueOf(i.toUpperCase())).collect(Collectors.toSet());
 				
 				//FIXME The default modifier is empty and needs special treatment
-				if(notDefaultCase(flagsCode, defaultAcessNot)) {
+				if(defaultAcessNot && notDefaultCase(flagsCode)) {
 					notBoolean = false;
 				}
 				
@@ -497,10 +526,6 @@ class EqualsController {
 			
 			if((notBoolean == null || notBoolean) && !alertIfNot.isEmpty()) {
 				
-				alertIfNot.remove(DEFAULT_ACCESS);
-				
-				Set<Modifier> alertIfNotFlags = alertIfNot.keySet().stream().map(i -> Modifier.valueOf(i.toUpperCase())).collect(Collectors.toSet());
-				
 				String returnMessage = a.getReturnMessage();
 				
 				if(returnMessage == null) {
@@ -508,9 +533,13 @@ class EqualsController {
 				}
 				
 				//FIXME The default modifier is empty and needs special treatment
-				if(notDefaultCase(flagsCode, defaultAcessAlertIfNot)) {
+				if(defaultAcessAlertIfNot && !notDefaultCase(flagsCode)) {
 					returnMessage += " " +alertIfNot.get(DEFAULT_ACCESS);
 				}
+				
+				alertIfNot.remove(DEFAULT_ACCESS);
+				
+				Set<Modifier> alertIfNotFlags = alertIfNot.keySet().stream().map(i -> Modifier.valueOf(i.toUpperCase())).collect(Collectors.toSet());
 				
 				List<Modifier> matches = alertIfNotFlags.stream().filter(x-> !flagsCode.contains(x)).collect(Collectors.toList());
 				
@@ -546,18 +575,12 @@ class EqualsController {
 	 * @param boolean that indicates if the modifier access will be verified.
 	 * @return true if notDefaultAccess is used and modifier access default occurs.
 	 */
-	private static boolean notDefaultCase(Set<Modifier> flagsCode, boolean verifyDefault) {
+	private static boolean notDefaultCase(Set<Modifier> flagsCode) {
+				
+		List<Modifier> acessModifiers = Arrays.asList(Modifier.valueOf("PRIVATE"), 	
+				Modifier.valueOf("PUBLIC"), Modifier.valueOf("PROTECTED"));
 		
-		if(verifyDefault) {
-					
-			List<Modifier> acessModifiers = Arrays.asList(Modifier.valueOf("PRIVATE"), 	
-					Modifier.valueOf("PUBLIC"), Modifier.valueOf("PROTECTED"));
-			
-			if(!flagsCode.stream().anyMatch(x-> acessModifiers.contains(x))) {
-				return true;
-			}
-		}
-		return false;
+		return !flagsCode.stream().anyMatch(x-> acessModifiers.contains(x));
 	}
 	
 	
@@ -626,7 +649,7 @@ class EqualsController {
 	public static boolean isAnyParameter(Node node) {
 		MethodTree methodPattern = (MethodTree)node.getNode();
 		
-		return methodPattern.getParameters().stream().anyMatch(x -> x.toString().startsWith(ANY));
+		return methodPattern.getParameters().stream().anyMatch(x -> startsWithAnyCaseInsentive(x.toString()));
 	}
 	
 	/**
@@ -639,7 +662,7 @@ class EqualsController {
 	public static boolean isAnyThrows(Node node) {
 		MethodTree methodPattern = (MethodTree)node.getNode();
 		
-		return methodPattern.getThrows().stream().anyMatch(x -> x.toString().startsWith(ANY));
+		return methodPattern.getThrows().stream().anyMatch(x -> startsWithAnyCaseInsentive(x.toString()));
 	}
 	
 	/**
@@ -652,7 +675,7 @@ class EqualsController {
 		
 		IdentifierTree identifier = (IdentifierTree)node.getNode();
 			
-		return identifier.getName().toString().startsWith(ANY);
+		return startsWithAnyCaseInsentive(identifier.getName().toString());
 	}
 	
 	/**
@@ -705,7 +728,7 @@ class EqualsController {
 			ExpressionTree argument = argumentsPattern.get(0);
 			
 			if(argument.getKind() == Kind.IDENTIFIER) {
-				if(((IdentifierTree) argument).getName().toString().startsWith(ANY)){
+				if(startsWithAnyCaseInsentive(((IdentifierTree) argument).getName().toString())){
 					
 					MethodInvocationTree invocantionCode = (MethodInvocationTree)a.getNode();
 					List<? extends ExpressionTree> argumentsCode = invocantionCode.getArguments();
