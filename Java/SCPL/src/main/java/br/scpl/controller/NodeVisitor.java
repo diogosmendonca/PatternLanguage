@@ -352,11 +352,11 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		 Node block = node.getBlockChild();
 		 
 		 List<Node> blockChildren;
+		 blockChildren = block !=null ? block.getChildren(): node.getChildrenThatExists();
 		 
 		 List<Node> ignoreList = new ArrayList<Node>();
 		 
-		 if(block != null) {
-			 blockChildren = block.getChildren();
+		 if(blockChildren != null) {
 			 ignoreList.addAll(blockChildren);
 			 
 			 blockChildren.forEach(i -> {

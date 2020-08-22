@@ -229,5 +229,18 @@ public class Node {
 		return this.children.stream().filter(n -> n.getNode().getKind() == Kind.BLOCK).findFirst().orElse(null);
 	}
 	
+	public List<Node> getChildrenThatExists(){
+		
+		List<Node> childrenThatExists = new ArrayList<>();
+		
+		for(Node c: this.children) {
+			if(c.getExists()) {
+				childrenThatExists.add(c);
+			}
+		}
+		
+		return childrenThatExists.isEmpty() ? null : childrenThatExists;
+	}
+	
 }
 	
