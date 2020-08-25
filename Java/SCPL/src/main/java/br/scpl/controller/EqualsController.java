@@ -182,7 +182,7 @@ class EqualsController {
 	 * 
 	 * Verify if a name starts with the wildcard any ignoring case (lower/upper case)
 	 * 
-	 * @param name
+	 * @param name Identifier String to analyzed
 	 * @return Boolean that indicates if the name starts with the wildcard any.
 	 */
 	private static boolean startsWithAnyCaseInsentive(String name) {
@@ -195,7 +195,7 @@ class EqualsController {
 	 * 
 	 * Verify if a name starts with the wildcard some ignoring case (lower/upper case)
 	 * 
-	 * @param name
+	 * @param name Identifier String to analyzed
 	 * @return Boolean that indicates if the name starts with the wildcard some.
 	 */
 	private static boolean startsWithSomeCaseInsentive(String name) {
@@ -210,7 +210,8 @@ class EqualsController {
 	 * 
 	 * @param node1 Node representing the source code tree.
 	 * @param node2 Node representing the pattern tree.
-	 * @param flagAny Flag that indicates if the any wildcard is being used. 
+	 * @param flagAny Flag that indicates if the any wildcard is being used.
+	 * @param flagSome Flag that indicates if the some wildcard is being used. 
 	 * @param wildcardsMap Map for wildcard mapping.
 	 * @return Boolean that indicates if the name of nodes are equals.
 	 */
@@ -572,7 +573,6 @@ class EqualsController {
 	 * And it needs special treatment.
 	 * 
 	 * @param flagsCode Modifiers used in the source code.
-	 * @param boolean that indicates if the modifier access will be verified.
 	 * @return true if notDefaultAccess is used and modifier access default occurs.
 	 */
 	private static boolean notDefaultCase(Set<Modifier> flagsCode) {
@@ -588,8 +588,8 @@ class EqualsController {
 	 * Method used when a method tree equality fails. 
 	 * Checks if wildcard is being used in the method and performs equality correctly.
 	 * 
-	 * @param node1 Node representing the source code tree.
-	 * @param node2 Node representing the pattern tree.
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
 	 * @param wildcardsMap Map for wildcard mapping.
 	 * @return Boolean that indicates if wildcard is being used and the methods are equals.
 	 */
@@ -715,7 +715,9 @@ class EqualsController {
 	/**
 	 * Verify if the argument of the method invocation tree uses any wildcard.
 	 * 
-	 * @param node Node representing the source code tree.
+	 * @param a Node representing the source code tree.
+	 * @param b Node representing the pattern tree.
+	 * @param wildcardsMap Map for wildcard mapping.
 	 * @return Boolean that indicates if wildcard is being used in the argument of the method invocation.
 	 */
 	
@@ -769,7 +771,7 @@ class EqualsController {
 	 * @param node2 Node representing the pattern tree.
 	 * @param flagAny Flag that indicates if the any wildcard is being used.
 	 * @param flagSome Flag that indicates if the some wildcard is being used. 
-	 * @param wildcardsMap Map for wildcar mapping.
+	 * @param wildcardsMap Map for wildcard mapping.
 	 * @return Boolean that indicates if the value of nodes are equals.
 	 */
 	

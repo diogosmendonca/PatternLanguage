@@ -10,7 +10,7 @@ import com.beust.jcommander.JCommander;
  * 
  * @author Denis
  *
- * @param <T>
+ * @param <T> T is the type of the object returned by the execute method
  */
 public interface Command<T> {
 	

@@ -20,7 +20,7 @@ public class ControllerFacade {
 	 * @param sourcePositionsCode SourcePositions corresponding the positions of the within the source code file.
 	 * @param sourcePositionsPattern SourcePositions corresponding the positions of the within the source code file of the pattern.
 	 * @return List of all occurrences of the pattern present in the source code.
-	 * @throws IOException
+	 * @throws IOException Signals that an I/O exception of some sort has occurred.
 	 */
 	public static List<Node> searchOccurrences(CompilationUnitTree code, CompilationUnitTree pattern, SourcePositions sourcePositionsCode, SourcePositions sourcePositionsPattern) throws IOException {
 		 

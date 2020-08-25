@@ -65,7 +65,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	   * @param sourcePos SourcePositions corresponding the positions of the trees.
 	   * @param isPattern Boolean that indicates if is a pattern tree or source code tree.
 	   * @return root node of the new tree.
-	   * @throws IOException
+	   * @throws IOException Signals that an I/O exception of some sort has occurred.
 	   */
 	  public static Node build(CompilationUnitTree tree, SourcePositions sourcePos, Boolean isPattern) throws IOException {
 		Map<Integer,String> alertMessagesMap = new LinkedHashMap<>();

@@ -81,8 +81,8 @@ public class FileHandler {
 	 * respecting the folder structure.
 	 * 
 	 * @param file File to be browsed
-	 * folder folder PatternFolder object that stores all the Java files already browsed, respecting the folder structure.
-	 * @throws IOException 
+	 * @param folder PatternFolder object that stores all the Java files already browsed, respecting the folder structure.
+	 * @throws IOException Signals that an I/O exception of some sort has occurred.
 	 */
 	public static void browseFiles(File file, PatternFolder folder) throws IOException {
 		// Testa se o arquivo é uma pasta
@@ -194,8 +194,8 @@ public class FileHandler {
 	 * 
 	 * @param rootPath Path of pattern. 
 	 * @return PatternFolder object that contains all patterns.
-	 * @throws NoValidFilesFoundException
-	 * @throws IOException 
+	 * @throws NoValidFilesFoundException Signals that none valid file has found (.java).
+	 * @throws IOException Signals that an I/O exception of some sort has occurred.
 	 */
 	public static PatternFolder getPatternFolder(String rootPath) throws NoValidFilesFoundException, IOException{
 		PatternFolder folder = new PatternFolder();
@@ -218,8 +218,8 @@ public class FileHandler {
 	 * 
 	 * @param rootPath Path of source code.
 	 * @return files array containing all Java files in the specified path.
-	 * @throws FileNotFoundException
-	 * @throws NoValidFilesFoundException
+	 * @throws FileNotFoundException Signals that an attempt to open the file denoted by a specified pathname has failed.
+	 * @throws NoValidFilesFoundException Signals that none valid file has found (.java).
 	 */
 	public static File[] getFiles(String rootPath) throws FileNotFoundException, NoValidFilesFoundException {
 		List<File> files = new ArrayList<>();
@@ -241,10 +241,11 @@ public class FileHandler {
 	 * Parse the java files and return the ASTs and an object with the positions of each node.
 	 * 
 	 * @param files array of Java code files.
+	 * @param charset Specifies the charset tha will be used.
 	 * @return The compilationUnit object corresponding to the passed files, which contains a 
 	 * CompilationUnitTree iterator and a SourcePositions object (stores the node positions)  
-	 * @throws IOException
-	 * @throws CompilationErrorException 
+	 * @throws IOException Signals that an I/O exception of some sort has occurred.
+	 * @throws CompilationErrorException Signals that an error of compilation occurred in the parse of files.
 	 */
 	public static CompilationUnit parserFileToCompilationUnit(File[] files, Charset charset) throws IOException, CompilationErrorException{
 		
@@ -294,7 +295,7 @@ public class FileHandler {
 	 * 
 	 * @param sourceFile JavaFileObject
 	 * @return String content of the object specified.
-	 * @throws IOException
+	 * @throws IOException Signals that an I/O exception of some sort has occurred.
 	 */
 	public static String getStringContent(JavaFileObject sourceFile) throws IOException {
 		return new String(Files.readAllBytes(Paths.get(sourceFile.getName())));

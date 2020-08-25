@@ -171,11 +171,12 @@ public class Search extends JCommander implements Command<List<Node>>{
 	 * Returns the occurrences of the patterns in source code tree.
 	 * 
 	 * @param treeCode Source code CompilationUnitTree.
+	 * @param posCode SourcePositions object, that stores the node positions. 
 	 * @param pattern PatternFolder containing the searched patterns.
 	 * @param charset Specifies the charset tha will be used.
 	 * @return List o Node representing the occurrences of the pattern in the source code.
-	 * @throws IOException
-	 * @throws CompilationErrorException 
+	 * @throws IOException Signals that an I/O exception of some sort has occurred.
+	 * @throws CompilationErrorException Signals that an error of compilation occurred in the parse of files.
 	 */
 	private static List<Node> searchOccurrencesFolder(CompilationUnitTree treeCode, SourcePositions posCode, PatternFolder pattern, Charset charset) throws IOException, CompilationErrorException{
 		List<Node> retorno = new ArrayList<>();
