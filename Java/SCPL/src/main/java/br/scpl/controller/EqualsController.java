@@ -112,7 +112,7 @@ class EqualsController {
 			
 			//Para cada filho chama recursivamente o método isEquals
 			for(int i=0; i<a.getChildren().size(); i++) {
-				if(a.getChildren().get(i).getFullVisited().booleanValue()) {
+				if(a.getChildren().get(i).getFullVisited()) {
 					return retorno;
 				}
 				if(!isEquals(a.getChildren().get(i), b.getChildren().get(i), wildcardsMap)) {
@@ -126,7 +126,7 @@ class EqualsController {
 		finally {
 			if(retorno) {
 				a.setMatchingNode(b);
-				if(b.getIsToReturn().booleanValue()) {
+				if(b.getIsToReturn()) {
 					a.setIsToReturn(true);
 					a.setReturnMessage(b.getReturnMessage());
 					a.setIssue(b.getIssue());
@@ -626,7 +626,7 @@ class EqualsController {
 		
 		if(childrenPattern.size() == childrenCode.size()) {
 			for(int i=0; i<childrenPattern.size(); i++) {
-				/*if(childrenCode.get(i).getFullVisited().booleanValue()) {
+				/*if(childrenCode.get(i).getFullVisited()) {
 					return false;
 				}*/
 				if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {
@@ -689,25 +689,20 @@ class EqualsController {
 		
 		boolean retorno = false;
 		
-		switch(node.getNode().getKind()) {
-			
-			case CLASS:
-				ClassTree classTree = (ClassTree) node.getNode();
-				retorno = isAnyModifier(Node.getNodesMap().get(classTree.getModifiers()));
-				break;
-			
-			case METHOD:
-				MethodTree mehtodTree = (MethodTree) node.getNode();
-				retorno = isAnyModifier(Node.getNodesMap().get(mehtodTree.getModifiers()));
-				break;
-			
-			case MODIFIERS:
-				ModifiersTree modifierTree = (ModifiersTree) node.getNode();
-				List<? extends AnnotationTree> annotations = modifierTree.getAnnotations();
-				
-				retorno = annotations.stream().anyMatch(a -> a.toString().toUpperCase().startsWith("@"+ANY.toUpperCase()));
-				break;
-				
+		if(node.getNode().getKind() == Kind.CLASS) {
+			ClassTree classTree = (ClassTree) node.getNode();
+			retorno = isAnyModifier(Node.getNodesMap().get(classTree.getModifiers()));
+		}
+		
+		if(node.getNode().getKind() == Kind.METHOD) {
+			MethodTree mehtodTree = (MethodTree) node.getNode();
+			retorno = isAnyModifier(Node.getNodesMap().get(mehtodTree.getModifiers()));
+		}
+		
+		if(node.getNode().getKind() == Kind.MODIFIERS) {
+			ModifiersTree modifierTree = (ModifiersTree) node.getNode();
+			List<? extends AnnotationTree> annotations = modifierTree.getAnnotations();
+			retorno = annotations.stream().anyMatch(a -> a.toString().toUpperCase().startsWith("@"+ANY.toUpperCase()));
 		}
 		
 		return retorno;
@@ -746,7 +741,7 @@ class EqualsController {
 					
 					if(childrenPattern.size() == childrenCode.size()) {
 						for(int i=0; i<childrenPattern.size(); i++) {
-							/*if(childrenCode.get(i).getFullVisited().booleanValue()) {
+							/*if(childrenCode.get(i).getFullVisited()) {
 								return false;
 							}*/
 							if(!isEquals(childrenCode.get(i), childrenPattern.get(i), wildcardsMap)) {

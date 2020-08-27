@@ -103,7 +103,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 			String currentFile = "";
 			
 			//removing empty default acess modifier, has no beginning and end
-			retorno = retorno.stream().filter(r -> !(r.getNode().getKind() == Kind.MODIFIERS && ((ModifiersTree) r.getNode()).getFlags().size() == 0)).collect(Collectors.toList());
+			retorno = retorno.stream().filter(r -> !(r.getNode().getKind() == Kind.MODIFIERS && ((ModifiersTree) r.getNode()).getFlags().isEmpty())).collect(Collectors.toList());
 			
 			log.debug("");
 			
@@ -155,13 +155,9 @@ public class Search extends JCommander implements Command<List<Node>>{
 		}
 		catch(IOException e) {
 			log.error("Error: " +e.getLocalizedMessage());
-		} catch (NoValidFilesFoundException e) {
+		} catch (NoValidFilesFoundException|NoAlertFoundException|CompilationErrorException e) {
 			log.error(e.getLocalizedMessage());
-		} catch (NoAlertFoundException e) {
-			log.error(e.getLocalizedMessage());
-		} catch (CompilationErrorException e) {
-			log.error(e.getLocalizedMessage());
-		}
+		} 
 		
 		return retorno;
 	}
@@ -185,7 +181,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 			retorno.addAll(searchOccurrencesFolder(treeCode, posCode, folder, charset));
 		}
 		
-		if(pattern.getFiles().size() > 0) {
+		if(!pattern.getFiles().isEmpty()) {
 			
 			File[] filesPatterns = pattern.getFiles().toArray(new File[0]);
 			

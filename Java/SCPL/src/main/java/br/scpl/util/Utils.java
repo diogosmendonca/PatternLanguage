@@ -35,7 +35,7 @@ public class Utils {
 		
 		List<Node> retorno = Utils.filterReturnNodes(nodes);
 		
-		if(retorno.size()>0) {
+		if(!retorno.isEmpty()) {
 			nodes = retorno;
 		}
 		

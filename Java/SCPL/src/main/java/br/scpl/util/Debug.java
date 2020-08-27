@@ -18,10 +18,10 @@ public class Debug {
 	private StringBuilder sb;
 	
 	@Parameter(names = {"-d", "--debug"}, description = "Activate the debug mode")
-	private static Boolean activated = false;
+	private static boolean activated = false;
 	
 	@Parameter(names = {"-l", "--showLocation"}, description = "Flag that indicates if debug will show the location informations", arity=1)
-	private static Boolean showLocation = true;
+	private static boolean showLocation = true;
 	
 	@Parameter(names = {"-b", "--beginLine"}, description = "Debug start line in source code", arity=1)
 	private static Integer startLine;
@@ -47,7 +47,7 @@ public class Debug {
 		}
 	}
 	
-	private void print(Node node, Boolean isSourceCode) {
+	private void print(Node node, boolean isSourceCode) {
 		
 		String toString = node.toString();
 		String close = null;
@@ -170,10 +170,8 @@ public class Debug {
 	 * @return Boolean that indicates if the debug mode is activated.
 	 */
 	public static boolean isActivated() {
-		if(!activated) {
-			if(ConfigUtils.getProperties().getProperty("debug").equals("on")) {
-				activated = true;
-			}
+		if(!activated && ConfigUtils.getProperties().getProperty("debug").equals("on")) {
+			activated = true;
 		}
 		return activated;
 	}

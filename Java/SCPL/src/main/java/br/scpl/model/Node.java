@@ -20,26 +20,26 @@ public class Node {
 	private CompilationUnitTree compilatioUnitTree;
 	private Long startPosition;
 	private Long endPosition;
-	private Boolean fullVisited;
-	private Boolean exists;
-	private Boolean changeOperator;
+	private boolean fullVisited;
+	private boolean exists;
+	private boolean changeOperator;
 	private List<Node> notExistsAsParents;
-	private Boolean isToReturn;
+	private boolean isToReturn;
 	private String returnMessage;
 	private Issue issue;
 	private Node matchingNode;
 	private Map<Node, Integer> path = new LinkedHashMap<>();
-	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<Tree, Node>();
+	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<>();
 	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
 		this.node = node;
-		this.children = new ArrayList<Node>();
+		this.children = new ArrayList<>();
 		this.compilatioUnitTree = compilatioUnitTree;
 		this.fullVisited = false;
 		this.exists = true;
 		this.changeOperator = false;
 		this.isToReturn = false;
-		this.notExistsAsParents = new ArrayList<Node>();
+		this.notExistsAsParents = new ArrayList<>();
 	}
 	
 	public Node(Node node, List<Node> ignore) {
@@ -47,23 +47,23 @@ public class Node {
 		this.parent = null;
 		this.node = node.getNode();
 		
-		List<Node> children = new ArrayList<Node>();
+		List<Node> childrenAux = new ArrayList<>();
 		
 		for(Node child: node.getChildren()) {
 			if(!ignore.contains(child)) {
 				Node childClone = new Node(child,ignore);
 				childClone.setParent(this);
-				children.add(childClone);
+				childrenAux.add(childClone);
 			}
 		}
 		
-		this.children = children;		
+		this.children = childrenAux;		
 		this.compilatioUnitTree = node.getCompilatioUnitTree();
 		this.fullVisited = false;
 		this.exists = true;
 		this.changeOperator = false;
 		this.isToReturn = false;
-		this.notExistsAsParents = new ArrayList<Node>();
+		this.notExistsAsParents = new ArrayList<>();
 	}
 	
 	public Node getParent() {
@@ -115,11 +115,11 @@ public class Node {
 		return this.getLineMap().getColumnNumber(this.endPosition);
 	}
 	
-	public Boolean getFullVisited() {
+	public boolean getFullVisited() {
 		return fullVisited;
 	}
 
-	public void setFullVisited(Boolean fullVisited) {
+	public void setFullVisited(boolean fullVisited) {
 		if(!this.hasBrother(Tree.Kind.BLOCK)) {
 			this.fullVisited = fullVisited;
 			
@@ -130,7 +130,7 @@ public class Node {
 		
 	}
 
-	public Boolean hasBrother(Kind kind) {
+	public boolean hasBrother(Kind kind) {
 		
 		if(this.parent == null) {
 			return false;
@@ -144,11 +144,11 @@ public class Node {
 		return false;
 	}
 
-	public Boolean getExists() {
+	public boolean getExists() {
 		return exists;
 	}
 
-	public void setExists(Boolean exists) {
+	public void setExists(boolean exists) {
 		this.exists = exists;
 		
 		for(Node child : this.children) {
@@ -156,11 +156,11 @@ public class Node {
 		}
 	}
 
-	public Boolean getChangeOperator() {
+	public boolean getChangeOperator() {
 		return changeOperator;
 	}
 
-	public void setChangeOperator(Boolean changeOperator) {
+	public void setChangeOperator(boolean changeOperator) {
 		this.changeOperator = changeOperator;
 		
 		if(this.parent != null) {
@@ -183,11 +183,11 @@ public class Node {
 				.findFirst().orElse(null);
 	}
 	
-	public Boolean getIsToReturn() {
+	public boolean getIsToReturn() {
 		return isToReturn;
 	}
 
-	public void setIsToReturn(Boolean isToReturn) {
+	public void setIsToReturn(boolean isToReturn) {
 		this.isToReturn = isToReturn;
 		
 		this.children.forEach(n -> n.setIsToReturn(isToReturn));

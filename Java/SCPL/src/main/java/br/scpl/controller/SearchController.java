@@ -16,7 +16,6 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.VariableTree;
 
 import br.scpl.model.Node;
-import br.scpl.util.ConfigUtils;
 import br.scpl.util.Debug;
 import br.scpl.util.Utils;
 
@@ -59,7 +58,7 @@ class SearchController {
 			}
 		}
 		
-		List<Node> childrenNodesAux = new ArrayList<Node>();
+		List<Node> childrenNodesAux;
 		
 		do {
 			childrenNodesAux = search(a, b, new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
@@ -69,7 +68,7 @@ class SearchController {
 			}else {
 				occurrences.addAll(childrenNodesAux);
 			}
-		}while(childrenNodesAux.size() > 0);
+		}while(!childrenNodesAux.isEmpty());
 		
 		log.debug("Occurrences found in the file: " +occurrences.size());
 		new Debug().run(a, b);
@@ -209,7 +208,7 @@ class SearchController {
 						subtreeAux = subtreeFirstOcorrence(a.getChildren().get(counter), b.getChildren().get(i), wildcardsMap, path, limitPath);
 						
 						
-						if(subtreeAux.size() > 0) {
+						if(!subtreeAux.isEmpty()) {
 							if(b.getChildren().get(i).getExists()) {
 								currentOccurrences.addAll(subtreeAux);
 								searching=false;
@@ -228,16 +227,16 @@ class SearchController {
 						}
 					}
 					
-					if(searching==false) {
+					if(!searching) {
 						path.put(a, counter);
 					}
 					
-					if(searching==true || currentOccurrences.contains(a.getChildren().get(counter)) ) {
+					if(searching || currentOccurrences.contains(a.getChildren().get(counter)) ) {
 						counter++;
 					}
 				}
 			}
-			if(searching && !(i == b.getChildren().size() - 1)) {
+			if(searching && (i != b.getChildren().size() - 1)) {
 				if(!b.getChildren().get(i).getExists()) {
 					counter = lastOcorrenceIndex++;
 					searching = false;
@@ -326,7 +325,7 @@ class SearchController {
 		
 		occurrences.addAll(search(a, b, wildcardsMap, path, limitPath));
 		
-		if(occurrences.size() > 0) {
+		if(!occurrences.isEmpty()) {
 			return occurrences;
 		}
 		
@@ -346,7 +345,7 @@ class SearchController {
 				limitPath.putAll(limitPathOld);
 				
 				occurrences.addAll(subtreeFirstOcorrence(child, b, wildcardsMap, path, limitPath));
-				if(occurrences.size() > 0) {
+				if(!occurrences.isEmpty()) {
 					
 					if(b.getExists()) {
 						path.put(a, counter);

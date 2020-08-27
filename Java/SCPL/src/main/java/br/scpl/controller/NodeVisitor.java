@@ -2,7 +2,6 @@ package br.scpl.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +28,8 @@ import br.scpl.util.StringUtil;
  */
 class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 
-	  private final static String NOT = ConfigUtils.getProperties().getProperty("not");
-	  private final static String EXISTS = ConfigUtils.getProperties().getProperty("exists");  	
+	  private static final String NOT = ConfigUtils.getProperties().getProperty("not");
+	  private static final String EXISTS = ConfigUtils.getProperties().getProperty("exists");  	
 
 	  private static final int INDENT_SPACES = 2;
 		
@@ -39,13 +38,13 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private final CompilationUnitTree compilatioUnitTree;
 	  private Tree root;
 	  private SourcePositions sourcePos;
-	  private Boolean isPattern;
+	  private boolean isPattern;
 	  private final Map<Integer,String> alertMessagesMap;
 	  private final Map<Integer,Boolean> existsModifierMap;
 	  private final Map<Integer, Issue> issuesMap;
 	  private final Map<Node, Boolean> commentExistsMap;
 
-	  private NodeVisitor(CompilationUnitTree tree, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap, Map<Integer,Issue> issuesMap, Boolean isPattern) {
+	  private NodeVisitor(CompilationUnitTree tree, SourcePositions sourcePos, Map<Integer,String> alertMessagesMap, Map<Integer,Boolean> existsModifierMap, Map<Integer,Issue> issuesMap, boolean isPattern) {
 		  this.sb = new StringBuilder();
 		this.indentLevel = 0;
 	    this.compilatioUnitTree = tree;
@@ -67,24 +66,22 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	   * @return root node of the new tree.
 	   * @throws IOException Signals that an I/O exception of some sort has occurred.
 	   */
-	  public static Node build(CompilationUnitTree tree, SourcePositions sourcePos, Boolean isPattern) throws IOException {
+	  public static Node build(CompilationUnitTree tree, SourcePositions sourcePos, boolean isPattern) throws IOException {
 		Map<Integer,String> alertMessagesMap = new LinkedHashMap<>();
 		Map<Integer,Boolean> existsModifierMap = new LinkedHashMap<>();
 		Map<Integer,Issue> issuesMap = new LinkedHashMap<>();
 		
-		if(isPattern) {
-			if(sourcePos != null) {
-				alertMessagesMap = StringUtil.extractAlertMessages(tree);
-				existsModifierMap = StringUtil.extractExistsOperator(tree);
-				issuesMap = StringUtil.extractIssue(tree);
-			}
+		if(isPattern && sourcePos != null) {
+			alertMessagesMap = StringUtil.extractAlertMessages(tree);
+			existsModifierMap = StringUtil.extractExistsOperator(tree);
+			issuesMap = StringUtil.extractIssue(tree);
 		}
 		
 	    NodeVisitor nv = new NodeVisitor(tree, sourcePos, alertMessagesMap, existsModifierMap, issuesMap, isPattern);
 	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
     	addInfos(nodes, isPattern, nv.commentExistsMap);	    	
-	    //System.out.println(nv.sb.toString());
+	    
 	    return Node.getNodesMap().get(nv.root);
 	  }
 	  
@@ -105,8 +102,6 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	        TreePath path = getCurrentPath();
 	        
 	        Tree parent = path == null? null: path.getLeaf();
-	        
-	        boolean isToReturn = false;
 	        
 	        Node nodeParent = Node.getNodesMap().get(parent);
 	        
@@ -191,16 +186,11 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	  private static void addInfos(Map<Node, List<Node>> nodes, boolean isPattern, Map<Node, Boolean> commentExistsMap) {
 		  List<Node> listToRemove = new ArrayList<>();
 		  List<Node> listChangePoints = new ArrayList<>();
-		  for(Node key : nodes.keySet()) {
-				for(Node node :  nodes.get(key)) {
-					Collection<Node> children = nodes.get(node);
-					if(children != null) {
-						//node.getChildren().addAll(children);
-						for(Node child: children) {
-							//child.setParent(node);
-						}
-						
-					}
+		  for(Map.Entry<Node,List<Node>> entry : nodes.entrySet()) {
+			  	Node key = entry.getKey();
+			  	List<Node> value = entry.getValue();
+			  
+				for(Node node :  value) {
 					if(key!=null) {
 						node.getPath().putAll(key.getPath());
 						node.getPath().put(key,key.getChildren().indexOf(node));						
@@ -208,7 +198,9 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 				}
 		  }
 		  if(isPattern) {
-			  for(Node key : nodes.keySet()) {
+			  for(Map.Entry<Node,List<Node>> entry : nodes.entrySet()) {
+				  Node key = entry.getKey();
+				  
 				  Boolean booleanExists = null;
 				  if(key != null) {
 					  
@@ -236,18 +228,16 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 					  		  nodes.get(parentAux).remove(key.getParent());
 					  		  
 						  	  nodes.get(parentAux).add(nodesIndexAux,key);
-						  	  nodesIndexAux++;
 						  	
 					  		  parenIndexAux = parentAux.getChildren().indexOf(key.getParent());
 					  		  parentAux.getChildren().remove(key.getParent());
 
 					  		  parentAux.getChildren().add(parenIndexAux,key);
-							  parenIndexAux++;
 							
 							  key.setParent(parentAux);
 							
 							  key.setExists(booleanExists);
-							  if(key.getParent().getExists().booleanValue()!=booleanExists.booleanValue()) {
+							  if(key.getParent().getExists()!=booleanExists.booleanValue()) {
 								  key.getParent().setChangeOperator(true);
 							  }
 							  
@@ -301,7 +291,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 									node.setParent(parentAux);
 									
 									node.setExists(booleanExists);
-									if(node.getParent().getExists().booleanValue()!=booleanExists.booleanValue()) {
+									if(node.getParent().getExists()!=booleanExists.booleanValue()) {
 										node.getParent().setChangeOperator(true);
 									}
 							  }
@@ -313,11 +303,13 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 				  }
 			  }
 			  
-			for(Node node: commentExistsMap.keySet()) {
-				Boolean booleanExists = commentExistsMap.get(node);
+			for(Map.Entry<Node, Boolean> entry: commentExistsMap.entrySet()) {
+				Node node = entry.getKey();
+				boolean booleanExists = entry.getValue();
+				
 			  	Node nodeParent = node.getParent();
 			  	node.setExists(booleanExists);
-				if(nodeParent.getExists().booleanValue()!=booleanExists.booleanValue()) {
+				if(nodeParent.getExists()!=booleanExists) {
 					nodeParent.setChangeOperator(true);
 				}
 				listChangePoints.add(node);
@@ -328,7 +320,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			}
 			
 			for(Node node : listChangePoints) {
-				if(!node.getExists()&&node.getChangeOperator()) {
+				if(!node.getExists() && node.getChangeOperator()) {
 					notInfos(node, listChangePoints);
 				}
 			}
@@ -377,9 +369,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 			 
 		 }
 		 
-		 toCallRecursive.forEach(i -> {
-			 notInfos(i, listChangePoints);
-		 });
+		 toCallRecursive.forEach(i -> notInfos(i, listChangePoints));
 		 
 	 }
 		 	 	  

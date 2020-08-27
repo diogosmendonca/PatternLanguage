@@ -29,8 +29,8 @@ public class StringUtil {
 	
 	private StringUtil() {}
 	
-	private final static String NOT = ConfigUtils.getProperties().getProperty("not");
-	private final static String EXISTS = ConfigUtils.getProperties().getProperty("exists");
+	private static final String NOT = ConfigUtils.getProperties().getProperty("not");
+	private static final String EXISTS = ConfigUtils.getProperties().getProperty("exists");
 	
 	public static Map<Integer,String> extractAlertMessages(Tree tree) throws IOException{
 		Map<Integer,String> retorno = new LinkedHashMap<>();

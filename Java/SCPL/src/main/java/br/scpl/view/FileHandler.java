@@ -43,6 +43,7 @@ public class FileHandler {
 	
 	private static Logger log = Logger.getLogger(FileHandler.class);
 	
+	private static final String END_JAVA_FILE = ".java";
 	private static final String BEGIN_OR = "//#BEGIN";
 	private static final String END_OR = "//#END";
 	private static final String OR = "//#OR";
@@ -71,7 +72,7 @@ public class FileHandler {
 			}
 			// Testa se o arquivo é um código fonte Java (termina com .java) e adiciona na
 			// lista de arquivos da classe
-		} else if (file.getName().endsWith(".java")) {
+		} else if (file.getName().endsWith(END_JAVA_FILE)) {
 			files.add(file);
 		}
 	}
@@ -112,7 +113,7 @@ public class FileHandler {
 			}
 			// Testa se o arquivo é um código fonte Java (termina com .java) e adiciona na
 			// lista de arquivos da classe
-		} else if (file.getName().endsWith(".java")) {
+		} else if (file.getName().endsWith(END_JAVA_FILE)) {
 			
 			folder.getFiles().addAll(preProcessing(file));
 		}
@@ -161,9 +162,9 @@ public class FileHandler {
 				
 				o = concatBeginAndEnd(o,begin,end);
 				
-				String currentName = String.format("_Option%d.java", n);
+				String currentName = String.format("_Option%d"+END_JAVA_FILE, n);
 				
-				File currentFile = new File(file.getAbsolutePath().replace(name, name.replace(".java", currentName)));
+				File currentFile = new File(file.getAbsolutePath().replace(name, name.replace(END_JAVA_FILE, currentName)));
 				currentFile.deleteOnExit();
 				
 				try(FileWriter writer = new FileWriter(currentFile)){
