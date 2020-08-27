@@ -169,7 +169,7 @@ public class Debug {
 	 * 
 	 * @return Boolean that indicates if the debug mode is activated.
 	 */
-	public boolean isActivated() {
+	public static boolean isActivated() {
 		if(!activated) {
 			if(ConfigUtils.getProperties().getProperty("debug").equals("on")) {
 				activated = true;

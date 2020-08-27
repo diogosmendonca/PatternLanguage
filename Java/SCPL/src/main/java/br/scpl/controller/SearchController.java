@@ -100,9 +100,7 @@ class SearchController {
 			return occurrences;
 		}
 		
-		List<Integer> anyIndex = new ArrayList<Integer>(); 
-		
-		int notChilds = 0;
+		List<Integer> anyIndex = new ArrayList<>(); 
 		
 		if(b.getNode() instanceof ExpressionTree || b.getNode() instanceof VariableTree) {
 			return occurrences;
@@ -112,15 +110,15 @@ class SearchController {
 			
 			if(EqualsController.isAnyParameter(b)) {
 				List<Integer> aux =  ((MethodTree)b.getNode()).getParameters().stream()
-										.map(x -> b.getChildrenbyTree(x))
-											.map(y -> b.getChildren().indexOf(y)).collect(Collectors.toList());
+										.map(b::getChildrenbyTree)
+											.map(b.getChildren()::indexOf).collect(Collectors.toList());
 				anyIndex.addAll(aux);
 			}
 			
 			if(EqualsController.isAnyThrows(b)) {
 				List<Integer> aux =  ((MethodTree)b.getNode()).getThrows().stream()
-						.map(x -> b.getChildrenbyTree(x))
-							.map(y -> b.getChildren().indexOf(y)).collect(Collectors.toList());
+						.map(b::getChildrenbyTree)
+							.map(b.getChildren()::indexOf).collect(Collectors.toList());
 				anyIndex.addAll(aux);
 			}
 			
@@ -253,7 +251,7 @@ class SearchController {
 					}else {
 						//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
 						if(!wildcardsMap.equals(wildcardsMapBefore) && (wildcardsMapLastFail.isEmpty() || !wildcardsMap.equals(wildcardsMapLastFail))) {
-							i =-1;
+							i = -1;
 							searching=false;
 							currentOccurrences.clear();
 							wildcardsMapLastFail.clear();

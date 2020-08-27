@@ -136,42 +136,40 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
         	node.setStartPosition(sourcePos.getStartPosition(node.getCompilatioUnitTree(), node.getNode()));
         	node.setEndPosition(sourcePos.getEndPosition(node.getCompilatioUnitTree(), node.getNode()));
 	        
-	        if(isPattern) {
 	        	
-		        if(!alertMessagesMap.isEmpty() || !existsModifierMap.isEmpty() || !issuesMap.isEmpty()) {
+	        if(isPattern && !alertMessagesMap.isEmpty() || !existsModifierMap.isEmpty() || !issuesMap.isEmpty()) {
+				
+				int line = (int) node.getStartLine();
+				
+				if(!alertMessagesMap.isEmpty()) {
+					String msg = alertMessagesMap.remove(line);
 					
-					int line = (int) node.getStartLine();
-					
-					if(!alertMessagesMap.isEmpty()) {
-						String msg = alertMessagesMap.remove(line);
-						
-						if(msg != null) {
-							node.setIsToReturn(true);
-							node.setReturnMessage(msg);
-							commentExistsMap.put(node, true);
-						}
+					if(msg != null) {
+						node.setIsToReturn(true);
+						node.setReturnMessage(msg);
+						commentExistsMap.put(node, true);
 					}
+				}
+				
+				if(!existsModifierMap.isEmpty()) {
+					Boolean booleanExists = existsModifierMap.remove(line);
 					
-					if(!existsModifierMap.isEmpty()) {
-						Boolean booleanExists = existsModifierMap.remove(line);
-						
-						if(booleanExists!=null) {
-							//extraido para depois do processamento dos labels
-							commentExistsMap.put(node, booleanExists);
-						}
+					if(booleanExists!=null) {
+						//extraido para depois do processamento dos labels
+						commentExistsMap.put(node, booleanExists);
 					}
+				}
+				
+				if(!issuesMap.isEmpty()) {
+					Issue issue = issuesMap.remove(line);
 					
-					if(!issuesMap.isEmpty()) {
-						Issue issue = issuesMap.remove(line);
-						
-						if(issue != null) {
-							node.setIsToReturn(true);
-							node.setReturnMessage(issue.getPrimaryLocation().getMessage());
-							node.setIssue(issue);
-							commentExistsMap.put(node, true);
-						}
+					if(issue != null) {
+						node.setIsToReturn(true);
+						node.setReturnMessage(issue.getPrimaryLocation().getMessage());
+						node.setIssue(issue);
+						commentExistsMap.put(node, true);
 					}
-		        }
+				}
 	        }
 	        
      	  }
@@ -190,9 +188,9 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	   * @param isPattern Boolean that indicates if is a pattern tree.
 	   * @param commentExistsMap Map that keeps its existence modifier comment for each node.
 	   */
-	  private static void addInfos(Map<Node, List<Node>> nodes, Boolean isPattern, Map<Node, Boolean> commentExistsMap) {
-		  List<Node> listToRemove = new ArrayList<Node>();
-		  List<Node> listChangePoints = new ArrayList<Node>();
+	  private static void addInfos(Map<Node, List<Node>> nodes, boolean isPattern, Map<Node, Boolean> commentExistsMap) {
+		  List<Node> listToRemove = new ArrayList<>();
+		  List<Node> listChangePoints = new ArrayList<>();
 		  for(Node key : nodes.keySet()) {
 				for(Node node :  nodes.get(key)) {
 					Collection<Node> children = nodes.get(node);
@@ -249,7 +247,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 							  key.setParent(parentAux);
 							
 							  key.setExists(booleanExists);
-							  if(key.getParent().getExists()!=booleanExists) {
+							  if(key.getParent().getExists().booleanValue()!=booleanExists.booleanValue()) {
 								  key.getParent().setChangeOperator(true);
 							  }
 							  
@@ -303,7 +301,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 									node.setParent(parentAux);
 									
 									node.setExists(booleanExists);
-									if(node.getParent().getExists()!=booleanExists) {
+									if(node.getParent().getExists().booleanValue()!=booleanExists.booleanValue()) {
 										node.getParent().setChangeOperator(true);
 									}
 							  }
@@ -319,7 +317,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 				Boolean booleanExists = commentExistsMap.get(node);
 			  	Node nodeParent = node.getParent();
 			  	node.setExists(booleanExists);
-				if(nodeParent.getExists()!=booleanExists) {
+				if(nodeParent.getExists().booleanValue()!=booleanExists.booleanValue()) {
 					nodeParent.setChangeOperator(true);
 				}
 				listChangePoints.add(node);
@@ -354,7 +352,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 		 List<Node> blockChildren;
 		 blockChildren = block !=null ? block.getChildren(): node.getChildrenThatExists();
 		 
-		 List<Node> ignoreList = new ArrayList<Node>();
+		 List<Node> ignoreList = new ArrayList<>();
 		 
 		 if(blockChildren != null) {
 			 ignoreList.addAll(blockChildren);

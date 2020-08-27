@@ -166,10 +166,9 @@ public class FileHandler {
 				File currentFile = new File(file.getAbsolutePath().replace(name, name.replace(".java", currentName)));
 				currentFile.deleteOnExit();
 				
-				FileWriter writer = new FileWriter(currentFile);
-				
-				writer.write(o);
-				writer.close();
+				try(FileWriter writer = new FileWriter(currentFile)){
+					writer.write(o);
+				}
 				
 				files.add(currentFile);
 				
@@ -253,19 +252,19 @@ public class FileHandler {
 			
 			UniversalDetector detector = new UniversalDetector(null);
 			
-			FileInputStream fis = new FileInputStream(files[0].getAbsolutePath());				
-						
-			byte[] buf = new byte[4096];
-						
-			int nread;
-			while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
-			detector.handleData(buf, 0, nread);
-			}
-			detector.dataEnd();
-			
-			if(detector.getDetectedCharset() != null) {
-				charset = Charset.forName(detector.getDetectedCharset());
-			}
+			try(FileInputStream fis = new FileInputStream(files[0].getAbsolutePath())){
+				byte[] buf = new byte[4096];
+				
+				int nread;
+				while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
+					detector.handleData(buf, 0, nread);
+				}
+				detector.dataEnd();
+				
+				if(detector.getDetectedCharset() != null) {
+					charset = Charset.forName(detector.getDetectedCharset());
+				}
+			}			
 			
 		}
 		

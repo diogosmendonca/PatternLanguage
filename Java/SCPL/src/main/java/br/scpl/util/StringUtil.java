@@ -51,7 +51,7 @@ public class StringUtil {
 	    	
 	    	Integer line = getLineComment(content, matcher.end());
 	    	
-	    	if(!alert.equals("")) {
+	    	if(alert!= null && !alert.equals("")) {
 	    		retorno.put(line+1, alert);
 	    	}
 	    }

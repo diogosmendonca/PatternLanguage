@@ -30,7 +30,7 @@ public class Issue {
 	}
 
 	public void setRuleId(String ruleId) {
-		this.ruleId = this.ruleId;
+		this.ruleId = ruleId;
 	}
 
 	public Location getPrimaryLocation() {

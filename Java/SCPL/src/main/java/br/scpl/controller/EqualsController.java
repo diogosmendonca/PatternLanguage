@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
@@ -38,11 +37,11 @@ class EqualsController {
 	
 	private EqualsController() {}
 	
-	private final static String ANY = ConfigUtils.getProperties().getProperty("any");
-	private final static String SOME = ConfigUtils.getProperties().getProperty("some");
-	private final static String NOT_ANNOTATION = ConfigUtils.getProperties().getProperty("notAnnotation");
-	private final static String ALERT_IF_NOT_ANNOTATION = ConfigUtils.getProperties().getProperty("alertIfNotAnnotation");
-	private final static String DEFAULT_ACCESS = "DefaultAccess";
+	private static final String ANY = ConfigUtils.getProperties().getProperty("any");
+	private static final String SOME = ConfigUtils.getProperties().getProperty("some");
+	private static final String NOT_ANNOTATION = ConfigUtils.getProperties().getProperty("notAnnotation");
+	private static final String ALERT_IF_NOT_ANNOTATION = ConfigUtils.getProperties().getProperty("alertIfNotAnnotation");
+	private static final String DEFAULT_ACCESS = "DefaultAccess";
 	
 	/***
 	 * Gets two trees and says if the both are equals.
@@ -102,7 +101,7 @@ class EqualsController {
 				}
 				
 				if(b.getNode().getKind() == Kind.BLOCK) {
-					if(b.getChildren().size() == 0) {
+					if(b.getChildren().isEmpty()) {
 						retorno = true;
 						return retorno;
 					}
@@ -127,7 +126,7 @@ class EqualsController {
 		finally {
 			if(retorno) {
 				a.setMatchingNode(b);
-				if(b.getIsToReturn()) {
+				if(b.getIsToReturn().booleanValue()) {
 					a.setIsToReturn(true);
 					a.setReturnMessage(b.getReturnMessage());
 					a.setIssue(b.getIssue());
@@ -222,8 +221,8 @@ class EqualsController {
 			return true;
 		}
 		
-		String name1 = null;
-		String name2 = flagSome ? ((IdentifierTree)node2.getNode()).toString() : null ;
+		String name1 = "";
+		String name2 = flagSome ? ((IdentifierTree)node2.getNode()).toString() : "";
 		
 		switch(node1.getNode().getKind()) {
 		
@@ -448,8 +447,8 @@ class EqualsController {
 			
 			List<String> annotationsToRemove = new ArrayList<>();
 					
-			List<String> notModifier = new ArrayList<String>();
-			HashMap<String, String> alertIfNot = new LinkedHashMap<String, String>();
+			List<String> notModifier = new ArrayList<>();
+			HashMap<String, String> alertIfNot = new LinkedHashMap<>();
 			
 			boolean defaultAcessNot = false;
 			boolean defaultAcessAlertIfNot = false;
@@ -484,7 +483,7 @@ class EqualsController {
 					modifier = modifier.replaceAll("\\(", "");
 					modifier = modifier.replaceAll("\\)", "");
 					
-					if(arguments.size() == 0) {
+					if(arguments.isEmpty()) {
 						message = "The modifier must be " +modifier;
 					}else {
 						if(message.startsWith("\"") && message.endsWith("\"")) {
@@ -514,12 +513,11 @@ class EqualsController {
 				
 				Set<Modifier> notFlags = notModifier.stream().map(i -> Modifier.valueOf(i.toUpperCase())).collect(Collectors.toSet());
 				
-				//FIXME The default modifier is empty and needs special treatment
 				if(defaultAcessNot && notDefaultCase(flagsCode)) {
 					notBoolean = false;
 				}
 				
-				if(notFlags.stream().anyMatch(x-> flagsCode.contains(x))) {
+				if(notFlags.stream().anyMatch(flagsCode::contains)) {
 					notBoolean = false;
 				}
 				
@@ -533,7 +531,6 @@ class EqualsController {
 					returnMessage = "";
 				}
 				
-				//FIXME The default modifier is empty and needs special treatment
 				if(defaultAcessAlertIfNot && !notDefaultCase(flagsCode)) {
 					returnMessage += " " +alertIfNot.get(DEFAULT_ACCESS);
 				}
@@ -544,13 +541,17 @@ class EqualsController {
 				
 				List<Modifier> matches = alertIfNotFlags.stream().filter(x-> !flagsCode.contains(x)).collect(Collectors.toList());
 				
+				StringBuilder sb = new StringBuilder();
+				
+				sb.append(returnMessage);
+				
 				for(Modifier m : matches) {
-					returnMessage += " " +alertIfNot.get(m.toString());
+					sb.append(" " +alertIfNot.get(m.toString()));
 				}
 				
-				if(!returnMessage.equals("")){
+				if(!sb.toString().equals("")){
 					a.setIsToReturn(true);
-					a.setReturnMessage(returnMessage);
+					a.setReturnMessage(sb.toString());
 					return true;
 				}
 				
@@ -580,7 +581,7 @@ class EqualsController {
 		List<Modifier> acessModifiers = Arrays.asList(Modifier.valueOf("PRIVATE"), 	
 				Modifier.valueOf("PUBLIC"), Modifier.valueOf("PROTECTED"));
 		
-		return !flagsCode.stream().anyMatch(x-> acessModifiers.contains(x));
+		return flagsCode.stream().noneMatch(acessModifiers::contains);
 	}
 	
 	
@@ -598,8 +599,8 @@ class EqualsController {
 		MethodTree methodPattern = (MethodTree)b.getNode();
 		MethodTree methodCode = (MethodTree)a.getNode();
 		
-		List<Tree> removePattern = new ArrayList<Tree>();
-		List<Tree> removeCode = new ArrayList<Tree>();
+		List<Tree> removePattern = new ArrayList<>();
+		List<Tree> removeCode = new ArrayList<>();
 		
 		if(isAnyParameter(b)) {
 			removePattern.addAll(methodPattern.getParameters());
@@ -613,12 +614,12 @@ class EqualsController {
 			removeCode.addAll(methodCode.getThrows());
 		}
 		
-		List<Node> childrenPattern = new ArrayList<Node>();
+		List<Node> childrenPattern = new ArrayList<>();
 		childrenPattern.addAll(b.getChildren());
 		
 		childrenPattern = childrenPattern.stream().filter(x -> !removePattern.contains(x.getNode())).collect(Collectors.toList());
 		
-		List<Node> childrenCode = new ArrayList<Node>();
+		List<Node> childrenCode = new ArrayList<>();
 		childrenCode.addAll(a.getChildren());
 		
 		childrenCode = childrenCode.stream().filter(x -> !removeCode.contains(x.getNode())).collect(Collectors.toList());
@@ -845,7 +846,7 @@ class EqualsController {
 			}
 			*/
 			
-			if(b.getNode().getKind() == Kind.BLOCK && b.getChildren().size() == 0) {
+			if(b.getNode().getKind() == Kind.BLOCK && b.getChildren().isEmpty()) {
 				return true;
 			}
 			
@@ -856,7 +857,8 @@ class EqualsController {
 		}
 		
 		boolean searching = false;
-		int i,counter = 0;
+		int i  = 0;
+		int counter = 0;
 		
 		for(i =0;i<b.getChildren().size();i++) {
 			
