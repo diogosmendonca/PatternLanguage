@@ -1,6 +1,5 @@
 package br.scpl.exception;
 
-import br.scpl.model.Node;
 
 public class CompilationErrorException extends Exception {
 	

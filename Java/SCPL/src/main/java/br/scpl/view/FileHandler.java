@@ -231,7 +231,7 @@ public class FileHandler {
 		browseFiles(new File(rootPath),files);
 		log.debug("");
 		log.debug("Total files: " +files.size());
-		if(files.size()==0) {
+		if(files.isEmpty()) {
 			throw new NoValidFilesFoundException(rootPath);
 		}
 		return files.toArray(new File[0]);

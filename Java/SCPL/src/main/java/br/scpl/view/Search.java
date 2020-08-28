@@ -110,23 +110,17 @@ public class Search extends JCommander implements Command<List<Node>>{
 			if(format != null) {
 				format = format.toLowerCase();
 				
-				switch(format) {
-				
-					case "sonarqube":
+				if(format.equals("sonarqube")) {
 						
-						SonarQubeFormat sonarQubeFormat = SonarQubeFormat.listNodeToSonarQubeFormat(retorno);
-						
-						Gson g = new GsonBuilder().setPrettyPrinting().create();
-	
-						String outputJson = g.toJson(sonarQubeFormat);
-						
-						log.info(outputJson);
-						
-						break;
-						
-					default:
-						log.error("Error: Unknow format");
-						break;
+					SonarQubeFormat sonarQubeFormat = SonarQubeFormat.listNodeToSonarQubeFormat(retorno);
+					
+					Gson g = new GsonBuilder().setPrettyPrinting().create();
+
+					String outputJson = g.toJson(sonarQubeFormat);
+					
+					log.info(outputJson);
+				}else {
+					log.error("Error: Unknow format");
 				}
 				
 			}else {
@@ -207,7 +201,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 				
 			}
 			
-			List<Tree> treesToRemove =  listToRemove.stream().map(n -> n.getNode()).collect(Collectors.toList());
+			List<Tree> treesToRemove =  listToRemove.stream().map(Node::getNode).collect(Collectors.toList());
 			
 			retorno = retorno.stream().filter(r -> !(treesToRemove.contains(r.getNode()))).collect(Collectors.toList());
 			

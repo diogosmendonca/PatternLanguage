@@ -1,6 +1,7 @@
 package br.scpl.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -10,6 +11,8 @@ import br.scpl.model.Node;
 
 @Parameters(separators = "=", commandDescription = "Debug mode")
 public class Debug {
+	
+	private static Logger log = Logger.getLogger(Debug.class);
 	
 	private static final String INDENT_STRING = "";
 	private static final int INDENT_SPACES = 2;
@@ -43,7 +46,7 @@ public class Debug {
 			
 			print(a, true);
 			
-			System.out.println(sb.toString());
+			log.info(sb.toString());
 		}
 	}
 	
@@ -61,7 +64,7 @@ public class Debug {
 			if(toString.startsWith("\r\n")) {
 				toString = toString.replaceFirst("\r\n", "");
 			}
-			position = "L: " +node.getStartLine() +" C: " +node.getStartColumn() +" -> L: " +node.getEndLine() +" C: " +node.getEndColumn() ;
+			position = getDefaultPosition(node);
 			
 		}else {
 			
@@ -76,7 +79,7 @@ public class Debug {
 				toString = toString.substring(0, index+1);
 				toString = toString.replaceFirst("\r\n", "");
 				
-				position = "L: " +node.getStartLine() +" C: " +node.getStartColumn() +" -> L: " +node.getEndLine() +" C: " +node.getEndColumn() ;
+				position = getDefaultPosition(node);
 				close = "} L: "+node.getEndLine() +" C: " +node.getEndColumn();
 				break;
 				
@@ -90,7 +93,7 @@ public class Debug {
 			default:
 				toString = node.toString();
 				if(!toString.equals("")) {
-					position = "L: " +node.getStartLine() +" C: " +node.getStartColumn() +" -> L: " +node.getEndLine() +" C: " +node.getEndColumn() ;			
+					position = getDefaultPosition(node) ;			
 				}
 				break;
 			}
@@ -133,6 +136,10 @@ public class Debug {
 			indent().append(close).append("\n");
 		}
 		
+	}
+	
+	private String getDefaultPosition(Node node) {
+		return "L: " +node.getStartLine() +" C: " +node.getStartColumn() +" -> L: " +node.getEndLine() +" C: " +node.getEndColumn();
 	}
 	
 	private boolean isToPrint(long line) {

@@ -23,7 +23,7 @@ public class PatternFolder {
 	}
 
 	public int size() {
-		return files.size() + folders.stream().mapToInt(f -> f.size()).sum();
+		return files.size() + folders.stream().mapToInt(PatternFolder::size).sum();
 	}
 	
 
