@@ -117,21 +117,22 @@ public class StringUtil {
 	    return retorno;
 	} 
 	
-	private static Issue getIssue(String alert) {
+	public static Issue getIssue(String alert) {
 		Issue issue = null;
 		
 		alert = alert.replaceAll("\r", "");
 		alert = alert.replaceAll("\n", "");
 		alert = alert.replaceAll(" +", " ");
 		alert = alert.replaceAll("\\*/", "");
+		alert = alert.startsWith("//") ? alert.replaceFirst("//", "") : alert ;
 		
-		Pattern pattern = Pattern.compile("alert(.)*",
+		/*Pattern pattern = Pattern.compile("alert(.)*",
 				Pattern.CASE_INSENSITIVE);
 		
 		Matcher matcher = pattern.matcher(alert);
 	    
 	    if(matcher.find()) {
-	    	alert = matcher.group();
+	    	alert = matcher.group();*/
 	    	
 	    	alert = alert.replaceAll("(?i)alert", "");
 	    	
@@ -161,12 +162,11 @@ public class StringUtil {
 	    	issue.setRuleId(properties.getProperty("ruleid"));
 	    	issue.setPrimaryLocation(new Location());
 	    	issue.getPrimaryLocation().setMessage(properties.getProperty("message"));
-	    	issue.getPrimaryLocation().setTextRange(new TextRange());
 	    	issue.setType(properties.getProperty("type"));
 	    	issue.setSeverity(properties.getProperty("severity"));
 	    	issue.setEffortMinutes(0);
 	    	
-	    }	
+	    //}	
 		
 		return issue;
 	}

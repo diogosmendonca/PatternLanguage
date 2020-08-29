@@ -31,7 +31,8 @@ public class SonarQubeFormat {
 			}
 			issue.getPrimaryLocation().setFilePath(node.getFilePath().replaceAll("(\\\\)+", "/"));
 			
-			TextRange textRange = issue.getPrimaryLocation().getTextRange();
+			TextRange textRange = new TextRange();
+			issue.getPrimaryLocation().setTextRange(textRange);
 			textRange.setStartLine((int) node.getStartLine());
 			textRange.setEndLine((int) node.getEndLine());
 			textRange.setStartColumn((int) node.getStartColumn());

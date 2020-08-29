@@ -27,7 +27,9 @@ import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.VariableTree;
 
 import br.scpl.model.Node;
+import br.scpl.model.sonarqube.Issue;
 import br.scpl.util.ConfigUtils;
+import br.scpl.util.StringUtil;
 
  /**
  * @author Denis
@@ -449,6 +451,7 @@ class EqualsController {
 					
 			List<String> notModifier = new ArrayList<>();
 			HashMap<String, String> alertIfNot = new LinkedHashMap<>();
+			HashMap<String, Issue> alertIfNotIssues = new LinkedHashMap<>();
 			
 			boolean defaultAcessNot = false;
 			boolean defaultAcessAlertIfNot = false;
@@ -471,17 +474,18 @@ class EqualsController {
 					List<? extends ExpressionTree> arguments =  annotation.getArguments();
 					
 					String message = null;
+					Issue issue = null;
 					String modifier = annotation.toString().toUpperCase().split(ALERT_IF_NOT_ANNOTATION.toUpperCase())[1].toLowerCase();
-					
-					if(modifier.equalsIgnoreCase(DEFAULT_ACCESS)) {
-						defaultAcessAlertIfNot = true;
-						modifier = DEFAULT_ACCESS;
-					}
 					
 					message = arguments.toString();
 					modifier = modifier.replaceAll("(?i)"+message, "");
 					modifier = modifier.replaceAll("\\(", "");
 					modifier = modifier.replaceAll("\\)", "");
+					
+					if(modifier.equalsIgnoreCase(DEFAULT_ACCESS)) {
+						defaultAcessAlertIfNot = true;
+						modifier = DEFAULT_ACCESS;
+					}
 					
 					if(arguments.isEmpty()) {
 						message = "The modifier must be " +modifier;
@@ -489,10 +493,16 @@ class EqualsController {
 						if(message.startsWith("\"") && message.endsWith("\"")) {
 							message = message.replaceFirst("\"", "");
 							message = message.replaceAll("\"$", "");
+							
+							if(message.toUpperCase().contains("RULEID")) {
+								issue = StringUtil.getIssue(message);
+								message = issue.getPrimaryLocation().getMessage();
+							}
 						}
 					}
 					
 					alertIfNot.put(modifier, message);
+					alertIfNotIssues.put(modifier, issue);
 					annotationsToRemove.add(annotation.toString());
 				}
 			}
@@ -525,14 +535,12 @@ class EqualsController {
 			
 			if((notBoolean == null || notBoolean) && !alertIfNot.isEmpty()) {
 				
-				String returnMessage = a.getReturnMessage();
-				
-				if(returnMessage == null) {
-					returnMessage = "";
-				}
+				List<String> messages = new ArrayList<>();//a.getReturnMessage();
+				List<Issue> issues = new ArrayList<>();
 				
 				if(defaultAcessAlertIfNot && !notDefaultCase(flagsCode)) {
-					returnMessage += " " +alertIfNot.get(DEFAULT_ACCESS);
+					messages.add(alertIfNot.get(DEFAULT_ACCESS));						
+					issues.add(alertIfNotIssues.get(DEFAULT_ACCESS));
 				}
 				
 				alertIfNot.remove(DEFAULT_ACCESS);
@@ -541,18 +549,35 @@ class EqualsController {
 				
 				List<Modifier> matches = alertIfNotFlags.stream().filter(x-> !flagsCode.contains(x)).collect(Collectors.toList());
 				
-				StringBuilder sb = new StringBuilder();
-				
-				sb.append(returnMessage);
-				
 				for(Modifier m : matches) {
-					sb.append(" " +alertIfNot.get(m.toString()));
+					messages.add(alertIfNot.get(m.toString()));
+					issues.add(alertIfNotIssues.get(m.toString()));
 				}
 				
-				if(!sb.toString().equals("")){
+				messages = messages.stream().filter(m -> m != null).collect(Collectors.toList());
+				issues = issues.stream().filter(i -> i != null).collect(Collectors.toList());
+				
+				StringBuilder sb = new StringBuilder();
+				
+				messages.forEach(m -> sb.append(m+". "));
+				
+				for (Issue i : issues){
+					if(issues.indexOf(i) != 0) {
+						issues.get(0).getSecondaryLocations().add(i.getPrimaryLocation());
+					}
+				}
+				
+				if(!messages.isEmpty() || !issues.isEmpty()){
 					a.setIsToReturn(true);
 					a.setReturnMessage(sb.toString());
+					if(!issues.isEmpty()) {
+						a.setIssue(issues.get(0));						
+					}
 					return true;
+				}else {
+					a.setIsToReturn(false);
+					a.setReturnMessage("");
+					a.setIssue(null);
 				}
 				
 			}

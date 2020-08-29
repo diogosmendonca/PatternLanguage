@@ -51,4 +51,8 @@ public class Issue {
 		this.effortMinutes = effortMinutes;
 	}
 
+	public List<Location> getSecondaryLocations() {
+		return secondaryLocations;
+	}
+	
 }
