@@ -30,6 +30,7 @@ import br.scpl.model.CompilationUnit;
 import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
 import br.scpl.model.sonarqube.SonarQubeFormat;
+import br.scpl.util.Debug;
 import br.scpl.view.converter.CharsetConverter;
 
 /**
@@ -124,23 +125,28 @@ public class Search extends JCommander implements Command<List<Node>>{
 				}
 				
 			}else {
+				int count = 0;
 				for(Node r : retorno) {
 					
-					if(!r.getFilePath().equals(currentFile)) {
-						currentFile = r.getFilePath();
-						log.info("File: " +currentFile);
-					}
-					
-					if(r.getReturnMessage() != null) {
-						log.info("Alert Message: " +r.getReturnMessage());
-					}
-					
-					log.info("Start: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
-					log.info("End: L: " +r.getEndLine() +" C: " +r.getEndColumn() +System.lineSeparator());
+					if(r.isToReturn() || Debug.isActivated()) {
+						count++;
+						if(!r.getFilePath().equals(currentFile)) {
+							currentFile = r.getFilePath();
+							log.info("File: " +currentFile);
+						}
+						
+						if(r.getReturnMessage() != null) {
+							log.info("Alert Message: " +r.getReturnMessage());
+						}
+						
+						log.info("Start: L: " +r.getStartLine() +" C: " +r.getStartColumn() );
+						log.info("End: L: " +r.getEndLine() +" C: " +r.getEndColumn() +System.lineSeparator());
+						
+					}	
 					
 				}
 				
-				log.info("Found patterns: " +retorno.size() +System.lineSeparator());
+				log.info("Found patterns: " +count +System.lineSeparator());
 			}
 			return retorno;
 			

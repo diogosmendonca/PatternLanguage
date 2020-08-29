@@ -20,7 +20,7 @@ public class Utils {
 		List<Node> retorno = new ArrayList<>();
 		
 		nodes.forEach( node -> {			
-			if(node.getIsToReturn()) {
+			if(node.isToReturn()) {
 				retorno.add(node);
 			}else {
 				retorno.addAll(filterReturnNodes(node.getChildren()));

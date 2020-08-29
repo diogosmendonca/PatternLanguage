@@ -183,7 +183,7 @@ public class Node {
 				.findFirst().orElse(null);
 	}
 	
-	public boolean getIsToReturn() {
+	public boolean isToReturn() {
 		return isToReturn;
 	}
 
