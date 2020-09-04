@@ -18,8 +18,8 @@ public class CompilationUnit {
 		this.doctrees = doctrees;
 	}
 
-	public Iterator<? extends CompilationUnitTree> getCompilationUnitTree() {
-		return compilationUnitTree;
+	public Iterator<CompilationUnitTree> getCompilationUnitTree() {
+		return (Iterator<CompilationUnitTree>) compilationUnitTree;
 	}
 
 	public SourcePositions getPos() {

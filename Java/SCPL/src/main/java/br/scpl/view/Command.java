@@ -1,10 +1,10 @@
 package br.scpl.view;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.beust.jcommander.JCommander;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -14,21 +14,17 @@ import com.beust.jcommander.JCommander;
  */
 public interface Command<T> {
 	
-	public static final Map<String, Command> command = new HashMap<>(){
-        {
-            put("help", new Help());
-            put("search", new Search());
-            put("version", new Version());
-        }
-    };
+	static final Map<String, JCommander> commands = 
+		ImmutableMap.of(
+			"help", new Help(), 
+			"search", new Search(), 
+			"version", new Version());
     
-    public static final Map<String, String[]> commandAlias = new HashMap<>(){
-        {
-        	put("help", new String [] {"-h", "--help"});
-        	put("search", new String [] {"-s", "--search"});
-        	put("version", new String [] {"-v", "--version"});
-        }
-    };
+ 	static final Map<String, String[]> commandAlias = 
+		ImmutableMap.of(
+			"help", new String [] {"-h", "--help"}, 
+			"search", new String [] {"-s", "--search"}, 
+			"version", new String [] {"-v", "--version"});
 	
 	T execute(JCommander jc) throws IOException;
 }

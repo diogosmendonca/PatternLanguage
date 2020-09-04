@@ -31,10 +31,6 @@ public class CLIView {
 	 */
 	public static void parserCLI(String[] args) {
 		
-		//args = Arrays.asList( "--debug", "--beginLine", "2", "--endLine=5", "--showLocation", "false", "search","-c","C:\\opt\\projects\\PatternLanguage\\Java\\SCPL\\src\\test\\resources\\ExperimentTemplate\\Ctx01_Exclude.java","-p","C:\\opt\\projects\\PatternLanguage\\Java\\SCPL\\src\\test\\resources\\ExperimentTemplate\\Ctx01_Exclude.java").toArray(new String[0]);
-		
-		//args = Arrays.asList("--help").toArray(new String[0]);
-		
 		CLIOptions cli = new CLIOptions();
 		
 		Debug debug = new Debug();
@@ -44,7 +40,7 @@ public class CLIView {
 				  .addObject(debug)
 				  .build();
 		
-		Command.command.forEach((key,value) ->{
+		Command.commands.forEach((key,value) ->{
 			
 			String[] alias = Command.commandAlias.get(key);
 			
