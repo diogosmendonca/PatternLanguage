@@ -70,7 +70,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 	 * @param pathPattern Code path of the fetched pattern.
 	 * @param charset Specifies the charset tha will be used.
 	 * @param format Specifies the output format.
-	 * @return List o Node representing the occurrences of the pattern in the source code.
+	 * @return List o Node representing the occurrences of the pattern in the source code. Null in case of Exception.
 	 */	
 	public static List<Node> searchOccurrences(String pathCode, String pathPattern, Charset charset, String format) {
 		
@@ -152,14 +152,16 @@ public class Search extends JCommander implements Command<List<Node>>{
 			
 		}catch(FileNotFoundException e) {
 			log.error("Failed to find the file: " +e.getMessage());
+			return null;
 		}
 		catch(IOException e) {
 			log.error("Error: " +e.getLocalizedMessage());
+			return null;
 		} catch (NoValidFilesFoundException|NoAlertFoundException|CompilationErrorException e) {
 			log.error(e.getLocalizedMessage());
+			return null;
 		} 
 		
-		return retorno;
 	}
 	
 	/**

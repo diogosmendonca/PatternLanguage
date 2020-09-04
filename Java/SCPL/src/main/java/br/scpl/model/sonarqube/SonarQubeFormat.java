@@ -23,22 +23,23 @@ public class SonarQubeFormat {
 		SonarQubeFormat sonarQubeFormat = new SonarQubeFormat();
 		
 		for(Node node: nodes) {
-			
-			Issue issue = node.getIssue();
-			
-			if(issue==null) {
-				throw new NoAlertFoundException(node.getMatchingNode());
+			if(node.isToReturn()) {
+				Issue issue = node.getIssue();
+				
+				if(issue==null) {
+					throw new NoAlertFoundException(node.getMatchingNode());
+				}
+				issue.getPrimaryLocation().setFilePath(node.getFilePath().replaceAll("(\\\\)+", "/"));
+				
+				TextRange textRange = new TextRange();
+				issue.getPrimaryLocation().setTextRange(textRange);
+				textRange.setStartLine((int) node.getStartLine());
+				textRange.setEndLine((int) node.getEndLine());
+				textRange.setStartColumn((int) node.getStartColumn());
+				textRange.setEndColumn((int) node.getEndColumn());
+				
+				sonarQubeFormat.getIssues().add(issue);
 			}
-			issue.getPrimaryLocation().setFilePath(node.getFilePath().replaceAll("(\\\\)+", "/"));
-			
-			TextRange textRange = new TextRange();
-			issue.getPrimaryLocation().setTextRange(textRange);
-			textRange.setStartLine((int) node.getStartLine());
-			textRange.setEndLine((int) node.getEndLine());
-			textRange.setStartColumn((int) node.getStartColumn());
-			textRange.setEndColumn((int) node.getEndColumn());
-			
-			sonarQubeFormat.getIssues().add(issue);
 		}
 		
 		return sonarQubeFormat;

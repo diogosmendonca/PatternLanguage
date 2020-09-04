@@ -894,7 +894,7 @@ public class AceitacaoTest {
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC71_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC72_Pattern.java");
 		
-		assertEquals(0, retorno.size());
+		assertEquals(null, retorno);
 		
 	}
 	
@@ -904,7 +904,7 @@ public class AceitacaoTest {
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC72_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC71_Pattern.java");
 		
-		assertEquals(0, retorno.size());
+		assertEquals(null, retorno);
 		
 	}
 	
@@ -914,7 +914,7 @@ public class AceitacaoTest {
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC71_Code.java"
 				,"./src/test/resources/AceitacaoFiles/PatternFolder/test.txt");
 		
-		assertEquals(0, retorno.size());
+		assertEquals(null, retorno);
 	}
 	
 	@Test
@@ -923,7 +923,7 @@ public class AceitacaoTest {
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/PatternFolder/test.txt"
 				,"./src/test/resources/AceitacaoFiles/PatternFolder");
 		
-		assertEquals(0, retorno.size());
+		assertEquals(null, retorno);
 	}
 	
 	@Test
@@ -956,7 +956,7 @@ public class AceitacaoTest {
 		
 		raFile.close();
 		
-		assertEquals(0, retorno.size());
+		assertEquals(null, retorno);
 	}
 	
 	@Test
@@ -1179,6 +1179,14 @@ public class AceitacaoTest {
 		assertEquals(8, retorno.get(0).getEndLine());
 		assertEquals(2, retorno.get(0).getEndColumn());
 		
+	}
+	
+	@Test
+	public void tc96() throws IOException {
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC96_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC96_Code.java");
+		
+		assertEquals(null, retorno);
 	}
 	
 }
