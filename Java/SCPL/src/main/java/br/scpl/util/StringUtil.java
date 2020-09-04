@@ -126,47 +126,47 @@ public class StringUtil {
 		alert = alert.replaceAll("\\*/", "");
 		alert = alert.startsWith("//") ? alert.replaceFirst("//", "") : alert ;
 		
-		/*Pattern pattern = Pattern.compile("alert(.)*",
+		Pattern pattern = Pattern.compile("alert(.)*",
 				Pattern.CASE_INSENSITIVE);
 		
 		Matcher matcher = pattern.matcher(alert);
 	    
 	    if(matcher.find()) {
-	    	alert = matcher.group();*/
+	    	alert = matcher.group();
+	    }
+	    
+    	alert = alert.replaceAll("(?i)alert", "");
+    	
+    	while(alert.startsWith(" ")) {
+    		alert = alert.replaceFirst(" ", "");
+    	}
+    	
+    	alert = alert.replaceFirst("\\(", "");
+    	
+    	alert = alert.replaceAll("\\)$", "");
+    	
+    	List<String> attributes = Arrays.asList(alert.split(","));
+    	
+    	Properties properties = new Properties();
+    	
+    	attributes.forEach( a -> {
+    		
+    		String[] split = a.split("=");
+    		
+    		properties.setProperty(split[0].toLowerCase().trim(), split[1].trim());
+    		
+    	});
+    	
+    	issue = new Issue();
+    	
+    	issue.setEngineId("SCPL");
+    	issue.setRuleId(properties.getProperty("ruleid"));
+    	issue.setPrimaryLocation(new Location());
+    	issue.getPrimaryLocation().setMessage(properties.getProperty("message"));
+    	issue.setType(properties.getProperty("type"));
+    	issue.setSeverity(properties.getProperty("severity"));
+    	issue.setEffortMinutes(0);
 	    	
-	    	alert = alert.replaceAll("(?i)alert", "");
-	    	
-	    	while(alert.startsWith(" ")) {
-	    		alert = alert.replaceFirst(" ", "");
-	    	}
-	    	
-	    	alert = alert.replaceFirst("\\(", "");
-	    	
-	    	alert = alert.replaceAll("\\)$", "");
-	    	
-	    	List<String> attributes = Arrays.asList(alert.split(","));
-	    	
-	    	Properties properties = new Properties();
-	    	
-	    	attributes.forEach( a -> {
-	    		
-	    		String[] split = a.split("=");
-	    		
-	    		properties.setProperty(split[0].toLowerCase().trim(), split[1].trim());
-	    		
-	    	});
-	    	
-	    	issue = new Issue();
-	    	
-	    	issue.setEngineId("SCPL");
-	    	issue.setRuleId(properties.getProperty("ruleid"));
-	    	issue.setPrimaryLocation(new Location());
-	    	issue.getPrimaryLocation().setMessage(properties.getProperty("message"));
-	    	issue.setType(properties.getProperty("type"));
-	    	issue.setSeverity(properties.getProperty("severity"));
-	    	issue.setEffortMinutes(0);
-	    	
-	    //}	
 		
 		return issue;
 	}
