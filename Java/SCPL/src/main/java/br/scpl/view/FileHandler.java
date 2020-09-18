@@ -47,6 +47,7 @@ public class FileHandler {
 	private static final String BEGIN_OR = "//#BEGIN";
 	private static final String END_OR = "//#END";
 	private static final String OR = "//#OR";
+	private static final String IN_ANY_METHOD = "//InAnyMethod";
 	
 	private FileHandler() {}
 	
@@ -115,18 +116,18 @@ public class FileHandler {
 			// lista de arquivos da classe
 		} else if (file.getName().endsWith(END_JAVA_FILE)) {
 			
-			folder.getFiles().addAll(preProcessing(file));
+			folder.getFiles().addAll(preProcessingPattern(file));
 		}
 	}
 	
-	public static List<File> preProcessing(File file) throws IOException{
+	private static List<File> preProcessingPattern(File file) throws IOException{
 		List<File> files = new ArrayList<>();
 		
 		String name = file.getName();
 		
 		String content = getStringContent(file);
 		
-		if(content.contains("//InAnyMethod")) {
+		if(content.toUpperCase().contains(IN_ANY_METHOD.toUpperCase())) {
 			
 			String anyMeThod = "@anyModifier\r\n" + 
 					"class anyClass {\r\n" + 
@@ -136,7 +137,7 @@ public class FileHandler {
 			
 			content = content.replaceAll("(\r\n)+", "\r\n        ");
 			
-			content = content.replace("//InAnyMethod", anyMeThod);
+			content = content.replaceAll("(?i)"+IN_ANY_METHOD, anyMeThod);
 			
 			content = content.replaceAll("\\s+$", "");
 			
