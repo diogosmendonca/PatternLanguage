@@ -19,6 +19,8 @@ public class Issue {
 
     private List<Location> secondaryLocations;
     
+    private String alertComment;
+    
     public Issue() {
     	this.secondaryLocations = new ArrayList<>();
     }
@@ -53,6 +55,14 @@ public class Issue {
 
 	public List<Location> getSecondaryLocations() {
 		return secondaryLocations;
+	}
+
+	public String getAlertComment() {
+		return alertComment;
+	}
+
+	public void setAlertComment(String alertComment) {
+		this.alertComment = alertComment;
 	}
 	
 }

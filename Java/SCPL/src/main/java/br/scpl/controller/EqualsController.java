@@ -131,7 +131,8 @@ class EqualsController {
 				if(b.isToReturn()) {
 					a.setIsToReturn(true);
 					a.setReturnMessage(b.getReturnMessage());
-					a.setIssue(b.getIssue());
+					a.setIssue(b.getIssue() == null ? null : 
+							StringUtil.getIssue(b.getIssue().getAlertComment()));
 				}
 			}
 	    }

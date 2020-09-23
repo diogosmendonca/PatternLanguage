@@ -110,6 +110,7 @@ public class StringUtil {
 	    	Integer line = getLineComment(content, matcher.end());
 	    	
 	    	if(issue!=null) {
+	    		issue.setAlertComment(alert);
 	    		retorno.put(line+1, issue);
 	    	}
 	    }

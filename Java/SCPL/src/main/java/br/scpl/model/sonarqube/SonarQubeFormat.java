@@ -1,5 +1,6 @@
 package br.scpl.model.sonarqube;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class SonarQubeFormat {
 		return issues;
 	}
 
-	public static SonarQubeFormat listNodeToSonarQubeFormat(List<Node> nodes) throws NoAlertFoundException {
+	public static SonarQubeFormat listNodeToSonarQubeFormat(List<Node> nodes) throws NoAlertFoundException, IOException {
 		
 		SonarQubeFormat sonarQubeFormat = new SonarQubeFormat();
 		
@@ -31,12 +32,7 @@ public class SonarQubeFormat {
 				}
 				issue.getPrimaryLocation().setFilePath(node.getFilePath().replaceAll("(\\\\)+", "/"));
 				
-				TextRange textRange = new TextRange();
-				issue.getPrimaryLocation().setTextRange(textRange);
-				textRange.setStartLine((int) node.getStartLine());
-				textRange.setEndLine((int) node.getEndLine());
-				textRange.setStartColumn((int) node.getStartColumn());
-				textRange.setEndColumn((int) node.getEndColumn());
+				issue.getPrimaryLocation().setTextRange(TextRange.nodeToTextRange(node));
 				
 				sonarQubeFormat.getIssues().add(issue);
 			}
