@@ -83,10 +83,6 @@ public class Node {
 		return compilatioUnitTree;
 	}
 	
-	public Long getStartPosition() {
-		return startPosition;
-	}
-
 	public void setStartPosition(Long startPosition) {
 		this.startPosition = startPosition;
 	}

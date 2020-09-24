@@ -514,8 +514,8 @@ public class AceitacaoTest {
   		assertEquals(1, retorno.size());
   		assertEquals(4, retorno.get(0).getStartLine());
 		assertEquals(13, retorno.get(0).getStartColumn());
-		assertEquals(4, retorno.get(0).getEndLine());
-		assertEquals(24, retorno.get(0).getEndColumn());
+		assertEquals(5, retorno.get(0).getEndLine());
+		assertEquals(29, retorno.get(0).getEndColumn());
   		
   	}
 	 

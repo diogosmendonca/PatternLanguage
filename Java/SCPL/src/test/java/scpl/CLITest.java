@@ -106,7 +106,7 @@ public class CLITest {
 	@Test
 	public void tc07() throws IOException {
         
-        String[] args = { "search", "-c", "./src/test/resources/AceitacaoFiles/TC01_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC01_Pattern.java", "-f", "sonarqube" };
+        String[] args = {"--debug", "-b", "1", "-e", "5", "search", "-c", "./src/test/resources/AceitacaoFiles/TC01_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC01_Pattern.java", "-f", "sonarqube" };
 		
 		Main.main(args);
 

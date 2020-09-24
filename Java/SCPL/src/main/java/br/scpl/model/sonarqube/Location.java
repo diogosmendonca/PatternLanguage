@@ -20,10 +20,6 @@ public class Location {
 		this.filePath = filePath;
 	}
 
-	public TextRange getTextRange() {
-		return textRange;
-	}
-
 	public void setTextRange(TextRange textRange) {
 		this.textRange = textRange;
 	}
