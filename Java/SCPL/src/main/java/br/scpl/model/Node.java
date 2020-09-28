@@ -26,7 +26,7 @@ public class Node {
 	private List<Node> notExistsAsParents;
 	private boolean isToReturn;
 	private String returnMessage;
-	private Issue issue;
+	private List<Issue> issues;
 	private Node matchingNode;
 	private Map<Node, Integer> path = new LinkedHashMap<>();
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<>();
@@ -40,6 +40,7 @@ public class Node {
 		this.changeOperator = false;
 		this.isToReturn = false;
 		this.notExistsAsParents = new ArrayList<>();
+		this.issues = new ArrayList<>();
 	}
 	
 	public Node(Node node, List<Node> ignore) {
@@ -64,6 +65,7 @@ public class Node {
 		this.changeOperator = false;
 		this.isToReturn = false;
 		this.notExistsAsParents = new ArrayList<>();
+		this.issues = new ArrayList<>();
 	}
 	
 	public Node getParent() {
@@ -201,14 +203,10 @@ public class Node {
 		this.returnMessage = returnMessage;
 	}
 	
-	public Issue getIssue() {
-		return issue;
+	public List<Issue> getIssues() {
+		return issues;
 	}
 
-	public void setIssue(Issue issue) {
-		this.issue = issue;
-	}
-	
 	public Node getMatchingNode() {
 		return matchingNode;
 	}

@@ -113,7 +113,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
         	if(nodeParent != null) {
         		node.setIsToReturn(nodeParent.isToReturn());
         		node.setReturnMessage(nodeParent.getReturnMessage());
-        		node.setIssue(nodeParent.getIssue());
+        		node.getIssues().addAll(nodeParent.getIssues());
         		nodeParent.getChildren().add(node);
         	}
         	Node.getNodesMap().put(tree,node);
@@ -161,7 +161,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 					if(issue != null) {
 						node.setIsToReturn(true);
 						node.setReturnMessage(issue.getPrimaryLocation().getMessage());
-						node.setIssue(issue);
+						node.getIssues().add(issue);
 						commentExistsMap.put(node, true);
 					}
 				}

@@ -25,16 +25,17 @@ public class SonarQubeFormat {
 		
 		for(Node node: nodes) {
 			if(node.isToReturn()) {
-				Issue issue = node.getIssue();
-				
-				if(issue==null) {
+				if(node.getIssues().isEmpty()) {
 					throw new NoAlertFoundException(node.getMatchingNode());
 				}
-				issue.getPrimaryLocation().setFilePath(node.getFilePath().replaceAll("(\\\\)+", "/"));
+				for(Issue issue : node.getIssues()) {
+					issue.getPrimaryLocation().setFilePath(node.getFilePath().replaceAll("(\\\\)+", "/"));
+					
+					issue.getPrimaryLocation().setTextRange(TextRange.nodeToTextRange(node));
+					
+					sonarQubeFormat.getIssues().add(issue);
+				}
 				
-				issue.getPrimaryLocation().setTextRange(TextRange.nodeToTextRange(node));
-				
-				sonarQubeFormat.getIssues().add(issue);
 			}
 		}
 		

@@ -131,8 +131,12 @@ class EqualsController {
 				if(b.isToReturn()) {
 					a.setIsToReturn(true);
 					a.setReturnMessage(b.getReturnMessage());
-					a.setIssue(b.getIssue() == null ? null : 
-							StringUtil.getIssue(b.getIssue().getAlertComment()));
+					a.getIssues().clear();
+					
+					b.getIssues().forEach(i -> {
+						a.getIssues().add(StringUtil.getIssue(i.getAlertComment()));
+					});
+					
 				}
 			}
 	    }
@@ -562,23 +566,17 @@ class EqualsController {
 				
 				messages.forEach(m -> sb.append(m+". "));
 				
-				for (Issue i : issues){
-					if(issues.indexOf(i) != 0) {
-						issues.get(0).getSecondaryLocations().add(i.getPrimaryLocation());
-					}
-				}
-				
 				if(!messages.isEmpty() || !issues.isEmpty()){
 					a.setIsToReturn(true);
 					a.setReturnMessage(sb.toString());
-					if(!issues.isEmpty()) {
-						a.setIssue(issues.get(0));						
-					}
+					a.getIssues().clear();
+					a.getIssues().addAll(issues);						
+
 					return true;
 				}else {
 					a.setIsToReturn(false);
 					a.setReturnMessage("");
-					a.setIssue(null);
+					a.getIssues().clear();
 				}
 				
 			}
