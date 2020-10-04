@@ -20,16 +20,16 @@ public class Debug {
 	private int indentLevel;
 	private StringBuilder sb;
 	
-	@Parameter(names = {"-d", "--debug"}, description = "Activate the debug mode")
+	@Parameter(names = {"-d", "--debug"}, description = "Activate the debug mode", order = 0)
 	private static boolean activated = false;
 	
-	@Parameter(names = {"-l", "--showLocation"}, description = "Flag that indicates if debug will show the location informations", arity=1)
+	@Parameter(names = {"-l", "--showLocation"}, description = "Flag that indicates if debug will show the location informations", arity=1, order = 1)
 	private static boolean showLocation = true;
 	
-	@Parameter(names = {"-b", "--beginLine"}, description = "Debug start line in source code", arity=1)
+	@Parameter(names = {"-b", "--beginLine"}, description = "Debug start line in source code", arity=1, order = 2)
 	private static Integer startLine;
 	
-	@Parameter(names = {"-e", "--endLine"}, description = "Final debug line in source code", arity=1)
+	@Parameter(names = {"-e", "--endLine"}, description = "Final debug line in source code", arity=1, order = 3)
 	private static Integer endLine;
 	
 	public Debug() {
@@ -107,7 +107,7 @@ public class Debug {
 			close = matching + close;
 		}
 		
-		if(showLocation) {
+		if(!showLocation) {
 			position = "";
 		}
 		
