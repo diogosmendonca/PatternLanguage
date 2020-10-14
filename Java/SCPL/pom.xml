@@ -8,12 +8,24 @@
   
   <modelVersion>4.0.0</modelVersion>
   
-  <name>SCPL</name>
+  <name>Source Code Pattern Language</name>
   <artifactId>SCPL</artifactId>
-  <groupId>br.cefetrj.eic</groupId>
-  <version>0.0.1-SNAPSHOT</version>
-  <description>Source Code Pattern Language</description>
-   	
+  <groupId>br.scpl</groupId>
+  <version>0.1.0-alpha</version>
+  <description>A markup language to find and alert source code patterns</description>
+
+  <licenses>
+    <license>
+      <name>GNU General Public License v3.0</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/diogosmendonca/PatternLanguage</url>
+  </scm>
+  
   <build>
  	<finalName>scpl</finalName>  		
 	<plugins>
