@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 
 @Suite.SuiteClasses({
-        CLITest.class,
+        /*CLITest.class,*/
         AceitacaoTest.class,
         SingletonTest.class
 })
