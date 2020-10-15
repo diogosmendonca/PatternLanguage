@@ -41,7 +41,7 @@ public class StringUtil {
 		
 		String content = FileHandler.getStringContent(sourceFile);
 			
-		Pattern pattern = Pattern.compile("(?s)(/\\*((?!\\*/).)*?alert( )*:(.)*?\\*/|//(.)*?alert( )*:(.)*?(\\n|\\r))",
+		Pattern pattern = Pattern.compile("(?s)(/\\*((?!\\*/).)*?alert( )*:(.)*?\\*/|//(.)*?alert( )*:(.)*?" +System.lineSeparator()+")",
 				Pattern.CASE_INSENSITIVE);
 		
 	    Matcher matcher = pattern.matcher(content);
@@ -59,15 +59,10 @@ public class StringUtil {
 	    return retorno;
 	}
 	
-	private static int getLineComment(String data, int end) {
-	    int line = 1;
-	    Pattern pattern = Pattern.compile("\n");
-	    Matcher matcher = pattern.matcher(data);
-	    matcher.region(0,end);
-	    while(matcher.find()) {
-	        line++;
-	    }
-	    return line;
+	private static int getLineComment(String data, int end) {	    
+	    String[] lines = data.substring(0, end).split(System.lineSeparator());
+	    
+	    return lines.length;
 	}
 	
 	private static String getAlertMessage(String comment) {
@@ -98,7 +93,7 @@ public class StringUtil {
 		
 		String content = FileHandler.getStringContent(sourceFile);
 			
-		Pattern pattern = Pattern.compile("(?s)(/\\*((?!\\*/).)*?alert( )*\\((.)*\\)\\*/|//(.)*?alert( )*\\((.)*\\)(\\n|\\r))",
+		Pattern pattern = Pattern.compile("(?s)(/\\*((?!\\*/).)*?alert( )*\\((.)*\\)\\*/|//(.)*?alert( )*\\((.)*\\)" +System.lineSeparator()+")",
 				Pattern.CASE_INSENSITIVE);
 		
 	    Matcher matcher = pattern.matcher(content);
@@ -181,7 +176,7 @@ public class StringUtil {
 		
 		String content = FileHandler.getStringContent(sourceFile);
 			
-		Pattern pattern = Pattern.compile("(?s)(/\\*("+NOT+"|"+EXISTS+")\\*/|//("+NOT+"|"+EXISTS+")(\\n|\\r))",
+		Pattern pattern = Pattern.compile("(?s)(/\\*("+NOT+"|"+EXISTS+")\\*/|//("+NOT+"|"+EXISTS+")" +System.lineSeparator()+")",
 				Pattern.CASE_INSENSITIVE);
 		
 	    Matcher matcher = pattern.matcher(content);
