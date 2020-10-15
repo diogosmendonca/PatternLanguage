@@ -945,6 +945,7 @@ public class AceitacaoTest {
 	}
 	
 	
+	@Ignore
 	@Test
 	public void tc78() throws IOException {
 		
