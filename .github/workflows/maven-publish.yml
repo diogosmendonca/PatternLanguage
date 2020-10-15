@@ -27,6 +27,6 @@ jobs:
       run: mvn -B package --file Java/SCPL/pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy --file Java/SCPL/pom.xml -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn deploy --file Java/SCPL/pom.xml -Dregistry=https://maven.pkg.github.com/diogosmendonca -Dtoken=GITHUB_TOKEN
       env:
         GITHUB_TOKEN: ${{ github.token }}
