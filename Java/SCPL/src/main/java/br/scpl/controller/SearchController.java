@@ -244,8 +244,10 @@ class SearchController {
 			}
 			
 			if(i == b.getChildren().size() - 1) {
-				if(searching){
-					if(!b.getChildren().get(i).getExists()) {
+				if(searching){	
+					Node current = b.getChildren().get(i);
+					
+					if(!current.getExists() || (current.getChangeOperator() && current.allChildrenDoNotExist())) {
 						occurrences.addAll(currentOccurrences);
 					}else {
 						//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado

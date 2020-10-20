@@ -240,5 +240,16 @@ public class Node {
 		return childrenThatExists.isEmpty() ? null : childrenThatExists;
 	}
 	
+	public boolean allChildrenDoNotExist() {
+		
+		for(Node n: this.children) {
+			if(n.getExists()) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 }
 	
