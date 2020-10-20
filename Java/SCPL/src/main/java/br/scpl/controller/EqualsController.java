@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.ExpressionStatementTree;
@@ -483,6 +485,8 @@ class EqualsController {
 					String modifier = annotation.toString().toUpperCase().split(ALERT_IF_NOT_ANNOTATION.toUpperCase())[1].toLowerCase();
 					
 					message = arguments.toString();
+					message = StringEscapeUtils.unescapeJava(message);
+					modifier = StringEscapeUtils.unescapeJava(modifier);
 					modifier = modifier.replaceAll("(?i)"+message, "");
 					modifier = modifier.replaceAll("\\(", "");
 					modifier = modifier.replaceAll("\\)", "");
