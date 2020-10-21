@@ -103,8 +103,17 @@ public class Search extends JCommander implements Command<List<Node>>{
 			
 			String currentFile = "";
 			
-			//removing empty default acess modifier, has no beginning and end
-			retorno = retorno.stream().filter(r -> !(r.getNode().getKind() == Kind.MODIFIERS && ((ModifiersTree) r.getNode()).getFlags().isEmpty())).collect(Collectors.toList());
+			retorno = retorno.stream().map(r -> {
+				//removing empty default acess modifier, has no beginning and end
+				if (r.getNode().getKind() == Kind.MODIFIERS && ((ModifiersTree) r.getNode()).getFlags().isEmpty()){
+					return r.transferAlert();
+				}
+				return r;
+			}).collect(Collectors.toList());
+			
+			retorno = retorno.stream()
+				     .distinct()
+				     .collect(Collectors.toList());	
 			
 			log.debug("");
 			

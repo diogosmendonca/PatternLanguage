@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
@@ -249,6 +250,58 @@ public class Node {
 		}
 		
 		return true;
+	}
+	
+	public Node transferAlert() {
+		
+		Node retorno = null;
+		Kind kind = this.parent.node.getKind();
+		
+		
+		if(kind == Kind.CLASS){
+			Node parent = this.parent;
+			
+			transferAlert(parent);
+			
+			retorno = parent;
+		}
+		
+		if(kind == Kind.METHOD){
+			Node brother = this.parent.children.get(this.parent.children.indexOf(this)+1);
+			
+			transferAlert(brother); 
+			
+			retorno = brother;
+		}
+		
+		if(kind == Kind.VARIABLE){
+			Node parent = this.parent;
+			
+			transferAlert(parent);
+			
+			retorno = parent;
+		}
+		
+		return retorno;
+	}
+	
+	private void transferAlert(Node node) {
+		node.setIsToReturn(true);
+		
+		if(this.returnMessage != null) {
+			if(node.returnMessage == null) {
+				node.returnMessage = this.returnMessage;
+			}else if(!node.returnMessage.contains(this.returnMessage)){
+				node.returnMessage += ". " +this.returnMessage;
+			}
+		}
+		
+		node.issues.addAll(this.issues);
+		
+		node.issues = node.issues.stream()
+			     .distinct()
+			     .collect(Collectors.toList());
+		
 	}
 	
 }
