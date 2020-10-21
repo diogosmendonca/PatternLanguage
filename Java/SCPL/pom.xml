@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <properties>
-    <maven.compiler.source>13</maven.compiler.source>
-    <maven.compiler.target>13</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -11,7 +11,7 @@
   <name>Source Code Pattern Language</name>
   <artifactId>SCPL</artifactId>
   <groupId>com.github.diogosmendonca</groupId>
-  <version>0.1.1-alpha</version>
+  <version>0.1.2-alpha</version>
   <description>A markup language to find and alert source code patterns</description>
   <url>https://github.com/diogosmendonca/PatternLanguage</url>
 
@@ -98,7 +98,7 @@
 		<plugin>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
-			<version>0.8.5</version>
+			<version>0.8.6</version>
 			<executions>
 				<execution>
 					<id>default-prepare-agent</id>
@@ -160,6 +160,18 @@
         <configuration>
           <show>public</show>
         </configuration>
+      </plugin>
+	  <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <!-- select non-aggregate reports -->
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>
