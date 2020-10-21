@@ -10,9 +10,10 @@
   
   <name>Source Code Pattern Language</name>
   <artifactId>SCPL</artifactId>
-  <groupId>br.scpl</groupId>
-  <version>0.1.0-alpha</version>
+  <groupId>com.github.diogosmendonca</groupId>
+  <version>0.1.1-alpha</version>
   <description>A markup language to find and alert source code patterns</description>
+  <url>https://github.com/diogosmendonca/PatternLanguage</url>
 
   <licenses>
     <license>
@@ -26,12 +27,30 @@
     <url>https://github.com/diogosmendonca/PatternLanguage</url>
   </scm>
 
+  <developers>
+	<developer>
+		<id>deniscrispe</id>
+		<name>Denis Crispe Silva</name>
+	</developer>
+	<developer>
+		<id>andrealvesaraujo</id>
+		<name>Andre Alves Araujo</name>
+	</developer>
+	<developer>
+		<id>diogosmendonca</id>
+		<name>Diogo Silveira Mendonça</name>
+	</developer>
+  </developers>
+
   <distributionManagement>
-   <repository>
-     <id>github</id>
-     <name>GitHub diogosmendonca Apache Maven Packages</name>
-     <url>https://maven.pkg.github.com/diogosmendonca/PatternLanguage</url>
-   </repository>
+      <snapshotRepository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      </snapshotRepository>
+      <repository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      </repository>
   </distributionManagement>
   
   <build>
@@ -68,7 +87,7 @@
 								<mainClass>br.scpl.view.Main</mainClass>
 							</manifest>
 						</archive>
-						<appendAssemblyId>false</appendAssemblyId>
+						<appendAssemblyId>true</appendAssemblyId>
 						<descriptorRefs>
 							<descriptorRef>jar-with-dependencies</descriptorRef>
 						</descriptorRefs>
@@ -108,15 +127,7 @@
         		</targetTests>
     		</configuration>
 		</plugin>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-javadoc-plugin</artifactId>
-			<version>3.2.0</version>
-			<configuration>
-			<show>private</show>
-			<nohelp>true</nohelp>
-			</configuration>
-		</plugin>
+		
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-site-plugin</artifactId>
@@ -211,4 +222,59 @@
 		    <version>2.6</version>
 		</dependency>		
 	</dependencies>
+
+	<profiles>
+  		<profile>
+		  <id>release</id>
+		  <build>
+		  	<finalName>scpl</finalName>  		
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.2.0</version>
+					<configuration>
+					<show>private</show>
+					<nohelp>true</nohelp>
+					</configuration>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>3.2.0</version>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<goals>
+								<goal>jar-no-fork</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.5</version>
+					<executions>
+						<execution>
+							<id>sign-artifacts</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+		  	</plugins>
+		  </build>
+		</profile>
+	</profiles>
 </project>
