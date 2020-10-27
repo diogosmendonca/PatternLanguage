@@ -30,6 +30,7 @@ public class Node {
 	private List<Issue> issues;
 	private Node matchingNode;
 	private Map<Node, Integer> path = new LinkedHashMap<>();
+	private boolean isParcialReturn;
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<>();
 	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
@@ -111,10 +112,24 @@ public class Node {
 	}
 	
 	public long getEndLine() {
+		
+		if(this.isParcialReturn) {
+			if(this.node.getKind() == Kind.METHOD) {
+				return this.getBlockChild().getStartLine();
+			}
+		}
+		
 		return this.getLineMap().getLineNumber(this.endPosition);
 	}
 	
 	public long getEndColumn() {
+		
+		if(this.isParcialReturn) {
+			if(this.node.getKind() == Kind.METHOD) {
+				return this.getBlockChild().getStartColumn();
+			}
+		}
+		
 		return this.getLineMap().getColumnNumber(this.endPosition);
 	}
 	
@@ -193,7 +208,6 @@ public class Node {
 	public void setIsToReturn(boolean isToReturn) {
 		this.isToReturn = isToReturn;
 		
-		this.children.forEach(n -> n.setIsToReturn(isToReturn));
 	}
 	
 	public String getReturnMessage() {
@@ -224,6 +238,14 @@ public class Node {
 		return path;
 	}
 	
+	public boolean isParcialReturn() {
+		return isParcialReturn;
+	}
+
+	public void setParcialReturn(boolean isParcialReturn) {
+		this.isParcialReturn = isParcialReturn;
+	}
+
 	public Node getBlockChild() {
 		return this.children.stream().filter(n -> n.getNode().getKind() == Kind.BLOCK).findFirst().orElse(null);
 	}

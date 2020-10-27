@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
 import br.scpl.model.sonarqube.SonarQubeFormat;
 import br.scpl.util.Debug;
+import br.scpl.util.StringUtil;
 import br.scpl.view.converter.CharsetConverter;
 
 /**
@@ -110,6 +112,34 @@ public class Search extends JCommander implements Command<List<Node>>{
 				}
 				return r;
 			}).collect(Collectors.toList());
+			
+			List<Node> toAdd = new ArrayList<>();
+			
+			for(Node r: retorno) {
+				if (r.getNode().getKind() == Kind.MODIFIERS){
+					Node parent = r.getParent();
+					Node parentMatchingNode = parent.getMatchingNode();
+					
+					if(parentMatchingNode.isToReturn() && !retorno.contains(parent)) {
+						if( Arrays.asList(Kind.METHOD,Kind.CLASS)
+								.contains(parent.getNode().getKind())) {
+							
+							parent.setIsToReturn(true);
+							parent.setReturnMessage(parentMatchingNode.getReturnMessage());
+							parent.setParcialReturn(true);
+							parent.getIssues().clear();
+							
+							parentMatchingNode.getIssues().forEach(i -> {
+								parent.getIssues().add(StringUtil.getIssue(i.getAlertComment()));
+							});
+
+							toAdd.add(parent);
+						}
+					}
+				}
+			}
+			
+			retorno.addAll(toAdd);
 			
 			retorno = retorno.stream()
 				     .distinct()
