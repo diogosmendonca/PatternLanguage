@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -107,42 +108,19 @@ public class Search extends JCommander implements Command<List<Node>>{
 			
 			retorno = retorno.stream().map(r -> {
 				//removing empty default acess modifier, has no beginning and end
-				if (r.getNode().getKind() == Kind.MODIFIERS && ((ModifiersTree) r.getNode()).getFlags().isEmpty()){
-					return r.transferAlert();
+				if (r.isDefaultModifierAccess()) {
+					if(r.isToReturn()){
+						return r.transferAlert();
+					}else {
+						return null;
+					}
 				}
 				return r;
 			}).collect(Collectors.toList());
 			
-			List<Node> toAdd = new ArrayList<>();
-			
-			for(Node r: retorno) {
-				if (r.getNode().getKind() == Kind.MODIFIERS){
-					Node parent = r.getParent();
-					Node parentMatchingNode = parent.getMatchingNode();
-					
-					if(parentMatchingNode.isToReturn() && !retorno.contains(parent)) {
-						if( Arrays.asList(Kind.METHOD,Kind.CLASS)
-								.contains(parent.getNode().getKind())) {
-							
-							parent.setIsToReturn(true);
-							parent.setReturnMessage(parentMatchingNode.getReturnMessage());
-							parent.setParcialReturn(true);
-							parent.getIssues().clear();
-							
-							parentMatchingNode.getIssues().forEach(i -> {
-								parent.getIssues().add(StringUtil.getIssue(i.getAlertComment()));
-							});
-
-							toAdd.add(parent);
-						}
-					}
-				}
-			}
-			
-			retorno.addAll(toAdd);
-			
 			retorno = retorno.stream()
 				     .distinct()
+				     .filter(Objects::nonNull)
 				     .collect(Collectors.toList());	
 			
 			log.debug("");
