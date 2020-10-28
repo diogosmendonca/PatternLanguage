@@ -263,7 +263,7 @@ class SearchController {
 							matchingNodes.add(c.getMatchingNode());
 						}
 						
-						if(!current.getMatchingNode().getChildren()
+						if(current.getMatchingNode() != null && !current.getMatchingNode().getChildren()
 								.stream().anyMatch(matchingNodes::contains)) {
 							restart = false;
 							occurrences.addAll(currentOccurrences);
