@@ -446,9 +446,6 @@ class EqualsController {
 		
 		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
-			if(isAnyModifier(b)) {
-				return true;
-			}
 			
 			ModifiersTree modifierPattern = ((ModifiersTree) b.getNode());
 			List<? extends AnnotationTree> annotationsPattern = modifierPattern.getAnnotations();
@@ -587,6 +584,10 @@ class EqualsController {
 			
 			if(notBoolean != null && !notBoolean) {
 				return notBoolean;
+			}
+			
+			if(isAnyModifier(b)) {
+				return true;
 			}
 			
 			return flagsCode.containsAll(flagsPattern) && annotationsCode.containsAll(annotationsPattern);

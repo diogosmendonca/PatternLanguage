@@ -1202,7 +1202,20 @@ public class AceitacaoTest {
 		assertEquals(5, retorno.get(0).getStartColumn());
 		assertEquals(8, retorno.get(0).getEndLine());
 		assertEquals(44, retorno.get(0).getEndColumn());
+  }
+  
+	//issue 7
+	@Test
+	public void tc98() throws IOException {
 		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC98_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC98_Pattern.java");
+
+		assertEquals(1, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(5, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(12, retorno.get(0).getEndColumn());		
 	}
 	
 }
