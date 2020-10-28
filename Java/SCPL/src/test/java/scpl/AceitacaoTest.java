@@ -1190,4 +1190,32 @@ public class AceitacaoTest {
 		assertEquals(null, retorno);
 	}
 	
+	//issue 8
+	@Test
+	public void tc99() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC99_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC99_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	//issue 8
+	@Test
+	public void tc100() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC100_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC100_Pattern.java");
+		
+		assertEquals(2, retorno.size());
+		assertEquals(7, retorno.get(0).getStartLine());
+		assertEquals(5, retorno.get(0).getStartColumn());
+		assertEquals(7, retorno.get(0).getEndLine());
+		assertEquals(18, retorno.get(0).getEndColumn());
+		assertEquals(7, retorno.get(1).getStartLine());
+		assertEquals(19, retorno.get(1).getStartColumn());
+		assertEquals(7, retorno.get(1).getEndLine());
+		assertEquals(30, retorno.get(1).getEndColumn());
+		
+	}
 }
