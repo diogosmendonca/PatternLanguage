@@ -1,6 +1,7 @@
 package br.scpl.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,7 +165,10 @@ class SearchController {
 		if(!verifyNotParent(a, b, wildcardsMap)) {
 			return occurrences;
 		}
-		
+		if(Arrays.asList(Kind.BLOCK, Kind.CLASS, Kind.METHOD)
+				.contains(b.getNode().getKind())) {
+			b.setMatchingNode(a);
+		}
 		a.setMatchingNode(b);
 		
 		//Lista auxiliar que guarda as ocorrências da busca atual
@@ -247,9 +251,27 @@ class SearchController {
 				if(searching){	
 					Node current = b.getChildren().get(i);
 					
-					if(!current.getExists() || (current.getChangeOperator() && current.allChildrenDoNotExist())) {
+					boolean restart = true;
+					
+					if(!current.getExists()) {
+						restart = false;
 						occurrences.addAll(currentOccurrences);
-					}else {
+					}else if(current.getChangeOperator() && current.allChildrenDoNotExist()) {
+						List<Node> matchingNodes = new ArrayList<>();
+								
+						for(Node c : current.getChildren()) {
+							matchingNodes.add(c.getMatchingNode());
+						}
+						
+						if(current.getMatchingNode() != null && !current.getMatchingNode().getChildren()
+								.stream().anyMatch(matchingNodes::contains)) {
+							restart = false;
+							occurrences.addAll(currentOccurrences);
+						}
+						
+					}
+					
+					if(restart) {
 						//Se usou wildcards, deve recomeçar a busca mesmo não tendo achado
 						if(!wildcardsMap.equals(wildcardsMapBefore) && (wildcardsMapLastFail.isEmpty() || !wildcardsMap.equals(wildcardsMapLastFail))) {
 							i = -1;

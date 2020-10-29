@@ -1217,5 +1217,31 @@ public class AceitacaoTest {
 		assertEquals(3, retorno.get(0).getEndLine());
 		assertEquals(12, retorno.get(0).getEndColumn());		
 	}
+
+	//issue 8
+	@Test
+	public void tc99() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC99_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC99_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
 	
+	//issue 8
+	@Test
+		public void tc100() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC100_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC100_Pattern.java");
+		
+		System.out.println(retorno);
+		
+		assertEquals(1, retorno.size());
+		assertEquals(7, retorno.get(0).getStartLine());
+		assertEquals(5, retorno.get(0).getStartColumn());
+		assertEquals(7, retorno.get(0).getEndLine());
+		assertEquals(44, retorno.get(0).getEndColumn());
+		
+	}
 }
