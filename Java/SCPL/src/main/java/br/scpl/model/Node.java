@@ -1,13 +1,16 @@
 package br.scpl.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
+import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 
@@ -30,6 +33,7 @@ public class Node {
 	private List<Issue> issues;
 	private Node matchingNode;
 	private Map<Node, Integer> path = new LinkedHashMap<>();
+	private boolean isParcialReturn;
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<>();
 	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
@@ -111,10 +115,36 @@ public class Node {
 	}
 	
 	public long getEndLine() {
+		
+		if(this.isParcialReturn) {
+			if(this.node.getKind() == Kind.CLASS) {
+				return this.getStartLine();
+			}
+			
+			if(this.node.getKind() == Kind.METHOD) {
+				return this.getBlockChild().getStartLine();
+			}
+		}
+		
 		return this.getLineMap().getLineNumber(this.endPosition);
 	}
 	
 	public long getEndColumn() {
+		
+		if(this.isParcialReturn) {
+			if(this.node.getKind() == Kind.CLASS) {
+				ClassTree classTree = (ClassTree)this.getNode();
+				String className = classTree.getSimpleName().toString();
+				Node modifier = nodesMap.get(classTree.getModifiers());
+				
+				return modifier.getEndColumn() + className.length() + 7;// 7 = 2 spaces + 5 letters(class)
+			}
+			
+			if(this.node.getKind() == Kind.METHOD) {
+				return this.getBlockChild().getStartColumn();
+			}
+		}
+		
 		return this.getLineMap().getColumnNumber(this.endPosition);
 	}
 	
@@ -193,7 +223,6 @@ public class Node {
 	public void setIsToReturn(boolean isToReturn) {
 		this.isToReturn = isToReturn;
 		
-		this.children.forEach(n -> n.setIsToReturn(isToReturn));
 	}
 	
 	public String getReturnMessage() {
@@ -224,6 +253,14 @@ public class Node {
 		return path;
 	}
 	
+	public boolean isParcialReturn() {
+		return isParcialReturn;
+	}
+
+	public void setParcialReturn(boolean isParcialReturn) {
+		this.isParcialReturn = isParcialReturn;
+	}
+
 	public Node getBlockChild() {
 		return this.children.stream().filter(n -> n.getNode().getKind() == Kind.BLOCK).findFirst().orElse(null);
 	}
@@ -253,40 +290,14 @@ public class Node {
 	}
 	
 	public Node transferAlert() {
+		Node node = this.parent;
 		
-		Node retorno = null;
-		Kind kind = this.parent.node.getKind();
-		
-		
-		if(kind == Kind.CLASS){
-			Node parent = this.parent;
-			
-			transferAlert(parent);
-			
-			retorno = parent;
-		}
-		
-		if(kind == Kind.METHOD){
-			Node brother = this.parent.children.get(this.parent.children.indexOf(this)+1);
-			
-			transferAlert(brother); 
-			
-			retorno = brother;
-		}
-		
-		if(kind == Kind.VARIABLE){
-			Node parent = this.parent;
-			
-			transferAlert(parent);
-			
-			retorno = parent;
-		}
-		
-		return retorno;
-	}
-	
-	private void transferAlert(Node node) {
 		node.setIsToReturn(true);
+		
+		if(Arrays.asList(Kind.METHOD,Kind.CLASS)
+				.contains(node.getNode().getKind())) {
+			node.setParcialReturn(true);
+		}
 		
 		if(this.returnMessage != null) {
 			if(node.returnMessage == null) {
@@ -302,6 +313,13 @@ public class Node {
 			     .distinct()
 			     .collect(Collectors.toList());
 		
+		return node;
+		
+	}
+	
+	public boolean isDefaultModifierAccess() {
+		return this.getNode().getKind() == Kind.MODIFIERS && 
+				((ModifiersTree) this.getNode()).getFlags().isEmpty();
 	}
 	
 }

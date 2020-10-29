@@ -2,8 +2,8 @@
 class anyClass{
 	@anyModifier
     any someMethod(anyType any) {
-		//Alert: Test
 		exists:
+		//Alert: Test
 		try {
 			any any;
 		}catch(anyException any){
