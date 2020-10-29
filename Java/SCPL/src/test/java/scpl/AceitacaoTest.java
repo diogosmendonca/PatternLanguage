@@ -1235,15 +1235,13 @@ public class AceitacaoTest {
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC100_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC100_Pattern.java");
 		
-		assertEquals(2, retorno.size());
+		System.out.println(retorno);
+		
+		assertEquals(1, retorno.size());
 		assertEquals(7, retorno.get(0).getStartLine());
 		assertEquals(5, retorno.get(0).getStartColumn());
 		assertEquals(7, retorno.get(0).getEndLine());
-		assertEquals(18, retorno.get(0).getEndColumn());
-		assertEquals(7, retorno.get(1).getStartLine());
-		assertEquals(19, retorno.get(1).getStartColumn());
-		assertEquals(7, retorno.get(1).getEndLine());
-		assertEquals(30, retorno.get(1).getEndColumn());
+		assertEquals(44, retorno.get(0).getEndColumn());
 		
 	}
 }
