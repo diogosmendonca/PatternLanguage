@@ -5,8 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -31,6 +33,7 @@ import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
 import br.scpl.model.sonarqube.SonarQubeFormat;
 import br.scpl.util.Debug;
+import br.scpl.util.StringUtil;
 import br.scpl.view.converter.CharsetConverter;
 
 /**
@@ -105,14 +108,19 @@ public class Search extends JCommander implements Command<List<Node>>{
 			
 			retorno = retorno.stream().map(r -> {
 				//removing empty default acess modifier, has no beginning and end
-				if (r.getNode().getKind() == Kind.MODIFIERS && ((ModifiersTree) r.getNode()).getFlags().isEmpty()){
-					return r.transferAlert();
+				if (r.isDefaultModifierAccess()) {
+					if(r.isToReturn()){
+						return r.transferAlert();
+					}else {
+						return null;
+					}
 				}
 				return r;
 			}).collect(Collectors.toList());
 			
 			retorno = retorno.stream()
 				     .distinct()
+				     .filter(Objects::nonNull)
 				     .collect(Collectors.toList());	
 			
 			log.debug("");

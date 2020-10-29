@@ -30,7 +30,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 
 	  private static final String NOT = ConfigUtils.getProperties().getProperty("not");
 	  private static final String EXISTS = ConfigUtils.getProperties().getProperty("exists");  	
-
+	  
 	  private static final int INDENT_SPACES = 2;
 		
 	  private final StringBuilder sb;
@@ -81,7 +81,7 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
 	    Map<Node, List<Node>> nodes = new LinkedHashMap<>();
 	    nv.scan(tree, nodes);
     	addInfos(nodes, isPattern, nv.commentExistsMap);	    	
-	    
+
 	    return Node.getNodesMap().get(nv.root);
 	  }
 	  
@@ -111,9 +111,6 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
         	
         	node.setParent(nodeParent);
         	if(nodeParent != null) {
-        		node.setIsToReturn(nodeParent.isToReturn());
-        		node.setReturnMessage(nodeParent.getReturnMessage());
-        		node.getIssues().addAll(nodeParent.getIssues());
         		nodeParent.getChildren().add(node);
         	}
         	Node.getNodesMap().put(tree,node);
