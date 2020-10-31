@@ -447,6 +447,17 @@ class EqualsController {
 		
 		if(a.getNode().getKind() == b.getNode().getKind() && b.getNode().getKind() == Kind.MODIFIERS) {
 			
+			if(a.getParent().getNode().getKind() != b.getParent().getNode().getKind()) {
+				return false;
+			}
+
+			if(Arrays.asList(Kind.CLASS, Kind.METHOD)
+					.contains(b.getParent().getNode().getKind())){
+				if(a.getParent().getMatchingNode() != null &&
+						a.getParent().getMatchingNode() != b.getParent()) {
+					return false;
+				}
+			}
 			
 			ModifiersTree modifierPattern = ((ModifiersTree) b.getNode());
 			List<? extends AnnotationTree> annotationsPattern = modifierPattern.getAnnotations();
