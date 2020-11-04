@@ -9,16 +9,12 @@ public class Main{
     public static void main(String[] args){
         String result = null;
         if(args != null && args.length > 0){
-            switch(args[0]){
-                case "studentSpecificCommand":
-                    result = ControlFacade.studentSpecificService();
-                    break;
-                case "diciplineSpecificCommand":
-                    result = ControlFacade.diciplineSpecificService();
-                    break;
-                default:
-                    result = "Command not found";
-                    break;
+            if(args[0].equals("studentSpecificCommand")){
+                result = ControlFacade.studentSpecificService();
+            }else if (args[0].equals("diciplineSpecificCommand")){
+                result = ControlFacade.diciplineSpecificService();
+            }else{
+                result = "Command not found";
             }
         }else{
             result = "Command not found";
