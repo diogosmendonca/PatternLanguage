@@ -112,6 +112,11 @@ class NodeVisitor extends TreePathScanner<Void, Map<Node, List<Node>>> {
         	node.setParent(nodeParent);
         	if(nodeParent != null) {
         		nodeParent.getChildren().add(node);
+        		if(nodeParent.getNode().getKind() == Kind.EXPRESSION_STATEMENT) {
+        			node.setIsToReturn(nodeParent.isToReturn());
+            		node.setReturnMessage(nodeParent.getReturnMessage());
+            		node.getIssues().addAll(nodeParent.getIssues());
+        		}
         	}
         	Node.getNodesMap().put(tree,node);
 	        
