@@ -11,7 +11,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import br.scpl.model.Node;
-import br.scpl.util.ConfigUtils;
 import br.scpl.view.Search;
 
 public class AceitacaoTest {
@@ -1290,10 +1289,7 @@ public class AceitacaoTest {
 	
 	//issue 20
 	@Test
-	public void tc105() throws IOException {
-		
-		ConfigUtils.getProperties().setProperty("verbose", "true");
-		ConfigUtils.getProperties().setProperty("debug", "on");
+	public void tc105() throws IOException {	
 				
 		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC105_Code.java"
 				,"./src/test/resources/AceitacaoFiles/TC105_Pattern.java");
