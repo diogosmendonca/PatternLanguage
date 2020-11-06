@@ -138,7 +138,7 @@ class SearchController {
 			}
 		}
 		
-		if(b.getNode().getKind() == Kind.CLASS) {
+		if(Arrays.asList(Kind.CLASS,Kind.INTERFACE).contains(b.getNode().getKind())) {
 			ModifiersTree modifierCodeTree = ((ClassTree)a.getNode()).getModifiers();
 			Node modifierCode = a.getChildrenbyTree(modifierCodeTree);
 			
@@ -165,7 +165,7 @@ class SearchController {
 		if(!verifyNotParent(a, b, wildcardsMap)) {
 			return occurrences;
 		}
-		if(Arrays.asList(Kind.BLOCK, Kind.CLASS, Kind.METHOD)
+		if(Arrays.asList(Kind.BLOCK, Kind.INTERFACE, Kind.CLASS, Kind.METHOD)
 				.contains(b.getNode().getKind())) {
 			b.setMatchingNode(a);
 		}

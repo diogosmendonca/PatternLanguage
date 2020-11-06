@@ -117,7 +117,7 @@ public class Node {
 	public long getEndLine() {
 		
 		if(this.isParcialReturn) {
-			if(this.node.getKind() == Kind.CLASS) {
+			if(Arrays.asList(Kind.CLASS,Kind.INTERFACE).contains(this.node.getKind())) {
 				return this.getStartLine();
 			}
 			
@@ -132,12 +132,22 @@ public class Node {
 	public long getEndColumn() {
 		
 		if(this.isParcialReturn) {
-			if(this.node.getKind() == Kind.CLASS) {
+			if(Arrays.asList(Kind.CLASS,Kind.INTERFACE).contains(this.node.getKind())) {
 				ClassTree classTree = (ClassTree)this.getNode();
 				String className = classTree.getSimpleName().toString();
 				Node modifier = nodesMap.get(classTree.getModifiers());
 				
-				return modifier.getEndColumn() + className.length() + 7;// 7 = 2 spaces + 5 letters(class)
+				int increase = 0;
+				
+				if(this.node.getKind() == Kind.CLASS) {
+					increase = 7;// 7 = 2 spaces + 5 letters(class)
+				}
+				
+				if(this.node.getKind() == Kind.INTERFACE) {
+					increase = 11;// 11 = 2 spaces + 9 letters(interface)
+				}
+				
+				return modifier.getEndColumn() + className.length() + increase;
 			}
 			
 			if(this.node.getKind() == Kind.METHOD) {
@@ -294,7 +304,7 @@ public class Node {
 		
 		node.setIsToReturn(true);
 		
-		if(Arrays.asList(Kind.METHOD,Kind.CLASS)
+		if(Arrays.asList(Kind.METHOD, Kind.INTERFACE, Kind.CLASS)
 				.contains(node.getNode().getKind())) {
 			node.setParcialReturn(true);
 		}

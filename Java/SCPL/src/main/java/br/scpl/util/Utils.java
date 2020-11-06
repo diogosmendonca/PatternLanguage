@@ -29,7 +29,7 @@ public class Utils {
 				Node parentMatchingNode = parent.getMatchingNode();
 				
 				if(parentMatchingNode != null && parentMatchingNode.isToReturn()){
-					if( Arrays.asList(Kind.METHOD,Kind.CLASS)
+					if( Arrays.asList(Kind.METHOD, Kind.INTERFACE, Kind.CLASS)
 								.contains(parent.getNode().getKind())) {
 							
 						parent.setIsToReturn(true);
