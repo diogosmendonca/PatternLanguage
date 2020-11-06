@@ -11,6 +11,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import br.scpl.model.Node;
+import br.scpl.util.ConfigUtils;
 import br.scpl.view.Search;
 
 public class AceitacaoTest {
