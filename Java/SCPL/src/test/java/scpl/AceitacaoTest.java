@@ -3,6 +3,7 @@ package scpl;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.ObjectInputFilter.Config;
 import java.io.RandomAccessFile;
 import java.util.List;
 
@@ -1286,4 +1287,18 @@ public class AceitacaoTest {
 		assertEquals(13, retorno.get(0).getEndLine());
 		assertEquals(64, retorno.get(0).getEndColumn());
 	}
+	
+	//issue 20
+	@Test
+	public void tc105() throws IOException {
+		
+		ConfigUtils.getProperties().setProperty("verbose", "true");
+		ConfigUtils.getProperties().setProperty("debug", "on");
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC105_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC105_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
 }
