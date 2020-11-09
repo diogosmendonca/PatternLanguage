@@ -11,7 +11,7 @@
   <name>Source Code Pattern Language</name>
   <artifactId>SCPL</artifactId>
   <groupId>com.github.diogosmendonca</groupId>
-  <version>0.1.4-alpha</version>
+  <version>0.1.5-alpha</version>
   <description>A markup language to find and alert source code patterns</description>
   <url>https://github.com/diogosmendonca/PatternLanguage</url>
 
