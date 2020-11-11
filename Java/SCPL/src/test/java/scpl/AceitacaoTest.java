@@ -3,6 +3,7 @@ package scpl;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.ObjectInputFilter.Config;
 import java.io.RandomAccessFile;
 import java.util.List;
 
@@ -1259,7 +1260,35 @@ public class AceitacaoTest {
 		assertEquals(27, retorno.get(0).getEndColumn());
 	}
 	
-	//issue 17
+	//issue 15
+	@Test
+	public void tc102() throws IOException {
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC102_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC102_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(14, retorno.get(0).getStartLine());
+		assertEquals(30, retorno.get(0).getStartColumn());
+		assertEquals(14, retorno.get(0).getEndLine());
+		assertEquals(68, retorno.get(0).getEndColumn());
+	}
+	
+	//issue 15
+	@Test
+	public void tc103() throws IOException {
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC103_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC102_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(13, retorno.get(0).getStartLine());
+		assertEquals(26, retorno.get(0).getStartColumn());
+		assertEquals(13, retorno.get(0).getEndLine());
+		assertEquals(64, retorno.get(0).getEndColumn());
+	}
+  
+  //issue 17
 	@Test
 	public void tc104() throws IOException {
 		
@@ -1272,4 +1301,15 @@ public class AceitacaoTest {
 		assertEquals(3, retorno.get(0).getEndLine());
 		assertEquals(25, retorno.get(0).getEndColumn());
 	}
+	
+	//issue 20
+	@Test
+	public void tc105() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC105_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC105_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
 }

@@ -332,5 +332,18 @@ public class Node {
 				((ModifiersTree) this.getNode()).getFlags().isEmpty();
 	}
 	
+	public List<Node> allNodesIn(){
+		List<Node> retorno = new ArrayList<>();
+		
+		for(Node n : this.getChildren()) {
+			retorno.add(n);
+			retorno.addAll(n.allNodesIn());
+		}
+		
+		
+		return retorno;
+		
+	}
+	
 }
 	
