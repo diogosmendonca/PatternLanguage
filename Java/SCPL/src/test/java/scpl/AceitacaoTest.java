@@ -1298,4 +1298,20 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
+	//issue 22
+	@Test
+	public void tc106() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC106_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC106_Pattern.java");
+		
+				
+		assertEquals(6, retorno.size());
+		
+		retorno.forEach(r -> {
+			assertEquals("Do not declare specific Apps (AppA or AppB) use the App instead.",
+					r.getReturnMessage());
+		});
+	}
+	
 }
