@@ -161,6 +161,9 @@ public class FileHandler {
 			
 			for(String o : options) {
 				
+				o = o.replaceAll("^( )*\r*\n*( )*", "");
+				o = o.replaceAll("( )*\r*\n*( )*$", "");
+				
 				o = concatBeginAndEnd(o,begin,end);
 				
 				String currentName = String.format("_Option%d"+END_JAVA_FILE, n);
