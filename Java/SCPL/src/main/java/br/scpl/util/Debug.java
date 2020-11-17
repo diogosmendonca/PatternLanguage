@@ -74,6 +74,8 @@ public class Debug {
 				toString = node.getFilePath();
 				break;
 				
+			case INTERFACE:	
+				
 			case CLASS:
 				int index = toString.indexOf("{");
 				toString = toString.substring(0, index+1);

@@ -236,6 +236,8 @@ class EqualsController {
 		
 		switch(node1.getNode().getKind()) {
 		
+			case INTERFACE:		
+		
 			case CLASS:
 				
 				name1 = ((ClassTree) node1.getNode()).getSimpleName().toString();
@@ -451,7 +453,7 @@ class EqualsController {
 				return false;
 			}
 
-			if(Arrays.asList(Kind.CLASS, Kind.METHOD)
+			if(Arrays.asList(Kind.INTERFACE,Kind.CLASS, Kind.METHOD)
 					.contains(b.getParent().getNode().getKind())){
 				if(a.getParent().getMatchingNode() != null &&
 						a.getParent().getMatchingNode() != b.getParent()) {
@@ -730,7 +732,7 @@ class EqualsController {
 		
 		boolean retorno = false;
 		
-		if(node.getNode().getKind() == Kind.CLASS) {
+		if(Arrays.asList(Kind.CLASS,Kind.INTERFACE).contains(node.getNode().getKind())) {
 			ClassTree classTree = (ClassTree) node.getNode();
 			retorno = isAnyModifier(Node.getNodesMap().get(classTree.getModifiers()));
 		}

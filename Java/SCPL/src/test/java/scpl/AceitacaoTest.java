@@ -1287,6 +1287,20 @@ public class AceitacaoTest {
 		assertEquals(13, retorno.get(0).getEndLine());
 		assertEquals(64, retorno.get(0).getEndColumn());
 	}
+  
+  //issue 17
+	@Test
+	public void tc104() throws IOException {
+		
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC104_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC104_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(3, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(3, retorno.get(0).getEndLine());
+		assertEquals(25, retorno.get(0).getEndColumn());
+	}
 	
 	//issue 20
 	@Test
