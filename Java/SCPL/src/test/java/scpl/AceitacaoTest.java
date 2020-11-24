@@ -1372,4 +1372,23 @@ public class AceitacaoTest {
 		assertTrue(alert.contains("Class should be public"));
 	}
 	
+	@Test
+	public void tc110() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC110_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC110_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals("Create in the invoker an static attribute that maps strings to command for store the commands." ,retorno.get(0).getReturnMessage());
+	}
+	
+	@Test
+	public void tc111() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC111_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC111_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
 }
