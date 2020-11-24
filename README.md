@@ -1,4 +1,9 @@
-# PatternLanguage
+# Source Code Pattern Language(SCPL)
+
+# O que é?
+
+A Source Code Pattern Language é uma linguagem para localização de padrões em código-fonte, e tem como proposta facilitar este processo, provendo uma abstração amigável e simples para o usuário.
+
 
 ## Requisitos para usar a ferramenta
 Para executar a ferramenta é necessário possuir o ambiente de execução Java (JRE) na versão igual ou superior a 13.0.1. Além disso, deve-se ter conhecimento básico de programação Java, para realizar a programação dos padrões e utilizar todas as suas funcionalidades.
