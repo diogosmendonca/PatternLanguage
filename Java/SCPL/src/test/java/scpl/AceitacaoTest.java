@@ -947,7 +947,7 @@ public class AceitacaoTest {
 	}
 	
 	
-	@Ignore
+	/*@Ignore
 	@Test
 	public void tc78() throws IOException {
 		
@@ -960,7 +960,7 @@ public class AceitacaoTest {
 		raFile.close();
 		
 		assertEquals(null, retorno);
-	}
+	}*/
 	
 	@Test
 	public void tc79() throws IOException {
