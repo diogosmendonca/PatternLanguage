@@ -1,6 +1,7 @@
 package scpl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.ObjectInputFilter.Config;
@@ -1288,7 +1289,7 @@ public class AceitacaoTest {
 		assertEquals(64, retorno.get(0).getEndColumn());
 	}
   
-  //issue 17
+	//issue 17
 	@Test
 	public void tc104() throws IOException {
 		
@@ -1326,6 +1327,49 @@ public class AceitacaoTest {
 			assertEquals("Do not declare specific Apps (AppA or AppB) use the App instead.",
 					r.getReturnMessage());
 		});
+	}
+	
+	@Test
+	public void tc107() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC107_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC107_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(1, retorno.get(0).getEndLine());
+		assertEquals(13, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc108() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC108_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC108_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(1, retorno.get(0).getEndLine());
+		assertEquals(19, retorno.get(0).getEndColumn());
+	}
+	
+	@Test
+	public void tc109() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC109_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC109_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals(1, retorno.get(0).getStartLine());
+		assertEquals(1, retorno.get(0).getStartColumn());
+		assertEquals(1, retorno.get(0).getEndLine());
+		assertEquals(13, retorno.get(0).getEndColumn());
+		
+		String alert = retorno.get(0).getReturnMessage();
+		assertTrue(alert.contains("Test for coverage"));
+		assertTrue(alert.contains("Class should be public"));
 	}
 	
 }
