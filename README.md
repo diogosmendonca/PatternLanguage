@@ -71,11 +71,50 @@ O código-fonte 4, apresenta um padrão de bloco “while” no caso de um loop 
 
 ```
 
-
 ### 2.3. Operador Exists
 
-### 2.4. Agrupamento de Padrões por Pastas
+O Operador Exists tem como função indicar que determinado trecho de código do padrão deve estar presente ou não no código-fonte buscado. Um trecho de código que não deve estar
+presente, sempre deve estar relacionado com outro trecho presente, ou seja, não é possível utilizar um padrão apenas composto por blocos não presentes. Quando não informado, por
+convenção, todo padrão deve estar presente e para fazer uso do operador exists e sinalizar a presença ou ausência de um bloco de código, são utilizadas as palavras-chave apresentadas na tabela abaixo.
 
+| Palavra-Chave | Significado |
+| --- | --- |
+| not-exists | Indica o bloco de código que não deve estar presente |
+| exists | Indica o bloco de código que deve estar presente  |
+
+Existem duas formas de uso para essas palavras-chave, utilizando comentários ou labels. Os modificadores de existência aplicados em comentários alteram apenas a próxima instrução após o comentário (linha abaixo), suas variações de uso são apresentadas no código-fonte 5. Já para os labels, é possível demarcar blocos de existência, é possível fazer uso de chaves (“{}”) para delimitar os blocos ou aplicar o label diretamente em estruturas permitidas pelo Java (while, for, try e etc), no código-fonte 6 são apresentados exemplos de uso.
+
+##### Código-Fonte 5: Exemplo dos modificadores de existência com comentários
+```java
+1 // not_exists
+2 try {
+3   /* exists */
+4   Integer.parseInt( any ) ;
+5
+6 } catch ( anyException any ) {
+7
+8 }
+```
+ 
+##### Código-Fonte 6: Exemplo dos modificadores de existência com labels
+```java
+1 not_exists:
+2 try {
+3   exists:{
+4     Integer.parseInt( any ) ;
+5   }
+6 } catch ( anyException any ) {
+7
+8 }
+
+```
+
+Em ambos os códigos de exemplos, 5 e 6, o mesmo padrão é escrito utilizando as duas formas de aplicação dos modificadores de existência e suas variações. O padrão definido é a
+conversão de qualquer valor(wildcard any) para inteiro que não esteja envolvido por um bloco de tratamento de exceções try catch. O bloco “catch” está vazio, pois, o seu conteúdo não importa para o padrão buscado.
+
+No código-fonte 6, o label “not_exist” é utilizado para indicar que todo o bloco try (inclusive o catch) não deve estar presente no código buscado. Como o trecho de código que deve existir está envolvido pelo try é necessário apontar a sua existência, pois, sem uso do modificador de existência o mesmo estaria designado a não existir por estar envolvido pelo try que não existe. A mesma lógica serve para o código-fonte 5, porém, fazendo o uso de comentários, o comentário “//not_exists” aponta que o bloco try não deve existir e o comentário “/\*exists\*/” aponta que a conversão para inteiro deve existir.
+
+### 2.4. Agrupamento de Padrões por Pastas
 
 ## 3. Manual do Usuário
 
