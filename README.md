@@ -116,6 +116,66 @@ No código-fonte 6, o label “not_exist” é utilizado para indicar que todo o
 
 ### 2.4. Agrupamento de Padrões por Pastas
 
+Para um determinado padrão de defeito, existem diversas formas de evitá-lo, sendo então necessário durante a busca do mesmo localizar estes códigos de verificação, tornando a localização mais precisa. Porém, a programação de múltiplas verificações em um só arquivo de código-fonte de padrão, pode deixar a sua escrita complexa ou até mesmo inviável. Pensando nesses casos, foi implementado o agrupamento de padrões por pastas, onde um grupo de padrões pertencentes a uma pasta constituem um defeito. Sendo possível trabalhar com a ideia de conjuntos, e incluir ou excluir do resultado final da busca de todo defeito(pasta), a ocorrência de determinado padrão.
+
+Voltando ao padrão do código-fonte 3, apenas o mesmo não é o suficiente para determinar se existe um defeito ou não, pois, algumas verificações não são feitas. Por exemplo, não é verificado se entre a declaração nula e a chamada de método, existe uma atribuição alterando o valor nulo da variável. Ou se antes da chamada do método existe uma verificação para que o método só seja invocado, caso a variável tenha valor diferente de nulo e assegurar que o valor não é nulo.
+
+Esses casos citados anteriormente não se configuram defeitos e não devem ser considerados no resultado final da busca, ou seja, devem ser excluídos. Por regra, todo padrão deve ser incluído ao resultado final, e para marcar um padrão como exclusão, basta adicionar o sufixo Exclude ao nome de seu arquivo, assim deve ser terminado com Exclude.java.
+
+Os padrões de exclusão trabalham como exceções a regra dos padrões de inclusão, se um nó é retornado para o padrão do código 3 o mesmo é incluído ao resultado, porém, se o mesmo
+também for retornado para o padrão do código-fonte 15 ou 16, deve ser retirado. Para o exemplo atual, uma variável declarada com valor nulo e posteriormente uma chamada de método com a mesma, não é um defeito caso: haja uma outra atribuição de qualquer valor antes da chamada de método (código-fonte 15) ou exista uma verificação de que o valor é diferente de nulo (código-fonte 16).
+
+##### Código-Fonte 15: Exemplo de padrão de exclusão
+
+```java
+// Terminado com ’Exclude . java ’
+Integer someVariable = null ;
+someVariable = anyValue ;
+someVariable.anyMethod () ;
+```
+ 
+##### Código-Fonte 16: Exemplo de padrão de exclusão
+
+```java
+// Terminado com ’Exclude . java ’
+Integer someVariable = null ;
+if( someVariable != null )
+ someVariable . anyMethod () ;
+
+```
+
+#### Alternativa ao agrupamento de padrões por pastas
+
+O agrupamento de padrões por pastas facilita a programação de padrões compostos por múltiplos sub-padrões, porém adiciona o trabalho de criar novos arquivos, demandando um esforço maior. Muitas das vezes esses novos arquivos repetem código-fonte e diferem em apenas um pequeno trecho. Pensando nesses casos, foi implementada uma funcionalidade de marcação no código-fonte do padrão, no qual possibilita escrever as múltiplas variações do padrão que diferem em apenas um ponto todas no mesmo arquivo.
+
+O bloco de opções tem início com o comentário “//#BEGIN”, as opções são separadas pelo comentário “//#OR” e o bloco é finalizado com o comentário “//#END”, como utilizado no
+código-fonte 17. Para cada opção é gerado automaticamente, em memória, um novo arquivo de código-fonte, repetindo o código-fonte do padrão substituindo o bloco de opções inteiro apenas pelo termo da respectiva opção. O funcionamento é análogo a propriedade distributiva, presente na operação matemática de multiplicação.
+
+
+##### Código-Fonte 17: Alternativa ao agrupamento de pastas
+
+```java
+// InAnyMethod
+//# BEGIN
+
+someVariable = anyMethod() ;
+if( someVariable != null ){
+ someVariable.any() ;
+}
+
+//#OR
+
+anyType someVariable = null ;
+// not_exists
+someVariable = any ;
+someVariable.any() ;
+
+//#END
+
+
+```
+O código-fonte 17 apresenta uma aplicação do bloco de opções. Onde se deseja procurar dois padrões que não dependem de características da classe e método que os evolvem, para isso foi utilizado o comentário “//InAnyMethod”. O bloco de opções facilita e possibilita a escrita dos padrões em apenas um arquivo. A junção destas duas funcionalidades deixa o padrão bem reduzido, sendo é possível notar que o foco principal de esforço é apenas nos pequenos trechos principais dos padrões.
+
 ## 3. Manual do Usuário
 
 ### 3.1 Requisitos para usar a ferramenta
