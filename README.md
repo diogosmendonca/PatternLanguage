@@ -9,14 +9,7 @@ A Source Code Pattern Language é uma linguagem para localização de padrões e
 Seguindo a proposta da linguagem de simplificar a programação de padrões, a forma de escrita dos padrões da SCPL é baseada na escrita do código-fonte do próprio defeito. Contudo, existem informações dos defeitos que variam entre suas instâncias e precisam ser abstraídas
 (nomes, parâmetros, valores e etc), ou até mesmo o defeito pode ser definido pela presença de um trecho de código com a ausência de outro. 
 
-Para viabilizar estes casos, algumas modificações na escrita do código são necessárias, para isso funcionalidades adicionais foram implementadas, são elas: 
-
-1. Wildcards
-1. Padrões de bloco  
-1. Operador Exists
-1. Agrupamento de Padrões por Pastas
-
-A seguir vai explicar cada um deles.
+Para viabilizar estes casos, algumas modificações na escrita do código são necessárias, para isso funcionalidades adicionais foram implementadas. A seguir a gente vai apresentar e explicar cada funcionalidade adicional.
 
 ### 2.1. Wildcards
 
@@ -114,7 +107,87 @@ conversão de qualquer valor(wildcard any) para inteiro que não esteja envolvid
 
 No código-fonte 6, o label “not_exist” é utilizado para indicar que todo o bloco try (inclusive o catch) não deve estar presente no código buscado. Como o trecho de código que deve existir está envolvido pelo try é necessário apontar a sua existência, pois, sem uso do modificador de existência o mesmo estaria designado a não existir por estar envolvido pelo try que não existe. A mesma lógica serve para o código-fonte 5, porém, fazendo o uso de comentários, o comentário “//not_exists” aponta que o bloco try não deve existir e o comentário “/\*exists\*/” aponta que a conversão para inteiro deve existir.
 
-### 2.4. Agrupamento de Padrões por Pastas
+### 2.4. Indicação do local do defeito e da mensagem de alerta
+
+O defeito não é inteiramente o padrão de defeito, e sim, os componentes do padrão, o escopo e a sequência de instruções determinam que a presença de determinado trecho de código seja um defeito. Com outras palavras, a execução de um trecho de código dependendo do escopo e dos acontecimentos anteriores, pode provocar um erro, logo, o defeito está presente neste trecho de código e não nos demais componentes do padrão de defeito.
+
+Os elementos do padrão de defeito são importantes para a definição da existência de um defeito, porém, como resultado da busca, é esperado apenas o(s) local(is) passíveis de provocarem um comportamento inesperado. Como exemplo, os padrões dos código-fontes 5 e 6, a execução da instrução correspondente à “Integer.parseInt(any)” por si só não é um defeito, porém, a não existência de um tratamento de exceção try catch ou outros tipos de verificações, determinam que seja.
+ 
+Os padrões programados utilizando a SCPL, permitem a indicação do local exato do defeito e a passagem de uma mensagem de alerta. Para fazer a indicação, basta na linha anterior a instrução adicionar um comentário com a seguinte estrutura: “//Alert: <Mensagem_de_Alerta>” ou “/\*Alert: <Mensagem_de_Alerta>\*/”. Desta forma, apenas as instruções correspondentes à instrução indicada são retornadas.
+
+O código-fonte 7, apresenta a reescrita do padrão do código-fonte 6, indicando a instrução que deve ser retornada e a sua mensagem de alerta. Uma observação, a indicação de retorno e a passagem da mensagem via comentário, implicitamente assinala que o trecho de código deve existir, não sendo necessário utilizar o operador exists.
+
+##### Código-Fonte 7:  Exemplo de indicação do local do defeito e da mensagem de alerta
+```java
+1 // not_exists
+2 try {
+3   // Alert : Poss í vel exce ção não tratada
+4   Integer . parseInt ( any ) ;
+5
+6 } catch ( anyException any ) {
+7
+8 }
+
+```
+
+A indicação mostrada anteriormente é opcional, e compatível com a saída padrão da SCPL. Existe um modo, de formatação de saída que é compatível com a ferramenta SonarQube, onde o resultado já está pronto para ser integrado com o SonarQube. Para o caso da formatação “sonarqube”, a indicação é obrigatória e tem o formato um pouco diferente.
+
+Para o formato de saída sonarqube a indicação é feita da seguinte forma: “//Alert (ruleid=<id>, type=<tipo>, severity=<severidade>, message =<mensagem>)”, também possível via comentário de bloco “/\*\*/”, no qual:
+ 
+* ruleid, corresponde ao id da regra.
+* type, corresponde ao tipo de padrão. BUG, VULNERABILITY ou CODE_SMELL.
+* severity, corresponde a severidade do padrão. BLOCKER, CRITICAL, MAJOR, MINOR ou INFO.
+* message, corresponde a mensagem de erro.
+
+Para as ocorrências do padrão do código-fonte 3 presentes no código-fonte 1, a IDE Eclipse, por exemplo, cria alertas para os trechos correspondentes a instrução “someVariable.anyMethod()” (as linhas 2,5 e 6), com a mensagem “Acesso de ponteiro nulo: a variável <variável> só pode ser nula neste local”. O código-fonte 8, apresenta a reescrita do padrão do código-fonte 3, indicando a instrução que deve ser retornada e sua mensagem de alerta, utilizando o formato “sonarqube”.
+
+##### Código-Fonte 8:  Exemplo de indicação do local do defeito e da mensagem de alerta para o formato sonarqube
+
+```java
+1 Integer someVariable = null ;
+2 // Alert ( ruleid= 3 , type= BUG , severity= MAJOR , message= Acesso de ponteiro nulo )
+3 someVariable.anyMethod() ;
+```
+
+#### Alertas para modificadores
+
+No caso dos modificadores, a indicação do local do defeito e a mensagem de alerta, também pode ser feita com outra abordagem. No qual, é escrito o padrão correto juntamente com anotações sobre os modificadores, onde são passados os modificadores corretos e caso no código-fonte não esteja presente algum dos modificadores passados é gerado um alerta. A anotação tem o seguinte formato, prefixo “AlertIfNot” e como sufixo o modificador desejado, ficando no formato “@AlertIfNotPublic”, por exemplo. O nome é intuitivo, traduzindo, tem o seguinte sentido/objetivo: “Se não for public alerta”.
+
+##### Código-Fonte 9:  Exemplo de padrão utilizando o AlertIfNot
+
+```java
+public class AnyClass {
+@AlertIfNotPrivate (" Message ")
+private anyType anyAttribute ;
+}
+```
+##### Código-Fonte 10:   Código-fonte correspondente ao exemplo do AlertIfNot
+
+```java
+1 public class Test {
+2
+3 public Object attribute ;
+4 }
+```
+
+O código-fonte 9, apresenta um exemplo de padrão escrito utilizando a SCPL que faz uso da anotação AlertIfNot. Um padrão simples de uma declaração de atributo, com qualquer nome, com qualquer tipo e que deve gerar um alerta com a mensagem “Message”, caso o modificador não seja private. O padrão do código-fonte 9 é encontrado no código-fonte 10, todos os nós do padrão possuem nós correspondentes no código-fonte, exceto o modificador do atributo porém o mesmo possui uma anotação de alerta para quando não achar nó correspondente. Dessa forma, quando a cláusula da anotação de alerta é cumprida e todo o restante do padrão é encontrado, o alerta é gerado.
+
+Também é possível passar como argumento da anotação uma string com a mensagem de alerta comum, apresentado no código-fonte 9. Ou com o formato de integração com a ferramento SonarQube, apresentado no código-fonte 11.
+
+##### Código-Fonte 11:   Exemplo de padrão utilizando AlertIfNot com integração com SonarQube
+
+```java
+1 @AlertIfNotDefaultAccess (" ruleid= 3 , type= BUG , severity= MAJOR , message= Test ")
+2 class AnyClass {
+3 }
+
+```
+
+O modificador de acesso default é indicado pela ausência de qualquer um outro modificador de acesso, logo não possui texto. Para utilizar a anotação AlertIfNot e fazer referencia ao modificador de acesso default, o sufixo deve ser “DefaultAccess”, como é empregado no código-fonte 11.
+
+### 2.5. Definição do Escopo da Busca
+
+### 2.6. Agrupamento de Padrões por Pastas
 
 Para um determinado padrão de defeito, existem diversas formas de evitá-lo, sendo então necessário durante a busca do mesmo localizar estes códigos de verificação, tornando a localização mais precisa. Porém, a programação de múltiplas verificações em um só arquivo de código-fonte de padrão, pode deixar a sua escrita complexa ou até mesmo inviável. Pensando nesses casos, foi implementado o agrupamento de padrões por pastas, onde um grupo de padrões pertencentes a uma pasta constituem um defeito. Sendo possível trabalhar com a ideia de conjuntos, e incluir ou excluir do resultado final da busca de todo defeito(pasta), a ocorrência de determinado padrão.
 
