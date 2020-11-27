@@ -187,6 +187,61 @@ O modificador de acesso default é indicado pela ausência de qualquer um outro 
 
 ### 2.5. Definição do Escopo da Busca
 
+Conforme já falado, a SCPL define seus padrões através da escrita do próprio defeito. Logo, uma cópia perfeita do defeito é sim um padrão, porém, com um escopo reduzido e engessado. Com a finalidade de definir o escopo da busca e viabilizar uma busca mais generalizada, artifícios foram implementados e requerem algumas modificações no código-fonte. 
+
+Todo padrão escrito utilizando a SCPL é um código-fonte Java válido e não diferente de um código comum, pertencem a um escopo. E se faz necessário definir o escopo em que o padrão pode estar presente, seja em uma classe e/ou método, etc. No entanto, na própria declaração das classes e métodos existem informações variáveis que podem ser generalizadas, e dependendo do padrão não influenciam no resultado.
+
+
+##### Código-Fonte 12:  Modelo para buscar um padrão que ocorre dentro de um método
+
+```java
+@anyModifier
+class anyClass {
+  @anyModifier
+  any anyMethod ( anyType any ) {
+    // Insira o padrão aqui
+  }
+}
+
+```
+
+No código-fonte 12, é apresentado o modelo para buscar um padrão que ocorre dentro de um método. O wildcard any é essencial para generalizar os casos, o mesmo é utilizado para: indicar que a classe e método podem ter qualquer nome, indicar que o retorno do método pode ser de qualquer tipo e indicar que o método pode conter qualquer parâmetro (inclusive nenhum).
+
+Ainda utilizando o any, só que de uma maneira diferente, a generalização dos modificadores é feita através do recurso do Java de anotação. O compilador não permite nenhum modificador diferente dos já existentes, por isso a necessidade de fazer uso desse recurso. Seguindo a mesma  maneira de uso, basta anotar, com uma anotação iniciada por any, o trecho de código o qual deseja generalizar o modificador.
+
+O formato de padrão descrito no código-fonte 12, no qual abstrai a classe e método que envolvem o padrão, é muito útil. Diversos padrões não são influenciados por características da classe ou método que os envolvem. Partindo desse ponto, foi implementada uma abstração que substitui a necessidade de escrever o código presente no código-fonte 12, basta fazer uso do comentário “//InAnyMethod”(como mostrado no código-fonte 13).
+
+##### Código-Fonte 13:  Exemplo de uso da abstração InAnyMethod
+
+```java
+// InAnyMethod
+// Insira o padrão aqui
+
+```
+
+Traduzindo seu conteúdo, é possível compreender do que se trata o comentário “//InAnyMethod”: “Em qualquer método”. Indicando que todo código abaixo será colocado dentro
+de uma abstração de “qualquer método”, que por sua vez está contido de uma abstração de “qualquer classe”. Dessa forma, o padrão presente no código-fonte 13 é equivalente ao padrão presente no código-fonte 12. O pré-processamento da SCPL substitui o comentário “//InAnyMethod” por todo o código necessário para abstrair a classe e método, diminuindo a carga de trabalho para a escrita do padrão.
+
+Utilizando uma ideia similar à do operador not_exists, é possível apontar o modificador o qual a instrução não pode ter. Ao invés de utilizar a anotação “@any”, que aponta qualquer modificador, utiliza-se o prefixo “@not” e o sufixo é o nome do modificador que aquela instrução não deve possuir. O código-fonte 14 apresenta um exemplo.
+
+##### Código-Fonte 14:  Modelo de padrão utilizando o not_exists para modificadores
+
+```java
+1 @notAbstract
+2 class anyClass {
+3   @notPrivate
+4   any anyMethod ( anyType any ) {
+5     // Insira o padr ão aqui
+6   }
+7 }
+
+```
+
+O código-fonte 14, é uma adaptação do código-fonte 12, onde a classe não pode ser abstrata(“@notAbstract”) e o método não pode ser private(“@notPrivate”). O mesmo processo
+pode ser feito para os demais modificadores, basta alterar o sufixo para o nome do modificador desejado.
+
+Vale ressaltar, novamente, que os padrões são códigos-fontes Java e devem respeitar sempre as regras da linguagem. No caso das anotações para modificadores, por exemplo, só é permitido o uso onde é possível(aceito pelo compilador Java) o uso de modificadores(classes, atributos e métodos).
+
 ### 2.6. Agrupamento de Padrões por Pastas
 
 Para um determinado padrão de defeito, existem diversas formas de evitá-lo, sendo então necessário durante a busca do mesmo localizar estes códigos de verificação, tornando a localização mais precisa. Porém, a programação de múltiplas verificações em um só arquivo de código-fonte de padrão, pode deixar a sua escrita complexa ou até mesmo inviável. Pensando nesses casos, foi implementado o agrupamento de padrões por pastas, onde um grupo de padrões pertencentes a uma pasta constituem um defeito. Sendo possível trabalhar com a ideia de conjuntos, e incluir ou excluir do resultado final da busca de todo defeito(pasta), a ocorrência de determinado padrão.
