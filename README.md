@@ -231,7 +231,7 @@ Utilizando uma ideia similar à do operador not_exists, é possível apontar o m
 2 class anyClass {
 3   @notPrivate
 4   any anyMethod ( anyType any ) {
-5     // Insira o padr ão aqui
+5     // Insira o padrão aqui
 6   }
 7 }
 
@@ -349,7 +349,7 @@ O comando search executa a função principal da aplicação, o mesmo realiza a 
 * “-C” ou “–charset”, especifica o charset que será usado pelo compilador. (Opcional)
 * “-f” ou “–format”, especifica o formato de saída da busca. (Opcional)
 
-As opções, “–code” e “–pattern”, são as únicas obrigatórias e sem elas não existem a busca. Ambas apontam para caminhos de arquivos, e podem apontar tanto para um arquivo específico ou para uma pasta. Para o código-fonte, todo o caminho é percorrido e todos os arquivos de código-fonte Java(terminados com “.java”) encontrados são carregados em memória e armazenados em uma só lista de arquivos. No caso dos padrões o mesmo é feito, porém, os padrões são armazenados em diversas listas associadas as suas pastas de origem, respeitando a hierarquia das pasta e permitindo que o agrupamento de padrões por pastas seja feito.
+As opções, “–code” e “–pattern”, são as únicas obrigatórias e sem elas não existem a busca. Ambas apontam para caminhos de arquivos, e podem apontar tanto para um arquivo específico ou para uma pasta. Para o código-fonte, todo o caminho é percorrido e todos os arquivos de código-fonte Java (terminados com “.java”) encontrados são carregados em memória e armazenados em uma só lista de arquivos. No caso dos padrões o mesmo é feito, porém, os padrões são armazenados em diversas listas associadas as suas pastas de origem, respeitando a hierarquia das pasta e permitindo que o agrupamento de padrões por pastas seja feito.
 
 A aplicação sempre tenta inferir o charset para o compilador utilizar durante a extração da AST do código-fonte, porém, quando não consegue, o charset utilizado é o padrão do compilador. Em alguns casos, isto pode gerar erros e, apesar de ser um parâmetro opcional, informar o charset passa a ser necessário.
 
@@ -357,7 +357,8 @@ A opção format foi implementada pensando na facilidade de integração com out
 é feita da forma padrão desenvolvida na SCPL. Até o momento, apenas um formato foi implementado, que é o formato de integração com a ferramenta SonarQube, para utilizar basta
 utilizar a opção format com o valor “sonarqube”. 
  
-Abaixo mostra o uso do comando principal e em seguida o comando com todas as opções.       
+Abaixo mostra o uso do comando principal e em seguida o comando com todas as opções. 
+
 ###### Comando Search padrão
  ``` 
  java -jar scpl.jar search -code ./CaminhoCodigoAlvoDaBusca -pattern ./CaminhoCodigosDosPadroes 
@@ -367,17 +368,120 @@ Abaixo mostra o uso do comando principal e em seguida o comando com todas as op�
  java -jar scpl.jar search -code ./CaminhoCodigoAlvoDaBusca -pattern ./CaminhoCodigosDosPadroes –charset UTF-8 –format sonarqube
  ```
 
-###### Comando Debug
 
- ``` 
- java -jar scpl.jar -debug search -code ./CaminhoDoCodigoAlvoDaBusca -pattern ./CaminhoComCodigosDosPadroes
- ```
+
+##### Version
 
 ###### Comando Version
 
  ```
  java -jar scpl.jar -version 
  ```
+
+##### Debug
+
+A opção debug foi implementada para complementar o comando search, adicionando informações relacionadas a busca, possibilitando a depuração do sistema. Está funcionalidade é
+importante no processo de desenvolvimento dos padrões de código-fonte utilizando a SCPL, pois auxilia o desenvolvedor a entender o funcionamento e ajustar o padrão conforme desejado. Para ativar este modo basta adicionar uma das flags: “-d” ou “–debug”, juntamente com as instruções para a busca desejada. O uso desse comando está abaixo:
+
+###### Comando Debug
+
+ ``` 
+ java -jar scpl.jar -debug search -code ./CaminhoDoCodigoAlvoDaBusca -pattern ./CaminhoComCodigosDosPadroes
+ ```
+ 
+Esta opção funciona da seguinte forma, as ASTs do código-fonte alvo e do padrão são apresentadas linha a linha de forma indentada, juntamente com os seus trechos de código correspondentes. Assim, sendo possível enxergar o formato das árvores geradas pelos elementos da busca. Há uma diferença para a AST do código-fonte, os nós que possuem nós correspondentes na AST do padrão são marcados com o prefixo “##”, indicando que foram encontrados na busca.
+
+##### Código-Fonte 18: Exemplo de código-fonte
+
+```java
+1 public class Codigo {
+2   public static void run () {
+3     doSomething() ;
+4     String str = "SCPL";
+5
+6     System.out.println(str);
+7   }
+8 }
+```
+
+##### Código-Fonte 19: Exemplo de padrão
+
+```java
+1 @anyModifier
+2 class anyClass {
+3   @anyModifier
+4   anyType anyMethod () {
+5     // Alert : Teste
+6     System.out.println(any) ;
+7   }
+8 }
+
+```
+
+Dado o exemplo de busca com os códigos-fontes apresentados acima, em que se deseja encontrar o padrão (código-fonte 19) no código-fonte 18. Utilizando a opção debug para a
+busca, a saída apresentada pelo sistema para a AST do código-fonte 18 é apresentada abaixo:
+
+##### Resultado padrão do debug
+
+```
+Codigo.java (CompilationUnitTree)
+  ##public class Codigo { (ClassTree) L: 1 C: 1 -> L: 8 C: 2
+    ##public (ModifiersTree) L: 1 C: 1 -> L: 1 C: 7
+    ##public static void run() (MethodTree) L: 2 C: 3 -> L: 7 C: 4
+      ##public static (ModifiersTree) L: 2 C: 3 -> L: 2 C: 16
+      ##void (PrimitiveTypeTree) L: 2 C: 17 -> L: 2 C: 21
+
+      ##{ (BlockTree) L: 2 C: 28
+        ##doSomething(); (ExpressionStatementTree) L: 3 C: 5 -> L: 3 C: 19
+          doSomething() (MethodInvocationTree) L: 3 C: 5 -> L: 3 C: 18
+            doSomething (IdentifierTree) L: 3 C: 5 -> L: 3 C: 16
+        String str = "SCPL" (VariableTree) L: 4 C: 5 -> L: 4 C: 23
+          String (IdentifierTree) L: 4 C: 5 -> L: 4 C: 11
+          "SCPL" (LiteralTree) L: 4 C: 16 -> L: 4 C: 22
+        ##System.out.println(str); (ExpressionStatementTree) L: 6 C: 5 -> L: 6 C: 27
+          ##System.out.println(str) (MethodInvocationTree) L: 6 C: 5 -> L: 6 C: 26
+            ##System.out.println (MemberSelectTree) L: 6 C: 5 -> L: 6 C: 23
+              ##System.out (MemberSelectTree) L: 6 C: 5 -> L: 6 C: 15
+                ##System (IdentifierTree) L: 6 C: 5 -> L: 6 C: 11
+            ##str (IdentifierTree) L: 6 C: 24 -> L: 6 C: 25
+       ##} L: 7 C: 4
+##} L: 8 C: 2
+
+```
+A opção debug possui parâmetros adicionais, responsáveis por ajustar o que é exibido na apresentação da AST do código-fonte. As flags: “-l” ou “–showLocation” são utilizadas para indicar se será exibido as informações de localização dos nós(linha e coluna), possui um valor do tipo booleano com valor padrão verdadeiro. Também é possível determinar o intervalo das linhas que serão apresentadas, sendo útil para casos onde o código-fonte é extenso e deseja-se focar em uma específica faixa do código-fonte.
+
+Para apontar a linha inicial basta utilizar uma dasflags “-b” ou “–beginLine”, indicando o número da linha desejada. Já para a linha final, deve ser usada uma das flags “-e” ou “–endLine”, seguido do número da linha final. Não é obrigatório o uso simultâneo das duas flags, ou seja, é possível indicar apenas a linha inicial ou apenas a linha final.
+
+Um exemplo de aplicação dos parâmetros adicionais para o exemplo anterior, seguiria o seguinte formato de instrução para a linha de comando: 
+
+###### Comando Debug com parâmetros adicionais
+
+ ``` 
+ java -jar scpl.jar —debug -l=false –beginLine=3 –endLine=6 search -code ./CaminhoDoCodigoAlvoDaBusca -pattern ./CaminhoComCodigosDosPadroes
+ ```
+ 
+Onde, “-l=false” desativa a apresentação das informações de localização e as instruções “–beginLine=3” e “–endLine=6” indicam a linha inicial e final, respectivamente. A execução do comando apresentado anteriormente tem o seguinte resultado:
+
+##### Resultado do debug com parâmetros adicionais
+```
+Codigo.java (CompilationUnitTree)
+  ##doSomething(); (ExpressionStatementTree)
+    doSomething() (MethodInvocationTree)
+      doSomething (IdentifierTree)
+  String s = "SCPL" (VariableTree)
+  (ModifiersTree)
+    String (IdentifierTree)
+    "SCPL" (LiteralTree)
+  ##System.out.println(s); (ExpressionStatementTree)
+    ##System.out.println(s) (MethodInvocationTree)
+      ##System.out.println (MemberSelectTree)
+        ##System.out (MemberSelectTree)
+          ##System (IdentifierTree)
+      ##s (IdentifierTree)
+
+```
+
+##### Verbose
 
 ###### Comando Verbose
 
