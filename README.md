@@ -1,14 +1,76 @@
 # Source Code Pattern Language(SCPL)
 
-# O que é?
+## 1. O que é?
 
 A Source Code Pattern Language é uma linguagem para localização de padrões em código-fonte, e tem como proposta facilitar este processo, provendo uma abstração amigável e simples para o usuário.
 
+## 2. Funcionalidades
 
-## Requisitos para usar a ferramenta
+Seguindo a proposta da linguagem de simplificar a programação de padrões, a forma de escrita dos padrões da SCPL é baseada na escrita do código-fonte do próprio defeito. Contudo, existem informações dos defeitos que variam entre suas instâncias e precisam ser abstraídas
+(nomes, parâmetros, valores e etc), ou até mesmo o defeito pode ser definido pela presença de um trecho de código com a ausência de outro. 
+
+Para viabilizar estes casos, algumas modificações na escrita do código são necessárias, para isso funcionalidades adicionais foram implementadas, são elas: 
+
+1. Wildcards
+1. Operador Exists
+1. Padrões de bloco 
+1. Agrupamento de Padrões por Pastas
+
+A seguir vai explicar cada um deles.
+
+### 2.1. Wildcards
+
+Os wildcards, servem como uma palavra abstrata que pode ser usada em certas partes do código do padrão de modo a generalizar a sua busca. Por exemplo, ela pode abstrair nome de
+variáveis, nome de métodos, nome de parâmetros e etc. A seguir temos a lista de wildcards disponíveis para o usuário.
+
+| Wildcard | Tipo de Nó |
+| --- | --- |
+| any | Qualquer um |
+| some | Um específico que se repete no padrão  |
+
+Todos os wildcards são prefixos e podem vir seguidos por um sufixo que auxilie na leitura do padrão. O “any” faz referências para qualquer um valor, logo toda comparação que o envolve retorna verdadeiro. O “some” serve para guardar a referência de um nó específico durante a comparação de nós, caso exista mais que um “some” no padrão então ele faz a referência ao mesmo nó. No caso do “some” que faz referência a ocorrências passadas, caso existam referências a mais de uma variável é indispensável o uso do sufixo, pois, é a forma com que a aplicação distingue uma variável de outra.
+
+Olhando o código-fonte 1, na linha 1 e 2 existe um defeito, que ocasiona uma exceção do tipo NullPointerException. A escrita desse defeito utilizando o SCPL pode ser feita copiando exatamente o defeito(código-fonte 2). Entretanto, dessa forma a busca será feita apenas para variáveis com o nome “num” e para o método “toString()”. Outras ocorrências equivalentes do mesmo defeito podem existir, porém, com variáveis e métodos distintos, como no código-fonte 1 (linhas 2-6). Sem o uso dos wildcards o padrão é muito particular e não é possível localizar outras instâncias que fogem um pouco do padrão escrito.
+
+##### Código-Fonte 1: Exemplo de código-fonte para realizar uma busca
+```java
+1 Integer num = null ;
+2 num.toString() ;
+3 Integer val = null ;
+4 Integer x = null ;
+5 x.toString() ;
+6 val.hashCode() ;
+```
+
+##### Código-Fonte 2: Exemplo de padrão sem utilizar wildcards
+```java
+1 Integer num = null ;
+2 num.toString() ;
+```
+
+Usando os wildcards para esses casos, o padrão é definido no código-fonte 3. O “someVariable” é aplicado para guardar a referência a qualquer objeto declarado com valor nulo que em seguida invoca um método e o “anyMethod” para abstrair e indicar que não importa o nome do método. Este novo padrão possibilita ampliar a busca, permitindo que as outras ocorrências do defeito presentes no código-fonte 1 sejam encontradas.
+
+##### Código-Fonte 3: Exemplo de padrão utilizando wildcards
+```java
+1 Integer someVariable = null ;
+2 someVariable.anyMethod() ;
+
+```
+
+
+### 2.2. Operador Exists
+
+### 2.3. Padrões de bloco
+
+### 2.4. Agrupamento de Padrões por Pastas
+
+
+## 3. Manual do Usuário
+
+### 3.1 Requisitos para usar a ferramenta
 Para executar a ferramenta é necessário possuir o ambiente de execução Java (JRE) na versão igual ou superior a 13.0.1. Além disso, deve-se ter conhecimento básico de programação Java, para realizar a programação dos padrões e utilizar todas as suas funcionalidades.
 
-## CLI (Command User Interface) - Prompt de Comando
+### 3.2 CLI (Command User Interface) - Prompt de Comando
 
 O CLI é a interface utilizada pela ferramenta para interagir com o usuário, onde o mesmo através de comandos executa as ações desejadas no sistema.  
 A ferramenta deve ser executada via Prompt de Comando passando os comandos abaixo :
@@ -21,7 +83,7 @@ java -jar scpl.jar <comandos_CLI>
   - "scpl.jar" representa a aplicação já compilada 
   - “<comandos_CLI>” representa os comandos que serão passados para o sistema interpretar e executar ações. 
 
-### Comandos CLI
+#### 3.2.1 Comandos CLI
   - Search
     ``` 
     java -jar scpl.jar search -code ./CaminhoCodigoAlvoDaBusca -pattern ./CaminhoCodigosDosPadroes
@@ -30,23 +92,23 @@ java -jar scpl.jar <comandos_CLI>
   - Debug
    
     ``` 
-    java -jar scpl.jar search -code ./CaminhoDoCodigoAlvoDaBusca -pattern ./CaminhoComCodigosDosPadroes
+    java -jar scpl.jar -debug search -code ./CaminhoDoCodigoAlvoDaBusca -pattern ./CaminhoComCodigosDosPadroes
     ```
   
   - Version
    
     ```
-    java -jar scpl.jar version 
+    java -jar scpl.jar -version 
     ```
 
   - Help
    
     ```
-    java -jar scpl.jar help
+    java -jar scpl.jar -help
     ```
 
   - Verbose
   
     ```
-    java -jar scpl.jar verbose
+    java -jar scpl.jar -verbose
     ```
