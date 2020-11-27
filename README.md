@@ -333,17 +333,38 @@ o que auxilia o usuário na formulação correta de comandos para a aplicação.
 ###### Menu help CLI
 ![Menu_Help](CLI_Menu_Help.PNG)
 
-Para executar a função help basta passar o comando “<main class> help”, a instrução “help” pode ser substituído por uma das flags: “-h” ou “–help”. Abaixo mostra o uso do comando.  
+Para executar a função help basta passar o comando “\<main class\> help”, a instrução “help” pode ser substituído por uma das flags: “-h” ou “–help”. Abaixo mostra o uso do comando.  
    
 ###### Comando Help
 ```
  java -jar scpl.jar -help
 ```
 
-  
-###### Comando Search
+##### Search
+O comando search executa a função principal da aplicação, o mesmo realiza a busca de padrões em código-fonte. Esta função é executada utilizando o comando “\<main class\> search
+\[opções\]”, a instrução search pode ser substituída pelos flags: “-s” ou “search”. Este comando necessita de parâmetros que são passados pelas opções e algumas delas são obrigatórias, são elas:
+
+* “-c” ou “–code”, especifica o caminho do código-fonte alvo da busca. (Obrigatório)
+* “-p” ou “–pattern”, especifica o caminho do padrão buscado. (Obrigatório)
+* “-C” ou “–charset”, especifica o charset que será usado pelo compilador. (Opcional)
+* “-f” ou “–format”, especifica o formato de saída da busca. (Opcional)
+
+As opções, “–code” e “–pattern”, são as únicas obrigatórias e sem elas não existem a busca. Ambas apontam para caminhos de arquivos, e podem apontar tanto para um arquivo específico ou para uma pasta. Para o código-fonte, todo o caminho é percorrido e todos os arquivos de código-fonte Java(terminados com “.java”) encontrados são carregados em memória e armazenados em uma só lista de arquivos. No caso dos padrões o mesmo é feito, porém, os padrões são armazenados em diversas listas associadas as suas pastas de origem, respeitando a hierarquia das pasta e permitindo que o agrupamento de padrões por pastas seja feito.
+
+A aplicação sempre tenta inferir o charset para o compilador utilizar durante a extração da AST do código-fonte, porém, quando não consegue, o charset utilizado é o padrão do compilador. Em alguns casos, isto pode gerar erros e, apesar de ser um parâmetro opcional, informar o charset passa a ser necessário.
+
+A opção format foi implementada pensando na facilidade de integração com outras plataformas, onde é possível escolher o formato de saída da busca. Quando não informada, a saída
+é feita da forma padrão desenvolvida na SCPL. Até o momento, apenas um formato foi implementado, que é o formato de integração com a ferramenta SonarQube, para utilizar basta
+utilizar a opção format com o valor “sonarqube”. 
+ 
+Abaixo mostra o uso do comando principal e em seguida o comando com todas as opções.       
+###### Comando Search padrão
  ``` 
- java -jar scpl.jar search -code ./CaminhoCodigoAlvoDaBusca -pattern ./CaminhoCodigosDosPadroes
+ java -jar scpl.jar search -code ./CaminhoCodigoAlvoDaBusca -pattern ./CaminhoCodigosDosPadroes 
+ ```
+###### Comando Search com todas as opções
+ ``` 
+ java -jar scpl.jar search -code ./CaminhoCodigoAlvoDaBusca -pattern ./CaminhoCodigosDosPadroes –charset UTF-8 –format sonarqube
  ```
 
 ###### Comando Debug
