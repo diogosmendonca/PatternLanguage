@@ -331,6 +331,7 @@ O comando help é comum em aplicações CLI e tem como função ajudar o usuári
 o que auxilia o usuário na formulação correta de comandos para a aplicação. A figura abaixo, apresenta a saída da aplicação após a execução do comando “help”.
 
 ###### Menu help CLI
+![Menu_Help](CLI_Menu_Help.PNG)
 
 Para executar a função help basta passar o comando “<main class> help”, a instrução “help” pode ser substituído por uma das flags: “-h” ou “–help”. Abaixo mostra o uso do comando.  
    
