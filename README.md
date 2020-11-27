@@ -12,8 +12,8 @@ Seguindo a proposta da linguagem de simplificar a programação de padrões, a f
 Para viabilizar estes casos, algumas modificações na escrita do código são necessárias, para isso funcionalidades adicionais foram implementadas, são elas: 
 
 1. Wildcards
+1. Padrões de bloco  
 1. Operador Exists
-1. Padrões de bloco 
 1. Agrupamento de Padrões por Pastas
 
 A seguir vai explicar cada um deles.
@@ -57,10 +57,22 @@ Usando os wildcards para esses casos, o padrão é definido no código-fonte 3. 
 
 ```
 
+### 2.2. Padrões de bloco
 
-### 2.2. Operador Exists
+O padrão de bloco é um bloco de código com início e fim, que possui o defeito que deseja-se procurar, é equivalente ao conceito de bloco presente nas linguagens de programação. Com esta funcionalidade é possível, por exemplo, utilizar os seguintes blocos: controle de fluxo (“if else”), estruturas de repetição (“for” e “while”), tratamento de exceções (“try and catch”) entre outros. 
 
-### 2.3. Padrões de bloco
+O código-fonte 4, apresenta um padrão de bloco “while” no caso de um loop infinito causado por uma variável, representada pelo wildcard “someVar”, que só aumenta com o tempo, o que representa um defeito.
+
+##### Código-Fonte 4: Exemplo de uso do padrão de bloco
+```java
+1 while ( someVariable > 0) {
+2 someVariable ++;
+3 }
+
+```
+
+
+### 2.3. Operador Exists
 
 ### 2.4. Agrupamento de Padrões por Pastas
 
