@@ -372,11 +372,16 @@ Abaixo mostra o uso do comando principal e em seguida o comando com todas as op�
 
 ##### Version
 
+O comando version é um comando simples, tem como resultado a apresentação da versão da SCPL em execução. É útil para o usuário ter conhecimento exato de qual versão da aplicação
+está utilizando. Sua execução deve ser feita utilizando o comando abaixo: 
+
 ###### Comando Version
 
  ```
  java -jar scpl.jar -version 
  ```
+ 
+A instrução “version” pode ser substituído por uma das flags: “-v” ou “–version”. 
 
 ##### Debug
 
