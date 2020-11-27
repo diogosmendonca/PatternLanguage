@@ -306,10 +306,10 @@ O código-fonte 17 apresenta uma aplicação do bloco de opções. Onde se desej
 
 ## 3. Manual do Usuário
 
-### 3.1 Requisitos para usar a ferramenta
+### 3.1. Requisitos para usar a ferramenta
 Para executar a ferramenta é necessário possuir o ambiente de execução Java (JRE) na versão igual ou superior a 13.0.1. Além disso, deve-se ter conhecimento básico de programação Java, para realizar a programação dos padrões e utilizar todas as suas funcionalidades.
 
-### 3.2 CLI (Command User Interface) - Prompt de Comando
+### 3.2. CLI (Command User Interface) - Prompt de Comando
 
 O CLI é a interface utilizada pela ferramenta para interagir com o usuário, onde o mesmo através de comandos executa as ações desejadas no sistema.  
 A ferramenta deve ser executada via Prompt de Comando passando os comandos abaixo :
@@ -318,36 +318,47 @@ A ferramenta deve ser executada via Prompt de Comando passando os comandos abaix
 java -jar scpl.jar <comandos_CLI>
 ```
 
-  - "java" faz referência ao JRE(caso não esteja no path do sistema operacional, é necessário especificar o caminho completo do arquivo)
-  - "scpl.jar" representa a aplicação já compilada 
-  - “<comandos_CLI>” representa os comandos que serão passados para o sistema interpretar e executar ações. 
+  * "java" faz referência ao JRE(caso não esteja no path do sistema operacional, é necessário especificar o caminho completo do arquivo)
+  * "scpl.jar" representa a aplicação já compilada 
+  * “<comandos_CLI>” representa os comandos que serão passados para o sistema interpretar e executar ações. 
 
-#### 3.2.1 Comandos CLI
-  - Search
-    ``` 
-    java -jar scpl.jar search -code ./CaminhoCodigoAlvoDaBusca -pattern ./CaminhoCodigosDosPadroes
-    ```
+Para todas as seções abaixo, a parte da execução do arquivo “.jar” (java -jar scpl.jar), que já é de conhecimento dos desenvolvedores Java, será tratada como “\<main class\>”.
 
-  - Debug
+#### 3.2.1. Comandos CLI
+
+##### Help
+O comando help é comum em aplicações CLI e tem como função ajudar o usuário. Sua execução apresenta um menu com todas as possibilidades de comandos aceitos pela aplicação,
+o que auxilia o usuário na formulação correta de comandos para a aplicação. A figura abaixo, apresenta a saída da aplicação após a execução do comando “help”.
+
+###### Menu help CLI
+
+Para executar a função help basta passar o comando “<main class> help”, a instrução “help” pode ser substituído por uma das flags: “-h” ou “–help”. Abaixo mostra o uso do comando.  
    
-    ``` 
-    java -jar scpl.jar -debug search -code ./CaminhoDoCodigoAlvoDaBusca -pattern ./CaminhoComCodigosDosPadroes
-    ```
+###### Comando Help
+```
+ java -jar scpl.jar -help
+```
+
   
-  - Version
-   
-    ```
-    java -jar scpl.jar -version 
-    ```
+###### Comando Search
+ ``` 
+ java -jar scpl.jar search -code ./CaminhoCodigoAlvoDaBusca -pattern ./CaminhoCodigosDosPadroes
+ ```
 
-  - Help
-   
-    ```
-    java -jar scpl.jar -help
-    ```
+###### Comando Debug
 
-  - Verbose
-  
-    ```
-    java -jar scpl.jar -verbose
-    ```
+ ``` 
+ java -jar scpl.jar -debug search -code ./CaminhoDoCodigoAlvoDaBusca -pattern ./CaminhoComCodigosDosPadroes
+ ```
+
+###### Comando Version
+
+ ```
+ java -jar scpl.jar -version 
+ ```
+
+###### Comando Verbose
+
+ ```
+ java -jar scpl.jar -verbose
+ ```
