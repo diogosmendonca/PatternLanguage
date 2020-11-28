@@ -366,9 +366,8 @@ Abaixo mostra o uso do comando principal e em seguida o comando com todas as op�
 ###### Comando Search com todas as opções
  ``` 
  java -jar scpl.jar search -code ./CaminhoCodigoAlvoDaBusca -pattern ./CaminhoCodigosDosPadroes –charset UTF-8 –format sonarqube
+ 
  ```
-
-
 
 ##### Version
 
@@ -488,8 +487,11 @@ Codigo.java (CompilationUnitTree)
 
 ##### Verbose
 
+A opção verbose tem como função ativar um modo estendido de informações, um modo verboso onde as informações sobre os processos que estão sendo realizados são apresentadas
+para o usuário. Está opção pode ser usada juntamente de todos os comandos, e para ser usado deve ser informado antes dos comandos. O seu uso é feito utilizando as flags “-V” ou “verbose”, a instrução fica da seguinte forma:
+
 ###### Comando Verbose
 
  ```
- java -jar scpl.jar -verbose
+ java -jar scpl.jar -verbose search -code ./CaminhoDoCodigoAlvoDaBusca -pattern ./CaminhoComCodigosDosPadroes
  ```
