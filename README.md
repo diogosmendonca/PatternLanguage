@@ -495,3 +495,38 @@ para o usuário. Está opção pode ser usada juntamente de todos os comandos, e
  ```
  java -jar scpl.jar -verbose search -code ./CaminhoDoCodigoAlvoDaBusca -pattern ./CaminhoComCodigosDosPadroes
  ```
+
+### 3.3. Passagem de Parâmetros Alternativa
+
+A passagem de múltiplas instruções via linha de comando, pode se tornar uma tarefa verbosa, sem contar o fato de ter que reescrever todas as instruções novamente a cada execução. Mediante a esse fato, a biblioteca utilizada pelo CLI provê a possibilidade de passar os argumentos para aplicação através de arquivos de texto.
+
+Desse modo, as instruções que serão passadas ficam organizadas e armazenadas em um arquivo “.txt”. No qual, cada linha do arquivo representa uma instrução, deixando as instruções visualmente mais organizadas. O usuário tem a chance de editar previamente o arquivo e também reexecutar uma sequência de instruções, sem a necessidade de reescrever cada uma delas. Abaixo é apresentado um arquivo texto de exemplo.
+
+###### Exemplo de um arquivo texto que usa os comandos da CLI  
+
+ ```
+ --verbose
+search
+-c
+Codigo.java
+-p
+Padrao.java
+--charset
+UTF-8
+
+ ```
+
+Para utilizar essa forma de passagem de comandos, basta na linha de comando executar o seguinte comando. 
+
+###### Comando que utiliza um arquivo texto que usa os comandos da CLI   
+
+ ```
+ java -jar scpl.jar @argumentos.txt 
+ ```
+
+No qual, “argumentos.txt” faz menção ao arquivo de texto que contem as instruções. De forma resumida, basta passar a instrução “@” juntamente do caminho do arquivo de texto.
+
+
+
+
+
