@@ -44,10 +44,11 @@ public class FileHandler {
 	private static Logger log = Logger.getLogger(FileHandler.class);
 	
 	private static final String END_JAVA_FILE = ".java";
-	private static final String BEGIN_OR = "//#BEGIN";
-	private static final String END_OR = "//#END";
+	private static final String BEGIN = "//#BEGIN";
+	private static final String END = "//#END";
 	private static final String OR = "//#OR";
 	private static final String IN_ANY_METHOD = "//InAnyMethod";
+	private static final String AND = "//#AND";
 	
 	private FileHandler() {}
 	
@@ -144,18 +145,28 @@ public class FileHandler {
 			content = content.concat(anyMethodClose);
 		}
 		
-		if(content.contains(BEGIN_OR) && content.contains(END_OR)) {
+		if(content.contains(BEGIN) && content.contains(END)) {
+			String begin = content.substring (0, content.indexOf(BEGIN));
 			
-			String begin = content.substring (0, content.indexOf(BEGIN_OR));
-			
-			String end = content.substring(content.indexOf(END_OR), content.length());
+			String end = content.substring(content.indexOf(END), content.length());
 			
 			content = content.replace(begin, "");
 			content = content.replace(end, "");
-			content = content.replace(BEGIN_OR, "");
-			end = end.replace(END_OR, "");
+			content = content.replace(BEGIN, "");
+			end = end.replace(END, "");
 			
-			List<String> options = Arrays.asList(content.split(OR));
+			List<String> options = new ArrayList<String>();
+			String nameType = "";
+			
+			if(content.contains(OR)) {
+				options = Arrays.asList(content.split(OR));
+				nameType = "OR";
+			}
+			
+			if(content.contains(AND)) {
+				options = Arrays.asList(content.split(AND));
+				nameType = "AND";
+			}
 			
 			int n = 1;
 			
@@ -166,7 +177,7 @@ public class FileHandler {
 				
 				o = concatBeginAndEnd(o,begin,end);
 				
-				String currentName = String.format("_Option%d"+END_JAVA_FILE, n);
+				String currentName = String.format("_%s%d"+END_JAVA_FILE, nameType, n);
 				
 				File currentFile = new File(file.getAbsolutePath().replace(name, name.replace(END_JAVA_FILE, currentName)));
 				currentFile.deleteOnExit();

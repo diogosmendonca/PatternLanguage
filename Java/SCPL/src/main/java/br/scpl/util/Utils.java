@@ -3,6 +3,10 @@ package br.scpl.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.sun.source.tree.Tree.Kind;
 
@@ -66,6 +70,14 @@ public class Utils {
 		}
 		
 		return nodes;
+	}
+	
+	public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+
+		Set<Object> seen = ConcurrentHashMap.newKeySet();
+
+		return t -> seen.add(keyExtractor.apply(t));
+
 	}
 		
 }
