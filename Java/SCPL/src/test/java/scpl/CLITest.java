@@ -96,7 +96,7 @@ public class CLITest {
 		
 		ConfigUtils.getProperties().setProperty("debug", "on");
         
-        String[] args = { "search", "-c", "./src/test/resources/AceitacaoFiles/TC40_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC40_Pattern.java", "--charset", "UTF-8", "-f", "sonarqube" };
+        String[] args = { "--showLocation", "false", "search", "-c", "./src/test/resources/AceitacaoFiles/TC40_Code.java", "-p", "./src/test/resources/AceitacaoFiles/TC40_Pattern.java", "--charset", "UTF-8", "-f", "sonarqube" };
 		
 		Main.main(args);
 
