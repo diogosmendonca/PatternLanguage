@@ -33,7 +33,7 @@ public class Node {
 	private List<Issue> issues;
 	private Node matchingNode;
 	private Map<Node, Integer> path = new LinkedHashMap<>();
-	private boolean isParcialReturn;
+	private boolean parcialReturn;
 	private static final Map<Tree,Node> nodesMap = new LinkedHashMap<>();
 	
 	public Node(Tree node, CompilationUnitTree compilatioUnitTree) {
@@ -116,7 +116,7 @@ public class Node {
 	
 	public long getEndLine() {
 		
-		if(this.isParcialReturn) {
+		if(this.isParcialReturn()) {
 			if(Arrays.asList(Kind.CLASS,Kind.INTERFACE).contains(this.node.getKind())) {
 				return this.getStartLine();
 			}
@@ -131,7 +131,7 @@ public class Node {
 	
 	public long getEndColumn() {
 		
-		if(this.isParcialReturn) {
+		if(this.isParcialReturn()) {
 			if(Arrays.asList(Kind.CLASS,Kind.INTERFACE).contains(this.node.getKind())) {
 				ClassTree classTree = (ClassTree)this.getNode();
 				String className = classTree.getSimpleName().toString();
@@ -147,7 +147,15 @@ public class Node {
 					increase = 11;// 11 = 2 spaces + 9 letters(interface)
 				}
 				
-				return modifier.getEndColumn() + className.length() + increase;
+				long endModifier = 0l;
+				
+				if(modifier.isDefaultModifierAccess()) {
+					endModifier = modifier.getParent().getStartColumn();
+				}else {
+					endModifier = modifier.getEndColumn();
+				}
+				
+				return endModifier + className.length() + increase;
 			}
 			
 			if(this.node.getKind() == Kind.METHOD) {
@@ -264,11 +272,11 @@ public class Node {
 	}
 	
 	public boolean isParcialReturn() {
-		return isParcialReturn;
+		return parcialReturn;
 	}
 
-	public void setParcialReturn(boolean isParcialReturn) {
-		this.isParcialReturn = isParcialReturn;
+	public void setParcialReturn(boolean parcialReturn) {
+		this.parcialReturn = parcialReturn;
 	}
 
 	public Node getBlockChild() {

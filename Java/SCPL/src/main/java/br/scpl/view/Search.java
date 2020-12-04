@@ -170,11 +170,7 @@ public class Search extends JCommander implements Command<List<Node>>{
 		}catch(FileNotFoundException e) {
 			log.error("Failed to find the file: " +e.getMessage());
 			return null;
-		}
-		catch(IOException e) {
-			log.error("Error: " +e.getLocalizedMessage());
-			return null;
-		} catch (NoValidFilesFoundException|NoAlertFoundException|CompilationErrorException e) {
+		} catch (IOException|NoValidFilesFoundException|NoAlertFoundException|CompilationErrorException e) {
 			log.error(e.getLocalizedMessage());
 			return null;
 		} 
