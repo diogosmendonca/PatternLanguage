@@ -1372,4 +1372,46 @@ public class AceitacaoTest {
 		assertTrue(alert.contains("Class should be public"));
 	}
 	
+	//issue 16
+	@Test
+	public void tc110() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC110_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC110_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals("Create in the invoker an static attribute that maps strings to command for store the commands." ,retorno.get(0).getReturnMessage());
+	}
+	
+	//issue 16
+	@Test
+	public void tc111() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC111_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC111_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
+	//issue 16
+	@Test
+	public void tc112() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC112_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC112_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals("Create in the invoker an static attribute that maps strings to command for store the commands." ,retorno.get(0).getReturnMessage());
+	}
+	
+	//issue 16
+	@Test
+	public void tc113() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC113_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC113_Pattern.java");
+		
+		assertEquals(0, retorno.size());
+	}
+	
 }

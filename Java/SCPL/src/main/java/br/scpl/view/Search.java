@@ -5,10 +5,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -19,9 +24,7 @@ import com.beust.jcommander.Parameters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.Tree;
-import com.sun.source.tree.Tree.Kind;
 import com.sun.source.util.SourcePositions;
 
 import br.scpl.controller.ControllerFacade;
@@ -33,7 +36,7 @@ import br.scpl.model.Node;
 import br.scpl.model.PatternFolder;
 import br.scpl.model.sonarqube.SonarQubeFormat;
 import br.scpl.util.Debug;
-import br.scpl.util.StringUtil;
+import br.scpl.util.Utils;
 import br.scpl.view.converter.CharsetConverter;
 
 /**
@@ -198,33 +201,77 @@ public class Search extends JCommander implements Command<List<Node>>{
 		
 		if(!pattern.getFiles().isEmpty()) {
 			
-			File[] filesPatterns = pattern.getFiles().toArray(new File[0]);
+			List<File> andFiles = pattern.getAndFiles();
+			List<File> files = pattern.getFiles().stream().filter(f -> !andFiles.contains(f)).collect(Collectors.toList());
 			
-			CompilationUnit compilationUnitPattern = FileHandler.parserFileToCompilationUnit(filesPatterns, charset);
-			
-			Iterator<? extends CompilationUnitTree> compilationUnitsPattern = compilationUnitPattern.getCompilationUnitTree();
-			
-			SourcePositions posPattern = compilationUnitPattern.getPos();
-			
-			List<Node> listToRemove = new ArrayList<>();
-			
-			while(compilationUnitsPattern.hasNext()) {
+			if(!files.isEmpty()) {
 				
-				CompilationUnitTree treePattern = compilationUnitsPattern.next();
+				File[] filesPatterns = files.toArray(new File[0]);
 				
-				String fileName = treePattern.getSourceFile().getName().toUpperCase();
+				CompilationUnit compilationUnitPattern = FileHandler.parserFileToCompilationUnit(filesPatterns, charset);
 				
-				if(fileName.endsWith("EXCLUDE.JAVA")){
-					listToRemove.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posCode, posPattern));
-				}else {
-					retorno.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posCode, posPattern));					
+				Iterator<? extends CompilationUnitTree> compilationUnitsPattern = compilationUnitPattern.getCompilationUnitTree();
+				
+				SourcePositions posPattern = compilationUnitPattern.getPos();
+				
+				List<Node> listToRemove = new ArrayList<>();
+				
+				while(compilationUnitsPattern.hasNext()) {
+					
+					CompilationUnitTree treePattern = compilationUnitsPattern.next();
+					
+					String fileName = treePattern.getSourceFile().getName().toUpperCase();
+					
+					if(fileName.endsWith("EXCLUDE.JAVA")){
+						listToRemove.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posCode, posPattern));
+					}else {
+						retorno.addAll(ControllerFacade.searchOccurrences(treeCode, treePattern, posCode, posPattern));					
+					}
+					
 				}
 				
+				List<Tree> treesToRemove =  listToRemove.stream().map(Node::getNode).collect(Collectors.toList());
+				
+				retorno = retorno.stream().filter(r -> !(treesToRemove.contains(r.getNode()))).collect(Collectors.toList());
 			}
 			
-			List<Tree> treesToRemove =  listToRemove.stream().map(Node::getNode).collect(Collectors.toList());
+			Map<String, List<File>> andGroups = pattern.groupByAndFiles(andFiles);
 			
-			retorno = retorno.stream().filter(r -> !(treesToRemove.contains(r.getNode()))).collect(Collectors.toList());
+			for(Entry<String, List<File>> entry : andGroups.entrySet()) {
+				
+				File[] filesPatterns = entry.getValue().toArray(new File[0]);
+				
+				CompilationUnit compilationUnitPattern = FileHandler.parserFileToCompilationUnit(filesPatterns, charset);
+				
+				Iterator<? extends CompilationUnitTree> compilationUnitsPattern = compilationUnitPattern.getCompilationUnitTree();
+				
+				SourcePositions posPattern = compilationUnitPattern.getPos();
+				
+				List<Node> parcialReturn = new ArrayList<Node>();
+				
+				boolean returning = true;
+				
+				while(compilationUnitsPattern.hasNext()) {
+					
+					CompilationUnitTree treePattern = compilationUnitsPattern.next();
+					
+					List<Node> auxReturn = ControllerFacade.searchOccurrences(treeCode, treePattern, posCode, posPattern);
+					
+					if(auxReturn.isEmpty()) {
+						returning = false;
+						break;
+					}
+					
+					parcialReturn.addAll(auxReturn);					
+					
+				}
+				
+				if(returning) {
+					parcialReturn = parcialReturn.stream().filter(Utils.distinctByKey(Node::getNode)).collect(Collectors.toList());
+					retorno.addAll(parcialReturn);
+				}
+			  
+			}
 			
 		}
 		
