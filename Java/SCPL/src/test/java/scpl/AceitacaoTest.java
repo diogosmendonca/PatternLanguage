@@ -1414,4 +1414,24 @@ public class AceitacaoTest {
 		assertEquals(0, retorno.size());
 	}
 	
+	@Test
+	public void tc114() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC114_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC114_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals("Mensagem de teste" ,retorno.get(0).getReturnMessage());
+	}
+	
+	@Test
+	public void tc115() throws IOException {	
+				
+		List<Node> retorno = Search.searchOccurrences("./src/test/resources/AceitacaoFiles/TC115_Code.java"
+				,"./src/test/resources/AceitacaoFiles/TC115_Pattern.java");
+		
+		assertEquals(1, retorno.size());
+		assertEquals("Unchecked Integer" ,retorno.get(0).getReturnMessage());
+	}
+	
 }
