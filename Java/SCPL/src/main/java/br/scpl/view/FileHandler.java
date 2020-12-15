@@ -128,6 +128,8 @@ public class FileHandler {
 		
 		String content = getStringContent(file);
 		
+		boolean inAnyMethod = false;
+		
 		if(content.toUpperCase().contains(IN_ANY_METHOD.toUpperCase())) {
 			
 			String anyMeThod = "@anyModifier\r\n" + 
@@ -143,6 +145,8 @@ public class FileHandler {
 			content = content.replaceAll("\\s+$", "");
 			
 			content = content.concat(anyMethodClose);
+			
+			inAnyMethod = true;
 		}
 		
 		if(content.contains(BEGIN) && content.contains(END)) {
@@ -194,7 +198,18 @@ public class FileHandler {
 		}
 		
 		if(files.isEmpty()) {
-			files.add(file);
+			if(inAnyMethod) {
+				File currentFile = new File(file.getAbsolutePath().replace(name, name.replace(END_JAVA_FILE, "_InAnyMethod"+END_JAVA_FILE)));
+				currentFile.deleteOnExit();
+				
+				try(FileWriter writer = new FileWriter(currentFile)){
+					writer.write(content);
+				}
+				
+				files.add(currentFile);
+			}else {
+				files.add(file);				
+			}
 		}
 				
 		return files;
