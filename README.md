@@ -1,3 +1,5 @@
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=diogosmendonca_PatternLanguage)
+
 # Source Code Pattern Language(SCPL)
 
 ## 1. O que é?
